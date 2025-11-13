@@ -472,6 +472,15 @@
                     <p>إدارة الشقق والفلل والوحدات السكنية والاستعلام عن السكان</p>
                 </a>
 
+                <!-- مراقبة المباني -->
+                <a href="building_monitoring.html" class="page-card">
+                    <div class="page-card-header">
+                        <div class="page-icon"><i class="fas fa-eye"></i></div>
+                        <h3>مراقبة المباني والبناء</h3>
+                    </div>
+                    <p>متابعة ومراقبة المباني والوحدات السكنية ونسب الإشغال</p>
+                </a>
+
                 <!-- إدارة المستخدمين -->
                 <a href="advanced_users_management.html" class="page-card">
                     <div class="page-card-header">
@@ -503,15 +512,15 @@
     </div>
 
     <!-- تحميل مكتبات النظام -->
-    <script src="../js/database.js"></script>
-    <script src="../js/auth.js"></script>
+    <script src="database.js"></script>
+    <script src="auth.js"></script>
 
     <script>
         'use strict';
 
         // التحقق من تسجيل الدخول
         if (!window.authManager.isAuthenticated()) {
-            window.location.href = '../index.html';
+            window.location.href = 'index.html';
         }
 
         // عرض اسم المستخدم

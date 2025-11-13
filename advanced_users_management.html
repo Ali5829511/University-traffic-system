@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المستخدمين - نظام إدارة المرور</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .actions-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(81, 207, 102, 0.4);
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .user-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .user-info h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-role {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .role-admin {
+            background: #ffe3e3;
+            color: #c92a2a;
+        }
+
+        .role-user {
+            background: #d0ebff;
+            color: #1864ab;
+        }
+
+        .role-viewer {
+            background: #d3f9d8;
+            color: #2b8a3e;
+        }
+
+        .user-details {
+            margin: 15px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .user-details div {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-edit {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-delete {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #ee5a52;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .users-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-users-cog"></i>
+                إدارة المستخدمين
+            </h1>
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-right"></i>
+                العودة للصفحة الرئيسية
+            </a>
+        </div>
+
+        <div class="actions-bar">
+            <h2 style="color: #333;">المستخدمون المسجلون</h2>
+            <button class="btn-add" onclick="addNewUser()">
+                <i class="fas fa-user-plus"></i>
+                إضافة مستخدم جديد
+            </button>
+        </div>
+
+        <div class="users-grid" id="usersGrid">
+            <div style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                <i class="fas fa-spinner fa-spin" style="font-size: 48px; color: white;"></i>
+                <p style="color: white; margin-top: 20px; font-size: 18px;">جاري تحميل المستخدمين...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="database.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // التحقق من المصادقة والصلاحيات
+        if (!window.authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        const currentUser = window.authManager.getCurrentUser();
+        if (!currentUser || currentUser.role !== 'admin') {
+            alert('عذراً، ليس لديك صلاحية الوصول لهذه الصفحة');
+            window.location.href = 'home.html';
+        }
+
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('users') || '[]');
+            displayUsers(users);
+        }
+
+        function displayUsers(users) {
+            const grid = document.getElementById('usersGrid');
+            
+            if (users.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 50px; color: white;">
+                        <i class="fas fa-users" style="font-size: 48px; margin-bottom: 20px;"></i>
+                        <p style="font-size: 18px;">لا يوجد مستخدمون مسجلون</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = users.map(user => {
+                const roleClass = user.role === 'admin' ? 'role-admin' : user.role === 'violation_entry' ? 'role-user' : 'role-viewer';
+                const roleName = user.role === 'admin' ? 'مدير النظام' : user.role === 'violation_entry' ? 'مسجل مخالفات' : 'استعلام';
+                const initials = user.name.split(' ').map(n => n[0]).join('');
+
+                return `
+                    <div class="user-card">
+                        <div class="user-header">
+                            <div class="user-avatar">${initials}</div>
+                            <div class="user-info">
+                                <h3>${user.name}</h3>
+                                <span class="user-role ${roleClass}">${roleName}</span>
+                            </div>
+                        </div>
+                        <div class="user-details">
+                            <div>
+                                <i class="fas fa-user"></i>
+                                <span>اسم المستخدم: <strong>${user.username}</strong></span>
+                            </div>
+                            <div>
+                                <i class="fas fa-envelope"></i>
+                                <span>${user.email || 'لا يوجد بريد إلكتروني'}</span>
+                            </div>
+                            <div>
+                                <i class="fas fa-clock"></i>
+                                <span>آخر تسجيل دخول: ${user.lastLogin || 'لم يسجل دخول بعد'}</span>
+                            </div>
+                        </div>
+                        <div class="user-actions">
+                            <button class="action-btn btn-edit" onclick="editUser('${user.id}')">
+                                <i class="fas fa-edit"></i> تعديل
+                            </button>
+                            <button class="action-btn btn-delete" onclick="deleteUser('${user.id}')">
+                                <i class="fas fa-trash"></i> حذف
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function addNewUser() {
+            alert('فتح نموذج إضافة مستخدم جديد');
+            // يمكن إضافة modal للإضافة
+        }
+
+        function editUser(id) {
+            alert('تعديل المستخدم: ' + id);
+            // يمكن إضافة modal للتعديل
+        }
+
+        function deleteUser(id) {
+            if (confirm('هل أنت متأكد من حذف هذا المستخدم؟')) {
+                let users = JSON.parse(localStorage.getItem('users') || '[]');
+                users = users.filter(u => u.id !== id);
+                localStorage.setItem('users', JSON.stringify(users));
+                loadUsers();
+                alert('تم حذف المستخدم بنجاح');
+            }
+        }
+
+        // تحميل المستخدمين عند فتح الصفحة
+        loadUsers();
+    </script>
+</body>
+</html>
