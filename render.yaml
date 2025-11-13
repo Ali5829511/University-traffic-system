@@ -9,3 +9,8 @@ services:
         value: production
       - key: PORT
         value: 3000
+      - key: DB_SSL
+        value: true
+      # DATABASE_URL should be added in Render dashboard or as a secret
+      # Add it in: Dashboard > Environment > Environment Variables
+      # Format: postgresql://user:password@host:port/database
