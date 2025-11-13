@@ -578,10 +578,24 @@
 
         // تحميل بيانات المواقف
         function loadParkingData() {
-            // تحميل من localStorage أو إنشاء بيانات تجريبية
+            // Try to load from parkingData (from generate_complete_data.html)
+            const parkingData = localStorage.getItem('parkingData');
             const stored = localStorage.getItem('parking_spaces');
             
-            if (stored) {
+            if (parkingData) {
+                // Convert parkingData format to parking_spaces format
+                const data = JSON.parse(parkingData);
+                parkingSpaces = data.map(p => ({
+                    id: p.id,
+                    parking_number: p.parking_number,
+                    parking_type: p.parking_type === 'ذوي الاحتياجات' ? 'معاقين' : p.parking_type,
+                    parking_zone: p.parking_type === 'عام' ? 'عام' : (p.building_number ? `Zone-${p.building_number}` : 'A'),
+                    building_number: p.building_number || '-',
+                    is_occupied: p.status === 'مشغول',
+                    location_description: `موقف ${p.parking_type} - ${p.floor || 'أرضي'}`
+                }));
+                saveParkingData();
+            } else if (stored) {
                 parkingSpaces = JSON.parse(stored);
             } else {
                 // إنشاء بيانات تجريبية بناءً على schema.sql

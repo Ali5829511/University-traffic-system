@@ -108,18 +108,21 @@
                 addLog('🏢 توليد بيانات المباني...', 'info');
                 const buildings = generateBuildingsData();
                 localStorage.setItem('buildings', JSON.stringify(buildings));
+                localStorage.setItem('buildingsData', JSON.stringify(buildings)); // For building_monitoring.html
                 addLog(`✓ تم توليد ${buildings.length} مبنى`, 'success');
                 
                 // 3. Generate parking data
                 addLog('🅿️ توليد بيانات المواقف...', 'info');
                 const parking = generateParkingData();
                 localStorage.setItem('parking', JSON.stringify(parking));
+                localStorage.setItem('parkingData', JSON.stringify(parking)); // For parking_management.html
                 addLog(`✓ تم توليد ${parking.length} موقف`, 'success');
                 
                 // 4. Generate stickers data
                 addLog('🏷️ توليد بيانات ملصقات السيارات...', 'info');
                 const stickers = generateStickersData(units);
                 localStorage.setItem('stickers', JSON.stringify(stickers));
+                localStorage.setItem('stickersData', JSON.stringify(stickers)); // For enhanced_stickers_management.html
                 addLog(`✓ تم توليد ${stickers.length} ملصق`, 'success');
                 
                 // 5. Create complete data object
