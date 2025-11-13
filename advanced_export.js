@@ -49,11 +49,11 @@ class AdvancedExporter {
                     <table>
                         <thead>
                             <tr>
+                                <th>م</th>
                                 <th>الصورة</th>
                                 <th>رقم اللوحة</th>
                                 <th>نوع المركبة</th>
                                 <th>اللون</th>
-                                <th>الدقة</th>
                                 <th>عدد التكرار</th>
                                 <th>التاريخ</th>
                             </tr>
@@ -66,12 +66,12 @@ class AdvancedExporter {
                 const imageData = this.images[index] || '';
                 html += `
                     <tr>
-                        <td>${imageData ? `<img src="${imageData}" />` : 'لا توجد صورة'}</td>
-                        <td style="font-weight: bold; font-size: 16px;">${item.plateNumber || '-'}</td>
+                        <td style="text-align: center;">${index + 1}</td>
+                        <td style="text-align: center;">${imageData ? `<img src="${imageData}" style="width: 120px; height: 90px; object-fit: cover; border: 2px solid #1a5f3f; border-radius: 5px;" />` : 'لا توجد صورة'}</td>
+                        <td style="font-weight: bold; font-size: 18px;">${item.plateNumber || '-'}</td>
                         <td>${item.vehicleType || '-'}</td>
                         <td>${item.color || '-'}</td>
-                        <td>${item.confidence || '-'}%</td>
-                        <td>${item.repeatCount || 1}</td>
+                        <td style="text-align: center;"><strong>${item.repeatCount || 1}</strong></td>
                         <td>${new Date(item.timestamp || Date.now()).toLocaleDateString('ar-SA')}</td>
                     </tr>
                 `;
@@ -179,14 +179,15 @@ class AdvancedExporter {
                         
                         .plate-number {
                             font-weight: bold;
-                            font-size: 16px;
-                            color: #8B6F47;
+                            font-size: 18px;
+                            color: #000;
                         }
                         
                         .thumbnail {
-                            width: 80px;
-                            height: 60px;
+                            width: 90px;
+                            height: 67px;
                             object-fit: cover;
+                            border: 2px solid #1a5f3f;
                             border-radius: 5px;
                         }
                         
@@ -260,12 +261,12 @@ class AdvancedExporter {
                     <table>
                         <thead>
                             <tr>
+                                <th style="width: 50px;">م</th>
                                 <th style="width: 100px;">الصورة</th>
                                 <th>رقم اللوحة</th>
                                 <th>نوع المركبة</th>
                                 <th>اللون</th>
-                                <th>الدقة</th>
-                                <th>التكرار</th>
+                                <th>عدد التكرار</th>
                                 <th>التاريخ</th>
                             </tr>
                         </thead>
@@ -277,14 +278,14 @@ class AdvancedExporter {
                 const imageData = this.images[index] || '';
                 html += `
                     <tr>
+                        <td style="text-align: center;">${index + 1}</td>
                         <td style="text-align: center;">
                             ${imageData ? `<img src="${imageData}" class="thumbnail" />` : 'لا توجد صورة'}
                         </td>
                         <td><span class="plate-number">${item.plateNumber || '-'}</span></td>
                         <td>${item.vehicleType || '-'}</td>
                         <td>${item.color || '-'}</td>
-                        <td>${item.confidence || '-'}%</td>
-                        <td><strong>${item.repeatCount || 1}</strong></td>
+                        <td style="text-align: center;"><strong>${item.repeatCount || 1}</strong></td>
                         <td>${new Date(item.timestamp || Date.now()).toLocaleDateString('ar-SA')}</td>
                     </tr>
                 `;
@@ -429,14 +430,15 @@ class AdvancedExporter {
                         .plate-number {
                             font-weight: bold;
                             font-size: 18px;
-                            color: #8B6F47;
+                            color: #000;
                         }
                         
                         .thumbnail {
-                            width: 100px;
-                            height: 75px;
+                            width: 90px;
+                            height: 67px;
                             object-fit: cover;
-                            border-radius: 8px;
+                            border: 2px solid #1a5f3f;
+                            border-radius: 5px;
                             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
                             cursor: pointer;
                             transition: transform 0.3s ease;
@@ -525,12 +527,12 @@ class AdvancedExporter {
                         <table>
                             <thead>
                                 <tr>
+                                    <th>م</th>
                                     <th>الصورة</th>
                                     <th>رقم اللوحة</th>
                                     <th>نوع المركبة</th>
                                     <th>اللون</th>
-                                    <th>الدقة</th>
-                                    <th>التكرار</th>
+                                    <th>عدد التكرار</th>
                                     <th>التاريخ</th>
                                 </tr>
                             </thead>
@@ -544,14 +546,14 @@ class AdvancedExporter {
                 
                 html += `
                     <tr>
+                        <td style="text-align: center;">${index + 1}</td>
                         <td style="text-align: center;">
                             ${imageData ? `<img src="${imageData}" class="thumbnail" alt="صورة السيارة" />` : 'لا توجد صورة'}
                         </td>
                         <td><span class="plate-number">${item.plateNumber || '-'}</span></td>
                         <td>${item.vehicleType || '-'}</td>
                         <td>${item.color || '-'}</td>
-                        <td>${item.confidence || '-'}%</td>
-                        <td><span class="badge badge-${badgeClass}">${item.repeatCount || 1}</span></td>
+                        <td style="text-align: center;"><span class="badge badge-${badgeClass}">${item.repeatCount || 1}</span></td>
                         <td>${new Date(item.timestamp || Date.now()).toLocaleDateString('ar-SA')}</td>
                     </tr>
                 `;

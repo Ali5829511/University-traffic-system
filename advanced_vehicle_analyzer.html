@@ -790,11 +790,26 @@
                 
                 if (data.results && data.results.length > 0) {
                     const plate = data.results[0];
+                    
+                    // Extract vehicle type with make and model
+                    let vehicleType = 'غير محدد';
+                    const make = plate.vehicle?.make?.[0]?.name || '';
+                    const model = plate.vehicle?.model?.[0]?.name || '';
+                    const type = plate.vehicle?.type || '';
+                    
+                    if (make && model) {
+                        vehicleType = `${make} ${model}`;
+                    } else if (make) {
+                        vehicleType = make;
+                    } else if (type) {
+                        vehicleType = type;
+                    }
+                    
                     return {
                         fileName: file.name,
                         plateNumber: plate.plate,
                         confidence: (plate.score * 100).toFixed(2),
-                        vehicleType: plate.vehicle?.type || 'غير محدد',
+                        vehicleType: vehicleType,
                         color: plate.vehicle?.color?.[0]?.name || 'غير محدد',
                         region: plate.region?.name || 'السعودية',
                         timestamp: new Date().toISOString(),
