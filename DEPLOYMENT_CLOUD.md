@@ -13,36 +13,38 @@
 - ✅ نشر تلقائي من GitHub
 - ✅ SSL مجاني
 - ✅ دعم PostgreSQL
+- ✅ ملف `render.yaml` جاهز في المشروع
 
-### الخطوات:
+### الخطوات السريعة:
+
+⚡ **المشروع يحتوي على ملف `render.yaml` للنشر التلقائي!**
+
+📖 **للحصول على دليل مفصل بالعربية:** اقرأ [RENDER_DEPLOYMENT.md](./RENDER_DEPLOYMENT.md)
+
+#### الخطوات الأساسية:
 
 1. **إنشاء حساب:**
    - اذهب إلى https://render.com
    - سجل دخول بحساب GitHub
 
-2. **إنشاء Web Service:**
-   - اضغط "New +" → "Web Service"
+2. **إنشاء PostgreSQL Database:**
+   - "New +" → "PostgreSQL"
+   - احفظ DATABASE_URL
+
+3. **إنشاء Web Service:**
+   - "New +" → "Web Service"
    - اختر repository: `University-traffic-system`
-   - املأ البيانات:
-     - **Name:** `university-traffic-system`
-     - **Environment:** `Node`
-     - **Build Command:** `npm install`
-     - **Start Command:** `npm start`
-     - **Plan:** Free
+   - ⚡ Render سيكتشف `render.yaml` تلقائياً!
+   - أضف فقط: `DATABASE_URL` في Environment Variables
 
-3. **إضافة Environment Variables:**
-   - اضغط "Advanced" → "Add Environment Variable"
-   - أضف:
-     ```
-     DATABASE_URL = [رابط Supabase/Neon]
-     DB_SSL = true
-     PORT = 3000
-     ```
+4. **إعداد قاعدة البيانات:**
+   - استخدم Render Shell: `node setup-database.js`
 
-4. **النشر:**
-   - اضغط "Create Web Service"
-   - انتظر 2-5 دقائق
-   - الموقع سيكون: `https://university-traffic-system.onrender.com`
+5. **الاختبار:**
+   - افتح: `https://university-traffic-system.onrender.com`
+   - سجل دخول بـ: `admin` / `admin123`
+
+✅ **تم حل مشكلة:** كان هناك خطأ في أمر البدء (`0npm start`)، الآن `render.yaml` يضمن استخدام الأمر الصحيح `npm start`.
 
 ---
 
