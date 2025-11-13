@@ -379,14 +379,34 @@
         async function loadVillasData() {
             try {
                 console.log('بدء تحميل بيانات الفلل...');
-                const response = await fetch('../data/real_data.json');
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // Try to load from localStorage first
+                let data = null;
+                const storedData = localStorage.getItem('complete_data');
+                if (storedData) {
+                    data = JSON.parse(storedData);
+                    console.log('تم تحميل البيانات من localStorage');
+                } else {
+                    // Try to load from residential_units if available
+                    const unitsData = localStorage.getItem('residential_units');
+                    if (unitsData) {
+                        const units = JSON.parse(unitsData);
+                        data = {
+                            units: units,
+                            residents: units.filter(u => u.is_occupied).map(u => ({
+                                name: u.resident_name,
+                                phone: u.resident_phone,
+                                unit_name: u.unit_name,
+                                building_number: u.building_number,
+                                unit_number: u.unit_number,
+                                building_type: u.building_description
+                            }))
+                        };
+                        console.log('تم تحميل البيانات من residential_units');
+                    } else {
+                        throw new Error('لا توجد بيانات. الرجاء زيارة صفحة "توليد البيانات" أولاً');
+                    }
                 }
-                
-                const data = await response.json();
-                console.log('تم تحميل البيانات بنجاح');
                 
                 // تصفية الفلل فقط
                 const villas = data.units.filter(unit => unit.unit_type === 'فلة');
@@ -394,17 +414,12 @@
                 
                 // دمج بيانات السكان مع الفلل
                 villasData = villas.map(villa => {
-                    const resident = data.residents.find(r => 
-                        r.unit_name === villa.name || 
-                        (r.building_type === villa.building_number && r.unit_number === villa.unit_number)
-                    );
-                    
                     return {
-                        'رقم الفلة': villa.building_number,
-                        'الوصف': villa.description,
-                        'اسم_الساكن': resident ? resident.name : 'شاغرة',
-                        'حالة الفلة': resident ? 'مشغولة' : 'شاغرة',
-                        'رقم الهاتف': resident ? resident.phone : '-'
+                        'رقم الفلة': villa.building_number || villa.unit_number,
+                        'الوصف': villa.building_description || villa.description || 'فلة',
+                        'اسم_الساكن': villa.resident_name || 'شاغرة',
+                        'حالة الفلة': villa.is_occupied ? 'مشغولة' : 'شاغرة',
+                        'رقم الهاتف': villa.resident_phone || '-'
                     };
                 });
                 
@@ -416,7 +431,7 @@
             } catch (error) {
                 console.error('خطأ في تحميل البيانات:', error);
                 document.getElementById('villas-table-body').innerHTML = 
-                    `<tr><td colspan="5" class="no-data">خطأ في تحميل البيانات: ${error.message}</td></tr>`;
+                    `<tr><td colspan="5" class="no-data">خطأ في تحميل البيانات: ${error.message}<br><a href="generate_complete_data.html" style="color: #667eea; text-decoration: underline;">انقر هنا لتوليد البيانات</a></td></tr>`;
             }
         }
 

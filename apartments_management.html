@@ -384,14 +384,34 @@
         async function loadApartmentsData() {
             try {
                 console.log('بدء تحميل بيانات الشقق...');
-                const response = await fetch('../data/real_data.json');
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                // Try to load from localStorage first
+                let data = null;
+                const storedData = localStorage.getItem('complete_data');
+                if (storedData) {
+                    data = JSON.parse(storedData);
+                    console.log('تم تحميل البيانات من localStorage');
+                } else {
+                    // Try to load from residential_units if available
+                    const unitsData = localStorage.getItem('residential_units');
+                    if (unitsData) {
+                        const units = JSON.parse(unitsData);
+                        data = {
+                            units: units,
+                            residents: units.filter(u => u.is_occupied).map(u => ({
+                                name: u.resident_name,
+                                phone: u.resident_phone,
+                                unit_name: u.unit_name,
+                                building_number: u.building_number,
+                                unit_number: u.unit_number,
+                                building_type: u.building_description
+                            }))
+                        };
+                        console.log('تم تحميل البيانات من residential_units');
+                    } else {
+                        throw new Error('لا توجد بيانات. الرجاء زيارة صفحة "توليد البيانات" أولاً');
+                    }
                 }
-                
-                const data = await response.json();
-                console.log('تم تحميل البيانات بنجاح');
                 
                 // تصفية الشقق فقط (استثناء الفلل)
                 const apartments = data.units.filter(unit => unit.unit_type === 'شقة');
@@ -399,18 +419,13 @@
                 
                 // دمج بيانات السكان مع الشقق
                 apartmentsData = apartments.map(apt => {
-                    const resident = data.residents.find(r => 
-                        r.unit_name === apt.name || 
-                        (r.building_type === apt.building_number && r.unit_number === apt.unit_number)
-                    );
-                    
                     return {
                         'رقم الشقة': apt.unit_number,
                         'رقم المبنى': apt.building_number,
-                        'نوع المبنى': apt.description,
-                        'اسم_الساكن': resident ? resident.name : 'شاغرة',
-                        'حالة الشقة': resident ? 'مشغولة' : 'شاغرة',
-                        'رقم الهاتف': resident ? resident.phone : '-'
+                        'نوع المبنى': apt.building_description || apt.description || '',
+                        'اسم_الساكن': apt.resident_name || 'شاغرة',
+                        'حالة الشقة': apt.is_occupied ? 'مشغولة' : 'شاغرة',
+                        'رقم الهاتف': apt.resident_phone || '-'
                     };
                 });
                 
@@ -422,7 +437,7 @@
             } catch (error) {
                 console.error('خطأ في تحميل البيانات:', error);
                 document.getElementById('apartments-table-body').innerHTML = 
-                    `<tr><td colspan="6" class="no-data">خطأ في تحميل البيانات: ${error.message}</td></tr>`;
+                    `<tr><td colspan="6" class="no-data">خطأ في تحميل البيانات: ${error.message}<br><a href="generate_complete_data.html" style="color: #667eea; text-decoration: underline;">انقر هنا لتوليد البيانات</a></td></tr>`;
             }
         }
 

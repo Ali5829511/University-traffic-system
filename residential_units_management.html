@@ -475,7 +475,7 @@
         </div>
     </div>
 
-    <script src="../js/real_data_loader.js"></script>
+    <script src="real_data_loader.js"></script>
     <script>
         // Global variables
         let allUnits = [];
@@ -489,17 +489,28 @@
         // Load units data from real data
         async function loadUnitsData() {
             try {
-                // تحميل البيانات الحقيقية
-                await realDataLoader.loadData();
+                // Load directly from localStorage (residential_units key)
+                const stored = localStorage.getItem('residential_units');
+                allUnits = stored ? JSON.parse(stored) : [];
                 
-                allUnits = realDataLoader.getUnitsWithResidents();
+                // If no data, try realDataLoader as fallback
+                if (allUnits.length === 0) {
+                    try {
+                        await realDataLoader.loadData();
+                        allUnits = realDataLoader.getUnitsWithResidents();
+                    } catch(e) {
+                        console.log('Could not load from realDataLoader, using empty data');
+                    }
+                }
+                
                 filteredUnits = allUnits;
                 
-                const statistics = realDataLoader.getStatistics();
+                // Calculate statistics from loaded data
+                const statistics = calculateStatistics(allUnits);
                 updateStatistics(statistics);
                 renderTable();
                 
-                console.log(`✓ تم تحميل ${allUnits.length} وحدة سكنية حقيقية`);
+                console.log(`✓ تم تحميل ${allUnits.length} وحدة سكنية`);
             } catch (error) {
                 console.error('خطأ في تحميل البيانات:', error);
                 document.getElementById('unitsTableBody').innerHTML = `
@@ -510,6 +521,17 @@
                     </tr>
                 `;
             }
+        }
+
+        // Calculate statistics from units data
+        function calculateStatistics(units) {
+            return {
+                total_units: units.length,
+                occupied_units: units.filter(u => u.is_occupied).length,
+                vacant_units: units.filter(u => !u.is_occupied).length,
+                villas_count: units.filter(u => u.unit_type === 'فلة').length,
+                new_buildings_units: units.filter(u => u.building_category === 'جديد').length
+            };
         }
 
         // Update statistics

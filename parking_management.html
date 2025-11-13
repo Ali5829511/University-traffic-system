@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إدارة المواقف - نظام إدارة المرور</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .actions-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 45px 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Tajawal', Arial, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Tajawal', Arial, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-card .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .stat-card.total .icon { color: #667eea; }
+        .stat-card.occupied .icon { color: #f56565; }
+        .stat-card.vacant .icon { color: #48bb78; }
+        .stat-card.disabled .icon { color: #4299e1; }
+
+        .stat-card h3 {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .table-container {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            text-align: right;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        th:first-child { border-radius: 10px 0 0 0; }
+        th:last-child { border-radius: 0 10px 0 0; }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        tr:hover {
+            background-color: #f7fafc;
+        }
+
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-occupied {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status-vacant {
+            background: #c6f6d5;
+            color: #2f855a;
+        }
+
+        .type-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .type-private {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .type-public {
+            background: #fbd38d;
+            color: #7c2d12;
+        }
+
+        .type-disabled {
+            background: #d6bcfa;
+            color: #553c9a;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-action {
+            padding: 5px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-edit {
+            background: #4299e1;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f56565;
+            color: white;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Tajawal', Arial, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: #cbd5e0;
+            color: #2d3748;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover,
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .actions-bar {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>
+                <i class="fas fa-parking"></i>
+                إدارة المواقف
+            </h1>
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-home"></i>
+                الرئيسية
+            </a>
+        </div>
+
+        <!-- Actions Bar -->
+        <div class="actions-bar">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="البحث برقم الموقف، المبنى، أو المنطقة...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="filter-group">
+                <select id="typeFilter" class="filter-select">
+                    <option value="">جميع الأنواع</option>
+                    <option value="خاص">خاص</option>
+                    <option value="عام">عام</option>
+                    <option value="معاقين">معاقين</option>
+                </select>
+                <select id="statusFilter" class="filter-select">
+                    <option value="">جميع الحالات</option>
+                    <option value="true">مشغول</option>
+                    <option value="false">شاغر</option>
+                </select>
+            </div>
+            <button class="btn-add" onclick="showAddModal()">
+                <i class="fas fa-plus"></i>
+                إضافة موقف
+            </button>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card total">
+                <div class="icon"><i class="fas fa-parking"></i></div>
+                <h3 id="totalParking">0</h3>
+                <p>إجمالي المواقف</p>
+            </div>
+            <div class="stat-card occupied">
+                <div class="icon"><i class="fas fa-car"></i></div>
+                <h3 id="occupiedParking">0</h3>
+                <p>مواقف مشغولة</p>
+            </div>
+            <div class="stat-card vacant">
+                <div class="icon"><i class="fas fa-check-circle"></i></div>
+                <h3 id="vacantParking">0</h3>
+                <p>مواقف شاغرة</p>
+            </div>
+            <div class="stat-card disabled">
+                <div class="icon"><i class="fas fa-wheelchair"></i></div>
+                <h3 id="disabledParking">0</h3>
+                <p>مواقف معاقين</p>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>رقم الموقف</th>
+                        <th>نوع الموقف</th>
+                        <th>المنطقة</th>
+                        <th>المبنى</th>
+                        <th>الحالة</th>
+                        <th>الوصف</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody id="parkingTableBody">
+                    <tr>
+                        <td colspan="7" class="no-data">جاري تحميل البيانات...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="parkingModal" class="modal">
+        <div class="modal-content">
+            <h2 id="modalTitle">إضافة موقف جديد</h2>
+            <form id="parkingForm">
+                <div class="form-group">
+                    <label for="parkingNumber">رقم الموقف *</label>
+                    <input type="text" id="parkingNumber" required placeholder="مثال: P1-01">
+                </div>
+                <div class="form-group">
+                    <label for="parkingType">نوع الموقف *</label>
+                    <select id="parkingType" required>
+                        <option value="">-- اختر النوع --</option>
+                        <option value="خاص">خاص</option>
+                        <option value="عام">عام</option>
+                        <option value="معاقين">معاقين</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="parkingZone">المنطقة</label>
+                    <input type="text" id="parkingZone" placeholder="مثال: A, B, عام">
+                </div>
+                <div class="form-group">
+                    <label for="buildingNumber">رقم المبنى</label>
+                    <input type="text" id="buildingNumber" placeholder="مثال: 1, 53, V1">
+                </div>
+                <div class="form-group">
+                    <label for="isOccupied">حالة الإشغال</label>
+                    <select id="isOccupied">
+                        <option value="false">شاغر</option>
+                        <option value="true">مشغول</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="locationDescription">وصف الموقع</label>
+                    <textarea id="locationDescription" rows="3" placeholder="وصف تفصيلي للموقع"></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i>
+                        حفظ
+                    </button>
+                    <button type="button" class="btn-secondary" onclick="closeModal()">
+                        <i class="fas fa-times"></i>
+                        إلغاء
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="database.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        'use strict';
+
+        // التحقق من تسجيل الدخول
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        // بيانات المواقف
+        let parkingSpaces = [];
+        let currentEditId = null;
+
+        // تحميل البيانات عند بدء الصفحة
+        document.addEventListener('DOMContentLoaded', function() {
+            loadParkingData();
+            setupEventListeners();
+        });
+
+        // إعداد المستمعات
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterParking);
+            document.getElementById('typeFilter').addEventListener('change', filterParking);
+            document.getElementById('statusFilter').addEventListener('change', filterParking);
+            document.getElementById('parkingForm').addEventListener('submit', handleFormSubmit);
+        }
+
+        // تحميل بيانات المواقف
+        function loadParkingData() {
+            // Try to load from parkingData (from generate_complete_data.html)
+            const parkingData = localStorage.getItem('parkingData');
+            const stored = localStorage.getItem('parking_spaces');
+            
+            if (parkingData) {
+                // Convert parkingData format to parking_spaces format
+                const data = JSON.parse(parkingData);
+                parkingSpaces = data.map(p => ({
+                    id: p.id,
+                    parking_number: p.parking_number,
+                    parking_type: p.parking_type === 'ذوي الاحتياجات' ? 'معاقين' : p.parking_type,
+                    parking_zone: p.parking_type === 'عام' ? 'عام' : (p.building_number ? `Zone-${p.building_number}` : 'A'),
+                    building_number: p.building_number || '-',
+                    is_occupied: p.status === 'مشغول',
+                    location_description: `موقف ${p.parking_type} - ${p.floor || 'أرضي'}`
+                }));
+                saveParkingData();
+            } else if (stored) {
+                parkingSpaces = JSON.parse(stored);
+            } else {
+                // إنشاء بيانات تجريبية بناءً على schema.sql
+                parkingSpaces = generateSampleParkingData();
+                saveParkingData();
+            }
+            
+            updateStatistics();
+            displayParking(parkingSpaces);
+        }
+
+        // إنشاء بيانات تجريبية
+        function generateSampleParkingData() {
+            const data = [];
+            let id = 1;
+
+            // مواقف خاصة لعمارة 1 (20 موقف)
+            for (let i = 1; i <= 20; i++) {
+                const unitNum = Math.floor((i-1) / 4) * 10 + ((i-1) % 4 + 1);
+                data.push({
+                    id: id++,
+                    parking_number: `P1-${String(unitNum).padStart(2, '0')}`,
+                    parking_type: 'خاص',
+                    parking_zone: 'A',
+                    building_number: '1',
+                    is_occupied: Math.random() > 0.2,
+                    location_description: `موقف شقة ${unitNum} عمارة 1`
+                });
+            }
+
+            // مواقف عمارة 18 مع مواقف معاقين
+            for (let i = 1; i <= 20; i++) {
+                const unitNum = Math.floor((i-1) / 4) * 10 + ((i-1) % 4 + 1);
+                data.push({
+                    id: id++,
+                    parking_number: `P18-${String(unitNum).padStart(2, '0')}`,
+                    parking_type: 'خاص',
+                    parking_zone: 'A',
+                    building_number: '18',
+                    is_occupied: Math.random() > 0.2,
+                    location_description: `موقف شقة ${unitNum} عمارة 18`
+                });
+            }
+
+            // مواقف معاقين في عمارة 18
+            for (let i = 1; i <= 3; i++) {
+                data.push({
+                    id: id++,
+                    parking_number: `PD-18-${String(i).padStart(2, '0')}`,
+                    parking_type: 'معاقين',
+                    parking_zone: 'معاقين',
+                    building_number: '18',
+                    is_occupied: Math.random() > 0.7,
+                    location_description: `موقف معاقين عمارة 18 - رقم ${i}`
+                });
+            }
+
+            // مواقف عمارة 79 الجديدة مع مواقف معاقين
+            for (let i = 1; i <= 20; i++) {
+                const floor = Math.ceil(i / 3);
+                const unitNum = floor * 10 + ((i-1) % 3 + 1);
+                data.push({
+                    id: id++,
+                    parking_number: `P79-${String(unitNum).padStart(2, '0')}`,
+                    parking_type: 'خاص',
+                    parking_zone: 'B',
+                    building_number: '79',
+                    is_occupied: Math.random() > 0.15,
+                    location_description: `موقف شقة ${unitNum} عمارة 79`
+                });
+            }
+
+            // موقف معاقين إضافي في عمارة 79
+            data.push({
+                id: id++,
+                parking_number: 'PD-79-01',
+                parking_type: 'معاقين',
+                parking_zone: 'معاقين',
+                building_number: '79',
+                is_occupied: false,
+                location_description: 'موقف معاقين عمارة 79 - رقم 1'
+            });
+
+            // مواقف عامة
+            for (let i = 1; i <= 20; i++) {
+                data.push({
+                    id: id++,
+                    parking_number: `PG-${String(i).padStart(3, '0')}`,
+                    parking_type: 'عام',
+                    parking_zone: 'عام',
+                    building_number: '',
+                    is_occupied: Math.random() > 0.4,
+                    location_description: `موقف عام رقم ${i}`
+                });
+            }
+
+            return data;
+        }
+
+        // حفظ البيانات
+        function saveParkingData() {
+            localStorage.setItem('parking_spaces', JSON.stringify(parkingSpaces));
+        }
+
+        // تحديث الإحصائيات
+        function updateStatistics() {
+            const total = parkingSpaces.length;
+            const occupied = parkingSpaces.filter(p => p.is_occupied).length;
+            const vacant = total - occupied;
+            const disabled = parkingSpaces.filter(p => p.parking_type === 'معاقين').length;
+
+            document.getElementById('totalParking').textContent = total;
+            document.getElementById('occupiedParking').textContent = occupied;
+            document.getElementById('vacantParking').textContent = vacant;
+            document.getElementById('disabledParking').textContent = disabled;
+        }
+
+        // عرض المواقف
+        function displayParking(data) {
+            const tbody = document.getElementById('parkingTableBody');
+            
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="no-data">لا توجد بيانات</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(parking => `
+                <tr>
+                    <td><strong>${parking.parking_number}</strong></td>
+                    <td>
+                        <span class="type-badge type-${parking.parking_type === 'خاص' ? 'private' : parking.parking_type === 'عام' ? 'public' : 'disabled'}">
+                            ${parking.parking_type}
+                        </span>
+                    </td>
+                    <td>${parking.parking_zone || '-'}</td>
+                    <td>${parking.building_number ? 'عمارة ' + parking.building_number : '-'}</td>
+                    <td>
+                        <span class="status-badge status-${parking.is_occupied ? 'occupied' : 'vacant'}">
+                            ${parking.is_occupied ? 'مشغول' : 'شاغر'}
+                        </span>
+                    </td>
+                    <td>${parking.location_description || '-'}</td>
+                    <td class="actions">
+                        <button class="btn-action btn-edit" onclick="editParking(${parking.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action btn-delete" onclick="deleteParking(${parking.id})">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // فلترة المواقف
+        function filterParking() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const typeFilter = document.getElementById('typeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+
+            let filtered = parkingSpaces.filter(parking => {
+                const matchesSearch = parking.parking_number.toLowerCase().includes(searchTerm) ||
+                                    parking.parking_zone.toLowerCase().includes(searchTerm) ||
+                                    parking.building_number.toLowerCase().includes(searchTerm) ||
+                                    (parking.location_description && parking.location_description.toLowerCase().includes(searchTerm));
+                
+                const matchesType = !typeFilter || parking.parking_type === typeFilter;
+                const matchesStatus = !statusFilter || parking.is_occupied.toString() === statusFilter;
+
+                return matchesSearch && matchesType && matchesStatus;
+            });
+
+            displayParking(filtered);
+        }
+
+        // إظهار نافذة الإضافة
+        function showAddModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = 'إضافة موقف جديد';
+            document.getElementById('parkingForm').reset();
+            document.getElementById('parkingModal').style.display = 'flex';
+        }
+
+        // تعديل موقف
+        function editParking(id) {
+            const parking = parkingSpaces.find(p => p.id === id);
+            if (!parking) return;
+
+            currentEditId = id;
+            document.getElementById('modalTitle').textContent = 'تعديل موقف';
+            document.getElementById('parkingNumber').value = parking.parking_number;
+            document.getElementById('parkingType').value = parking.parking_type;
+            document.getElementById('parkingZone').value = parking.parking_zone || '';
+            document.getElementById('buildingNumber').value = parking.building_number || '';
+            document.getElementById('isOccupied').value = parking.is_occupied.toString();
+            document.getElementById('locationDescription').value = parking.location_description || '';
+            
+            document.getElementById('parkingModal').style.display = 'flex';
+        }
+
+        // حذف موقف
+        function deleteParking(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا الموقف؟')) return;
+
+            parkingSpaces = parkingSpaces.filter(p => p.id !== id);
+            saveParkingData();
+            updateStatistics();
+            filterParking();
+        }
+
+        // معالجة حفظ النموذج
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            const parkingData = {
+                parking_number: document.getElementById('parkingNumber').value,
+                parking_type: document.getElementById('parkingType').value,
+                parking_zone: document.getElementById('parkingZone').value,
+                building_number: document.getElementById('buildingNumber').value,
+                is_occupied: document.getElementById('isOccupied').value === 'true',
+                location_description: document.getElementById('locationDescription').value
+            };
+
+            if (currentEditId) {
+                // تحديث
+                const index = parkingSpaces.findIndex(p => p.id === currentEditId);
+                if (index !== -1) {
+                    parkingSpaces[index] = { ...parkingSpaces[index], ...parkingData };
+                }
+            } else {
+                // إضافة جديد
+                parkingData.id = Date.now();
+                parkingSpaces.push(parkingData);
+            }
+
+            saveParkingData();
+            updateStatistics();
+            filterParking();
+            closeModal();
+        }
+
+        // إغلاق النافذة المنبثقة
+        function closeModal() {
+            document.getElementById('parkingModal').style.display = 'none';
+            document.getElementById('parkingForm').reset();
+            currentEditId = null;
+        }
+
+        // إغلاق النافذة بالنقر خارجها
+        window.onclick = function(event) {
+            const modal = document.getElementById('parkingModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html>
