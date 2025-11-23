@@ -197,6 +197,48 @@ CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);
 CREATE INDEX IF NOT EXISTS idx_users_active ON users(is_active);
 
 -- ============================================
+-- 10. جدول سجلات الأنشطة (Audit Logs)
+-- ============================================
+CREATE TABLE IF NOT EXISTS audit_logs (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    username VARCHAR(50),
+    action_type VARCHAR(50) NOT NULL,
+    action_description TEXT NOT NULL,
+    entity_type VARCHAR(50),
+    entity_id INTEGER,
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    request_data JSONB,
+    response_data JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_audit_logs_user ON audit_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_action ON audit_logs(action_type);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX IF NOT EXISTS idx_audit_logs_created ON audit_logs(created_at DESC);
+
+-- ============================================
+-- 11. جدول صور المخالفات (Violation Images)
+-- ============================================
+CREATE TABLE IF NOT EXISTS violation_images (
+    id SERIAL PRIMARY KEY,
+    violation_id INTEGER REFERENCES traffic_violations(id) ON DELETE CASCADE,
+    image_path VARCHAR(500) NOT NULL,
+    image_url VARCHAR(500),
+    image_type VARCHAR(20) DEFAULT 'violation',
+    file_size INTEGER,
+    mime_type VARCHAR(50),
+    uploaded_by INTEGER REFERENCES users(id) ON DELETE SET NULL,
+    upload_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_violation_images_violation ON violation_images(violation_id);
+CREATE INDEX IF NOT EXISTS idx_violation_images_uploaded ON violation_images(uploaded_by);
+
+-- ============================================
 -- إدراج بيانات المستخدمين الافتراضية
 -- ============================================
 -- ملاحظة: كلمات المرور يجب تشفيرها في التطبيق الفعلي
