@@ -1,7 +1,7 @@
 /**
- * بيانات الوحدات السكنية التجريبية
- * Residential Units Sample Data
- * @version 1.0.0
+ * بيانات الوحدات السكنية - 114 فلة
+ * Residential Units Data - 114 Villas
+ * @version 2.0.0
  */
 
 class ResidentialUnitsData {
@@ -20,98 +20,27 @@ class ResidentialUnitsData {
     }
 
     /**
-     * إنشاء بيانات تجريبية شاملة
+     * إنشاء بيانات الوحدات السكنية - 114 فلة
      */
     createSampleData() {
         const units = [];
-        let unitId = 1;
-
-        // 1. المباني القديمة (30 عمارة: 1-30)
-        for (let buildingNum = 1; buildingNum <= 30; buildingNum++) {
-            const floors = [0, 1, 2, 3, 4]; // الأدوار
-            const unitsPerFloor = [1, 2, 3, 4]; // الشقق في كل دور
-
-            floors.forEach(floor => {
-                unitsPerFloor.forEach(unitNum => {
-                    const fullUnitNum = floor * 10 + unitNum;
-                    const isOccupied = Math.random() > 0.05; // 95% مشغول
-                    
-                    units.push({
-                        id: unitId++,
-                        unit_number: fullUnitNum,
-                        building_number: buildingNum,
-                        unit_name: `شقة ${fullUnitNum} عمارة ${buildingNum}`,
-                        building_category: 'قديم',
-                        building_description: `عمارة ${buildingNum} - المباني القديمة`,
-                        unit_type: 'شقة',
-                        occupancy_status: isOccupied ? 'مشغول' : 'شاغر',
-                        is_occupied: isOccupied,
-                        floor_number: floor,
-                        resident_name: isOccupied ? this.generateRandomName() : null,
-                        resident_phone: isOccupied ? this.generateRandomPhone() : null,
-                        parking_number: `P-${buildingNum}-${fullUnitNum}`,
-                        area_sqm: 120,
-                        rooms_count: 3
-                    });
-                });
-            });
-        }
-
-        // 2. المباني الجديدة (21 عمارة)
-        const newBuildings = [
-            ...Array.from({length: 4}, (_, i) => 53 + i), // 53-56
-            ...Array.from({length: 8}, (_, i) => 61 + i), // 61-68
-            ...Array.from({length: 9}, (_, i) => 71 + i)  // 71-79
-        ];
-
-        newBuildings.forEach(buildingNum => {
-            const floors = [1, 2, 3, 4, 5, 6, 7]; // 7 أدوار
-            const unitsPerFloor = [1, 2, 3]; // 3 شقق في كل دور
-
-            floors.forEach(floor => {
-                unitsPerFloor.forEach(unitNum => {
-                    const fullUnitNum = floor * 10 + unitNum;
-                    const isOccupied = Math.random() > 0.05; // 95% مشغول
-                    
-                    units.push({
-                        id: unitId++,
-                        unit_number: fullUnitNum,
-                        building_number: buildingNum,
-                        unit_name: `شقة ${fullUnitNum} عمارة ${buildingNum}`,
-                        building_category: 'جديد',
-                        building_description: `عمارة ${buildingNum} - المباني الجديدة`,
-                        unit_type: 'شقة',
-                        occupancy_status: isOccupied ? 'مشغول' : 'شاغر',
-                        is_occupied: isOccupied,
-                        floor_number: floor,
-                        resident_name: isOccupied ? this.generateRandomName() : null,
-                        resident_phone: isOccupied ? this.generateRandomPhone() : null,
-                        parking_number: `P-${buildingNum}-${fullUnitNum}`,
-                        area_sqm: 150,
-                        rooms_count: 4
-                    });
-                });
-            });
-        });
-
-        // 3. الفلل (114 فلة)
+        
+        // إنشاء 114 فلة حسب المواصفات المطلوبة
         for (let villaNum = 1; villaNum <= 114; villaNum++) {
-            const isOccupied = Math.random() > 0.05; // 95% مشغول
-            
             units.push({
-                id: unitId++,
-                unit_number: villaNum,
-                building_number: 1000 + villaNum, // أرقام خاصة للفلل
-                unit_name: `فلة ${villaNum}`,
-                building_category: 'فلل',
-                building_description: `فلة ${villaNum} - الفلل الفردية`,
+                id: villaNum,
+                unit_name: `فلة${villaNum}`,
+                building_description: 'منطقة الفلل',
+                building_number: 1, // All villas are in building 1 (منطقة الفلل)
+                unit_number: 0, // Villas have unit_number = 0 (not apartments)
                 unit_type: 'فلة',
-                occupancy_status: isOccupied ? 'مشغول' : 'شاغر',
-                is_occupied: isOccupied,
-                floor_number: 1,
-                resident_name: isOccupied ? this.generateRandomName() : null,
-                resident_phone: isOccupied ? this.generateRandomPhone() : null,
-                parking_number: null, // الفلل لها مواقفها الخاصة
+                building_category: 'فلل',
+                occupancy_status: 'مشغول', // Occupied
+                is_occupied: true,
+                floor_number: 0,
+                resident_name: null, // Will be populated from residents table
+                resident_phone: null,
+                parking_number: null,
                 area_sqm: 300,
                 rooms_count: 5
             });
@@ -119,7 +48,7 @@ class ResidentialUnitsData {
 
         // حفظ البيانات
         localStorage.setItem(this.storageKey, JSON.stringify(units));
-        console.log(`✓ تم إنشاء ${units.length} وحدة سكنية تجريبية`);
+        console.log(`✓ تم إنشاء ${units.length} وحدة سكنية (فلل)`);
         
         return units;
     }
