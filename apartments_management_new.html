@@ -317,7 +317,7 @@
                     <h1 class="header-title">إدارة الشقق</h1>
                     <p class="header-subtitle">نظام إدارة إسكان أعضاء هيئة التدريس</p>
                 </div>
-                <a href="../pages/unified_dashboard.html" class="back-button">
+                <a href="unified_dashboard.html" class="back-button">
                     🏠 العودة للوحة التحكم
                 </a>
             </div>
@@ -529,6 +529,16 @@
             console.log('الصفحة جاهزة، بدء تحميل البيانات...');
             loadApartmentsData();
         });
+    </script>
+
+    <!-- تحميل مكتبات النظام -->
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // التحقق من تسجيل الدخول
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
     </script>
 </body>
 </html>
