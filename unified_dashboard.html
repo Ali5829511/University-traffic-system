@@ -310,6 +310,12 @@
             gap: 15px;
         }
 
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .header h1 {
@@ -339,7 +345,7 @@
                     </h1>
                     <p>نظام إدارة المرور والإسكان - وحدة إسكان أعضاء هيئة التدريس</p>
                 </div>
-                <div style="display: flex; gap: 15px; align-items: center;">
+                <div class="header-actions">
                     <a href="home.html" class="back-btn">
                         <i class="fas fa-home"></i>
                         الصفحة الرئيسية
@@ -500,12 +506,12 @@
         'use strict';
 
         // التحقق من تسجيل الدخول
-        if (!window.authManager.isAuthenticated()) {
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
             window.location.href = 'index.html';
         }
 
         // عرض اسم المستخدم
-        const currentUser = window.authManager.getCurrentUser();
+        const currentUser = window.authManager ? window.authManager.getCurrentUser() : null;
         if (currentUser) {
             document.getElementById('userName').textContent = `مرحباً ${currentUser.name}`;
         }
@@ -513,7 +519,9 @@
         // وظيفة تسجيل الخروج
         function logout() {
             if (confirm('هل تريد تسجيل الخروج؟')) {
-                window.authManager.logout();
+                if (window.authManager) {
+                    window.authManager.logout();
+                }
             }
         }
 
@@ -529,12 +537,22 @@
                 document.getElementById('totalUnits').textContent = units.length || 0;
 
                 // عدد المخالفات
-                const violations = JSON.parse(localStorage.getItem('violations') || '[]');
-                document.getElementById('totalViolations').textContent = violations.length || 0;
+                try {
+                    const violations = JSON.parse(localStorage.getItem('violations') || '[]');
+                    document.getElementById('totalViolations').textContent = violations.length || 0;
+                } catch (e) {
+                    console.error('خطأ في قراءة المخالفات:', e);
+                    document.getElementById('totalViolations').textContent = '0';
+                }
 
                 // عدد المستخدمين
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                document.getElementById('totalUsers').textContent = users.length || 0;
+                try {
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    document.getElementById('totalUsers').textContent = users.length || 0;
+                } catch (e) {
+                    console.error('خطأ في قراءة المستخدمين:', e);
+                    document.getElementById('totalUsers').textContent = '0';
+                }
             } catch (error) {
                 console.error('خطأ في تحميل الإحصائيات:', error);
             }
@@ -544,7 +562,12 @@
         loadStatistics();
 
         // تحديث الإحصائيات كل 30 ثانية
-        setInterval(loadStatistics, 30000);
+        const statsInterval = setInterval(loadStatistics, 30000);
+
+        // تنظيف الموارد عند مغادرة الصفحة
+        window.addEventListener('beforeunload', function() {
+            clearInterval(statsInterval);
+        });
     </script>
 </body>
 </html>
