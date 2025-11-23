@@ -19,6 +19,14 @@ logs/
 *.sqlite
 *.sqlite3
 
+# Uploads
+uploads/
+*.jpg
+*.jpeg
+*.png
+*.gif
+*.webp
+
 # OS files
 .DS_Store
 Thumbs.db
