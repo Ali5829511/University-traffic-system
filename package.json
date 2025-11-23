@@ -9,7 +9,8 @@
     "setup": "node setup-database.js",
     "test": "node test-api.js",
     "test:api": "node test-api.js",
-    "import-stickers": "node import-stickers.js"
+    "import-stickers": "node import-stickers.js",
+    "import-all": "node import-all-data.js"
   },
   "keywords": [
     "traffic",
