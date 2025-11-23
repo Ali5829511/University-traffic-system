@@ -465,7 +465,7 @@
                 updateProgress(90, 'جاري التحقق من البيانات...');
                 
                 // التحقق من البيانات
-                const savedData = JSON.parse(localStorage.getItem('stickersData'));
+                const savedData = JSON.parse(localStorage.getItem('stickers'));
                 
                 if (savedData && savedData.length === stickersData.stickers.length) {
                     updateProgress(100, 'تم الاستيراد بنجاح!');
