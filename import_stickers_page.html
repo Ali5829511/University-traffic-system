@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استيراد بيانات الملصقات - نظام إدارة المرور</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #003c50 0%, #00566f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 50px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #8B6F47;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            color: #8B6F47;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 18px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-right: 5px solid #2196F3;
+        }
+
+        .info-box h3 {
+            color: #1976D2;
+            margin-bottom: 15px;
+            font-size: 20px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-right: 20px;
+        }
+
+        .info-box li {
+            margin: 10px 0;
+            color: #555;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box li:before {
+            content: "✓";
+            color: #4CAF50;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-right: 5px solid #FF9800;
+        }
+
+        .warning-box h3 {
+            color: #F57C00;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .warning-box p {
+            color: #E65100;
+            font-weight: 500;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Tajawal', Arial, sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f85032, #e73827);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(248, 80, 50, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #8B6F47, #A0826D);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(139, 111, 71, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .progress-box {
+            display: none;
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .progress-box.active {
+            display: block;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .status-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border: 2px solid #e0e0e0;
+            min-height: 100px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .status-message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-message.success {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-message.error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .status-message.info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #8B6F47, #A0826D);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-file-import"></i>
+                استيراد بيانات الملصقات
+            </h1>
+            <p>Import Stickers Data from Excel</p>
+        </div>
+
+        <div class="info-box">
+            <h3><i class="fas fa-info-circle"></i> معلومات الاستيراد</h3>
+            <ul>
+                <li>سيتم استيراد البيانات من ملف stickers_data.json</li>
+                <li>يحتوي الملف على بيانات من صفحتين: فعال وملغي</li>
+                <li>سيتم حذف جميع البيانات القديمة قبل الاستيراد</li>
+                <li>يمكنك مراجعة البيانات قبل الاستيراد النهائي</li>
+            </ul>
+        </div>
+
+        <div class="warning-box">
+            <h3><i class="fas fa-exclamation-triangle"></i> تحذير هام</h3>
+            <p>سيتم حذف جميع بيانات الملصقات الحالية واستبدالها بالبيانات الجديدة. هذه العملية لا يمكن التراجع عنها!</p>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn btn-primary" onclick="loadPreview()">
+                <i class="fas fa-eye"></i>
+                معاينة البيانات
+            </button>
+            <button class="btn btn-danger" id="importBtn" onclick="confirmImport()" disabled>
+                <i class="fas fa-upload"></i>
+                استيراد البيانات
+            </button>
+            <button class="btn btn-secondary" onclick="window.location.href='enhanced_stickers_management.html'">
+                <i class="fas fa-arrow-right"></i>
+                الذهاب لإدارة الملصقات
+            </button>
+        </div>
+
+        <div class="progress-box" id="progressBox">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+            <p id="progressText" style="text-align: center; color: #666;">جاري التحميل...</p>
+        </div>
+
+        <div class="status-box" id="statusBox">
+            <p style="text-align: center; color: #999;">قم بمعاينة البيانات أو استيرادها باستخدام الأزرار أعلاه</p>
+        </div>
+    </div>
+
+    <script>
+        let stickersData = null;
+        
+        function addStatus(message, type = 'info') {
+            const statusBox = document.getElementById('statusBox');
+            const statusDiv = document.createElement('div');
+            statusDiv.className = `status-message ${type}`;
+            
+            let icon = 'fa-info-circle';
+            if (type === 'success') icon = 'fa-check-circle';
+            if (type === 'error') icon = 'fa-times-circle';
+            
+            statusDiv.innerHTML = `
+                <i class="fas ${icon}"></i>
+                <span>${message}</span>
+            `;
+            
+            statusBox.appendChild(statusDiv);
+            statusBox.scrollTop = statusBox.scrollHeight;
+        }
+        
+        function clearStatus() {
+            document.getElementById('statusBox').innerHTML = '';
+        }
+        
+        function updateProgress(percent, text) {
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = Math.round(percent) + '%';
+            progressText.textContent = text;
+        }
+        
+        async function loadPreview() {
+            clearStatus();
+            const progressBox = document.getElementById('progressBox');
+            progressBox.classList.add('active');
+            
+            try {
+                updateProgress(10, 'جاري تحميل ملف البيانات...');
+                addStatus('بدء تحميل البيانات من stickers_data.json...', 'info');
+                
+                const response = await fetch('stickers_data.json');
+                
+                if (!response.ok) {
+                    throw new Error('فشل في تحميل ملف البيانات. تأكد من وجود الملف stickers_data.json');
+                }
+                
+                updateProgress(50, 'جاري معالجة البيانات...');
+                stickersData = await response.json();
+                
+                updateProgress(100, 'تم التحميل بنجاح!');
+                
+                addStatus('✓ تم تحميل البيانات بنجاح!', 'success');
+                addStatus(`إجمالي الملصقات: ${stickersData.metadata.totalCount}`, 'success');
+                addStatus(`الملصقات الفعالة: ${stickersData.metadata.activeCount}`, 'success');
+                addStatus(`الملصقات الملغاة: ${stickersData.metadata.cancelledCount}`, 'success');
+                addStatus(`تاريخ الاستيراد: ${new Date(stickersData.metadata.importDate).toLocaleString('ar-SA')}`, 'info');
+                
+                // إنشاء بطاقات الإحصائيات
+                const statsHtml = `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${stickersData.metadata.totalCount}</div>
+                            <div class="stat-label">إجمالي الملصقات</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stickersData.metadata.activeCount}</div>
+                            <div class="stat-label">الملصقات الفعالة</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stickersData.metadata.cancelledCount}</div>
+                            <div class="stat-label">الملصقات الملغاة</div>
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('statusBox').innerHTML += statsHtml;
+                
+                // عينة من البيانات
+                addStatus('عينة من البيانات:', 'info');
+                stickersData.stickers.slice(0, 5).forEach((sticker, index) => {
+                    addStatus(`${index + 1}. ${sticker.stickerNumber} - ${sticker.residentName} - ${sticker.status}`, 'info');
+                });
+                
+                // تفعيل زر الاستيراد
+                document.getElementById('importBtn').disabled = false;
+                addStatus('يمكنك الآن استيراد البيانات بالضغط على زر "استيراد البيانات"', 'success');
+                
+            } catch (error) {
+                addStatus(`خطأ: ${error.message}`, 'error');
+                console.error('Error loading preview:', error);
+            } finally {
+                setTimeout(() => {
+                    progressBox.classList.remove('active');
+                }, 2000);
+            }
+        }
+        
+        function confirmImport() {
+            if (!stickersData) {
+                addStatus('يرجى معاينة البيانات أولاً!', 'error');
+                return;
+            }
+            
+            const confirmed = confirm(
+                `هل أنت متأكد من استيراد ${stickersData.metadata.totalCount} ملصق؟\n\n` +
+                `سيتم حذف جميع البيانات القديمة!\n\n` +
+                `هذه العملية لا يمكن التراجع عنها.`
+            );
+            
+            if (confirmed) {
+                importData();
+            }
+        }
+        
+        async function importData() {
+            if (!stickersData) {
+                addStatus('لا توجد بيانات للاستيراد!', 'error');
+                return;
+            }
+            
+            clearStatus();
+            const progressBox = document.getElementById('progressBox');
+            progressBox.classList.add('active');
+            
+            try {
+                updateProgress(10, 'جاري تحضير البيانات...');
+                addStatus('بدء عملية الاستيراد...', 'info');
+                
+                // حذف البيانات القديمة
+                updateProgress(30, 'جاري حذف البيانات القديمة...');
+                addStatus('حذف البيانات القديمة...', 'info');
+                
+                // حذف من localStorage
+                localStorage.removeItem('stickers');
+                localStorage.removeItem('stickersData');
+                localStorage.removeItem('stickersMetadata');
+                addStatus('✓ تم حذف البيانات القديمة', 'success');
+                
+                // استيراد البيانات الجديدة
+                updateProgress(60, 'جاري استيراد البيانات الجديدة...');
+                addStatus('استيراد البيانات الجديدة...', 'info');
+                
+                // حفظ في localStorage (استخدام مفتاح واحد فقط)
+                localStorage.setItem('stickers', JSON.stringify(stickersData.stickers));
+                
+                // حفظ المعلومات الوصفية
+                localStorage.setItem('stickersMetadata', JSON.stringify(stickersData.metadata));
+                
+                updateProgress(90, 'جاري التحقق من البيانات...');
+                
+                // التحقق من البيانات
+                const savedData = JSON.parse(localStorage.getItem('stickers'));
+                
+                if (savedData && savedData.length === stickersData.stickers.length) {
+                    updateProgress(100, 'تم الاستيراد بنجاح!');
+                    addStatus('✓ تم استيراد البيانات بنجاح!', 'success');
+                    addStatus(`تم استيراد ${savedData.length} ملصق بنجاح`, 'success');
+                    addStatus(`الملصقات الفعالة: ${stickersData.metadata.activeCount}`, 'success');
+                    addStatus(`الملصقات الملغاة: ${stickersData.metadata.cancelledCount}`, 'success');
+                    
+                    // تعطيل زر الاستيراد
+                    document.getElementById('importBtn').disabled = true;
+                    
+                    // عرض رسالة النجاح
+                    setTimeout(() => {
+                        if (confirm('تم الاستيراد بنجاح! هل تريد الانتقال إلى صفحة إدارة الملصقات؟')) {
+                            window.location.href = 'enhanced_stickers_management.html';
+                        }
+                    }, 2000);
+                } else {
+                    throw new Error('فشل في التحقق من البيانات المستوردة');
+                }
+                
+            } catch (error) {
+                addStatus(`خطأ: ${error.message}`, 'error');
+                console.error('Error importing data:', error);
+            } finally {
+                setTimeout(() => {
+                    progressBox.classList.remove('active');
+                }, 3000);
+            }
+        }
+        
+        // تحميل المعاينة تلقائياً عند فتح الصفحة
+        window.addEventListener('load', () => {
+            addStatus('مرحباً بك في صفحة استيراد بيانات الملصقات', 'info');
+            addStatus('قم بالضغط على "معاينة البيانات" لعرض البيانات قبل الاستيراد', 'info');
+        });
+    </script>
+</body>
+</html>
