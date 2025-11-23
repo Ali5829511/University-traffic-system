@@ -31,14 +31,14 @@ class ResidentialUnitsData {
                 id: villaNum,
                 unit_name: `فلة${villaNum}`,
                 building_description: 'منطقة الفلل',
-                building_number: villaNum,
-                unit_number: 0,
+                building_number: 1, // All villas are in building 1 (منطقة الفلل)
+                unit_number: 0, // Villas have unit_number = 0 (not apartments)
                 unit_type: 'فلة',
                 building_category: 'فلل',
-                occupancy_status: 'شاغر',
-                is_occupied: false,
+                occupancy_status: 'مشغول', // Occupied
+                is_occupied: true,
                 floor_number: 0,
-                resident_name: null,
+                resident_name: null, // Will be populated from residents table
                 resident_phone: null,
                 parking_number: null,
                 area_sqm: 300,
