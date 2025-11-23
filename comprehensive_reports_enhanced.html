@@ -172,7 +172,7 @@
         <div class="reports-grid">
             <div class="report-card">
                 <div class="report-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                    <i class="fas fa-car"></i>
+                    <i class="fas fa-file-alt"></i>
                 </div>
                 <div class="report-title">تقرير المركبات</div>
                 <div class="report-description">تقرير شامل عن جميع المركبات المسجلة والملصقات</div>
@@ -188,7 +188,7 @@
 
             <div class="report-card">
                 <div class="report-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
-                    <i class="fas fa-exclamation-triangle"></i>
+                    <i class="fas fa-file-invoice"></i>
                 </div>
                 <div class="report-title">تقرير المخالفات</div>
                 <div class="report-description">تقرير تفصيلي عن المخالفات المرورية والأرصدة</div>
@@ -204,7 +204,7 @@
 
             <div class="report-card">
                 <div class="report-icon" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
-                    <i class="fas fa-building"></i>
+                    <i class="fas fa-file-contract"></i>
                 </div>
                 <div class="report-title">تقرير المباني</div>
                 <div class="report-description">تقرير حول الوحدات السكنية ونسب الإشغال</div>
@@ -220,7 +220,7 @@
 
             <div class="report-card">
                 <div class="report-icon" style="background: linear-gradient(135deg, #ffd93d, #f9ca24);">
-                    <i class="fas fa-users"></i>
+                    <i class="fas fa-file-medical"></i>
                 </div>
                 <div class="report-title">تقرير المستخدمين</div>
                 <div class="report-description">تقرير عن المستخدمين والصلاحيات ونشاط النظام</div>
@@ -236,7 +236,7 @@
 
             <div class="report-card">
                 <div class="report-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a52);">
-                    <i class="fas fa-chart-line"></i>
+                    <i class="fas fa-file-chart-line"></i>
                 </div>
                 <div class="report-title">التقرير الإحصائي</div>
                 <div class="report-description">إحصائيات شاملة وتحليلات متقدمة للنظام</div>
@@ -252,7 +252,7 @@
 
             <div class="report-card">
                 <div class="report-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
-                    <i class="fas fa-calendar-alt"></i>
+                    <i class="fas fa-file-pdf"></i>
                 </div>
                 <div class="report-title">التقرير الشهري</div>
                 <div class="report-description">تقرير شهري شامل لجميع الأنشطة والعمليات</div>
@@ -261,6 +261,22 @@
                         <i class="fas fa-eye"></i> عرض
                     </button>
                     <button class="btn-action btn-export" onclick="exportReport('monthly')">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-icon" style="background: linear-gradient(135deg, #fa8c16, #fa541c);">
+                    <i class="fas fa-file-image"></i>
+                </div>
+                <div class="report-title">تقرير المخالفات بالصور</div>
+                <div class="report-description">تقرير المركبات المخالفة مع صور مصغرة للمخالفات</div>
+                <div class="report-actions">
+                    <button class="btn-action btn-view" onclick="viewReport('violations-images')">
+                        <i class="fas fa-eye"></i> عرض
+                    </button>
+                    <button class="btn-action btn-export" onclick="exportReport('violations-images')">
                         <i class="fas fa-download"></i> تصدير
                     </button>
                 </div>
@@ -361,6 +377,8 @@
                     return await getVehiclesReport();
                 case 'violations':
                     return await getViolationsReport();
+                case 'violations-images':
+                    return await getViolationsWithImagesReport();
                 case 'buildings':
                     return await getBuildingsReport();
                 case 'users':
@@ -407,6 +425,24 @@
                 amount: violation.amount || 0,
                 status: violation.status || 'معلق',
                 notes: violation.notes || '-'
+            }));
+        }
+
+        /**
+         * تقرير المخالفات مع الصور
+         */
+        async function getViolationsWithImagesReport() {
+            const violations = await window.db.getViolations();
+            return violations.map((violation, index) => ({
+                index: index + 1,
+                plateNumber: violation.plateNumber || '-',
+                violationType: violation.violationType || '-',
+                violationDate: violation.violationDate || '-',
+                location: violation.location || '-',
+                amount: violation.amount || 0,
+                status: violation.status || 'معلق',
+                notes: violation.notes || '-',
+                imageUrl: violation.imageUrl || violation.image || null
             }));
         }
 
@@ -542,6 +578,7 @@
             const titles = {
                 vehicles: 'تقرير المركبات',
                 violations: 'تقرير المخالفات',
+                'violations-images': 'تقرير المخالفات بالصور',
                 buildings: 'تقرير المباني',
                 users: 'تقرير المستخدمين',
                 statistics: 'التقرير الإحصائي',
@@ -579,6 +616,26 @@
                     tableRows = data.map(row => `
                         <tr>
                             <td>${row.index}</td>
+                            <td><strong>${row.plateNumber}</strong></td>
+                            <td>${row.violationType}</td>
+                            <td>${row.violationDate}</td>
+                            <td>${row.location}</td>
+                            <td>${row.amount} ريال</td>
+                            <td>${row.status}</td>
+                            <td>${row.notes}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'violations-images':
+                    colCount = 9;
+                    tableHeaders = '<th>م</th><th>الصورة</th><th>رقم اللوحة</th><th>نوع المخالفة</th><th>التاريخ</th><th>الموقع</th><th>المبلغ</th><th>الحالة</th><th>ملاحظات</th>';
+                    tableRows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td style="text-align: center;">
+                                ${row.imageUrl ? `<img src="${row.imageUrl}" style="width: 100px; height: 75px; object-fit: cover; border: 2px solid #f5576c; border-radius: 5px;" alt="صورة المخالفة" />` : '<span style="color: #999;">لا توجد صورة</span>'}
+                            </td>
                             <td><strong>${row.plateNumber}</strong></td>
                             <td>${row.violationType}</td>
                             <td>${row.violationDate}</td>
@@ -821,6 +878,7 @@
             const titles = {
                 vehicles: 'تقرير المركبات',
                 violations: 'تقرير المخالفات',
+                'violations-images': 'تقرير المخالفات بالصور',
                 buildings: 'تقرير المباني',
                 users: 'تقرير المستخدمين',
                 statistics: 'التقرير الإحصائي',
@@ -913,6 +971,25 @@
                     rows = data.map(row => `
                         <tr>
                             <td>${row.index}</td>
+                            <td><strong>${row.plateNumber}</strong></td>
+                            <td>${row.violationType}</td>
+                            <td>${row.violationDate}</td>
+                            <td>${row.location}</td>
+                            <td>${row.amount} ريال</td>
+                            <td>${row.status}</td>
+                            <td>${row.notes}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'violations-images':
+                    headers = '<th>م</th><th>الصورة</th><th>رقم اللوحة</th><th>نوع المخالفة</th><th>التاريخ</th><th>الموقع</th><th>المبلغ</th><th>الحالة</th><th>ملاحظات</th>';
+                    rows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td style="text-align: center;">
+                                ${row.imageUrl ? `<img src="${row.imageUrl}" style="width: 120px; height: 90px; object-fit: cover; border: 2px solid #f5576c; border-radius: 5px;" alt="صورة المخالفة" />` : 'لا توجد صورة'}
+                            </td>
                             <td><strong>${row.plateNumber}</strong></td>
                             <td>${row.violationType}</td>
                             <td>${row.violationDate}</td>
