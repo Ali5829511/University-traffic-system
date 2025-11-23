@@ -20,6 +20,7 @@ logs/
 *.sqlite3
 
 # Data files (sample/test data)
+# Note: Production data should be managed through secure deployment processes
 *.xlsx
 *.xls
 *.csv
@@ -34,8 +35,10 @@ uploads/
 *.webp
 *.bmp
 *.svg
-# But keep assets folder
-!assets/**
+# Keep essential UI assets (logos, icons)
+!assets/**/*.jpg
+!assets/**/*.png
+!assets/**/*.svg
 
 # OS files
 .DS_Store
