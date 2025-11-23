@@ -65,6 +65,39 @@
             box-shadow: 0 5px 15px rgba(139, 111, 71, 0.4);
         }
 
+        .logout-btn {
+            background: linear-gradient(135deg, #ee5a6f, #f29263);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            font-family: 'Tajawal', Arial, sans-serif;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(238, 90, 111, 0.4);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -208,10 +241,16 @@
                 <i class="fas fa-traffic-light"></i>
                 لوحة المرور
             </h1>
-            <a href="home.html" class="back-btn">
-                <i class="fas fa-arrow-right"></i>
-                العودة للصفحة الرئيسية
-            </a>
+            <div class="header-actions">
+                <a href="home.html" class="back-btn">
+                    <i class="fas fa-arrow-right"></i>
+                    العودة للصفحة الرئيسية
+                </a>
+                <button class="logout-btn" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    تسجيل الخروج
+                </button>
+            </div>
         </div>
 
         <div class="stats-grid">
@@ -231,20 +270,20 @@
                 <div class="value" id="activeViolations">0</div>
             </div>
 
-            <div class="stat-card" style="border-right: 5px solid #51cf66;">
-                <div class="icon" style="color: #51cf66;">
-                    <i class="fas fa-check-circle"></i>
-                </div>
-                <h3>المخالفات المعالجة</h3>
-                <div class="value" id="processedViolations">0</div>
-            </div>
-
             <div class="stat-card" style="border-right: 5px solid #ff6b6b;">
                 <div class="icon" style="color: #ff6b6b;">
-                    <i class="fas fa-hourglass-half"></i>
+                    <i class="fas fa-car-crash"></i>
                 </div>
-                <h3>المخالفات قيد الإجراء</h3>
-                <div class="value" id="inProgressViolations">0</div>
+                <h3>الحوادث المرورية</h3>
+                <div class="value" id="totalAccidents">0</div>
+            </div>
+
+            <div class="stat-card" style="border-right: 5px solid #ffa94d;">
+                <div class="icon" style="color: #ffa94d;">
+                    <i class="fas fa-ban"></i>
+                </div>
+                <h3>السيارات المحجوزة</h3>
+                <div class="value" id="seizedVehicles">0</div>
             </div>
         </div>
 
@@ -291,6 +330,58 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- قسم السيارات المحجوزة -->
+        <div class="recent-violations" style="margin-top: 30px;">
+            <h2>
+                <i class="fas fa-ban"></i>
+                السيارات المحجوزة
+            </h2>
+            <table class="violations-table">
+                <thead>
+                    <tr>
+                        <th>رقم اللوحة</th>
+                        <th>سبب الحجز</th>
+                        <th>تاريخ الحجز</th>
+                        <th>الموقع</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="seizedVehiclesTable">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px; color: #999;">
+                            لا توجد سيارات محجوزة حالياً
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- قسم الحوادث المرورية -->
+        <div class="recent-violations" style="margin-top: 30px;">
+            <h2>
+                <i class="fas fa-car-crash"></i>
+                الحوادث المرورية
+            </h2>
+            <table class="violations-table">
+                <thead>
+                    <tr>
+                        <th>رقم الحادث</th>
+                        <th>الموقع</th>
+                        <th>التاريخ والوقت</th>
+                        <th>نوع الحادث</th>
+                        <th>الحالة</th>
+                    </tr>
+                </thead>
+                <tbody id="accidentsTable">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px; color: #999;">
+                            لا توجد حوادث مسجلة
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <script src="database.js"></script>
@@ -307,15 +398,23 @@
                 // تحميل إحصائيات المخالفات
                 const violations = JSON.parse(localStorage.getItem('violations') || '[]');
                 const vehicles = JSON.parse(localStorage.getItem('vehicles') || '[]');
+                const seizedVehicles = JSON.parse(localStorage.getItem('seizedVehicles') || '[]');
+                const accidents = JSON.parse(localStorage.getItem('trafficAccidents') || '[]');
 
                 // تحديث الإحصائيات
                 document.getElementById('totalVehicles').textContent = vehicles.length;
                 document.getElementById('activeViolations').textContent = violations.filter(v => v.status === 'active').length;
-                document.getElementById('processedViolations').textContent = violations.filter(v => v.status === 'processed' || v.status === 'completed').length;
-                document.getElementById('inProgressViolations').textContent = violations.filter(v => v.status === 'in_progress' || v.status === 'pending').length;
+                document.getElementById('totalAccidents').textContent = accidents.length;
+                document.getElementById('seizedVehicles').textContent = seizedVehicles.length;
 
                 // تحميل آخر المخالفات
                 loadRecentViolations(violations);
+                
+                // تحميل السيارات المحجوزة
+                loadSeizedVehicles(seizedVehicles);
+                
+                // تحميل الحوادث المرورية
+                loadTrafficAccidents(accidents);
             } catch (error) {
                 console.error('خطأ في تحميل البيانات:', error);
             }
@@ -349,11 +448,68 @@
             `).join('');
         }
 
+        // تحميل السيارات المحجوزة
+        function loadSeizedVehicles(seizedVehicles) {
+            const tbody = document.getElementById('seizedVehiclesTable');
+            
+            if (seizedVehicles.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; color: #999;">لا توجد سيارات محجوزة حالياً</td></tr>';
+                return;
+            }
+            
+            const recentSeized = seizedVehicles.slice(0, 10);
+            tbody.innerHTML = recentSeized.map(v => `
+                <tr>
+                    <td>${v.plateNumber || 'غير محدد'}</td>
+                    <td>${v.reason || 'غير محدد'}</td>
+                    <td>${v.seizedDate || new Date().toLocaleDateString('ar-SA')}</td>
+                    <td>${v.location || 'الحرم الجامعي'}</td>
+                    <td>
+                        <span class="status-badge" style="background: #ff6b6b; color: white;">
+                            محجوز
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // تحميل الحوادث المرورية
+        function loadTrafficAccidents(accidents) {
+            const tbody = document.getElementById('accidentsTable');
+            
+            if (accidents.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px; color: #999;">لا توجد حوادث مسجلة</td></tr>';
+                return;
+            }
+            
+            const recentAccidents = accidents.slice(0, 10);
+            tbody.innerHTML = recentAccidents.map(a => `
+                <tr>
+                    <td>${a.id || Math.floor(Math.random() * 10000)}</td>
+                    <td>${a.location || 'غير محدد'}</td>
+                    <td>${a.dateTime || new Date().toLocaleString('ar-SA')}</td>
+                    <td>${a.type || 'حادث مروري'}</td>
+                    <td>
+                        <span class="status-badge status-${a.status || 'active'}">
+                            ${a.status === 'closed' ? 'مغلق' : a.status === 'under_investigation' ? 'قيد التحقيق' : 'جديد'}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
         // تحميل البيانات عند فتح الصفحة
         loadDashboardData();
 
         // تحديث البيانات كل 30 ثانية
         setInterval(loadDashboardData, 30000);
+
+        // وظيفة تسجيل الخروج
+        function logout() {
+            if (confirm('هل تريد تسجيل الخروج؟')) {
+                window.authManager.logout();
+            }
+        }
     </script>
 </body>
 </html>

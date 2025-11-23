@@ -330,5 +330,18 @@
         addLog('مرحباً بك في نظام توليد البيانات', 'info');
         addLog('اضغط على زر "توليد البيانات" لإنشاء قاعدة بيانات كاملة للنظام', 'info');
     </script>
+
+    <!-- تحميل مكتبات النظام -->
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // التحقق من تسجيل الدخول (مطلوب صلاحيات مدير)
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        } else if (!window.authManager.hasRole('admin')) {
+            alert('عذراً، هذه الصفحة متاحة للمديرين فقط');
+            window.location.href = 'home.html';
+        }
+    </script>
 </body>
 </html>

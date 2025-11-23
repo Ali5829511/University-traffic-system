@@ -902,5 +902,15 @@
             window.location.href = `vehicle_details.html?id=${id}`;
         }
     </script>
+
+    <!-- تحميل مكتبات النظام -->
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // التحقق من تسجيل الدخول
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+    </script>
 </body>
 </html>
