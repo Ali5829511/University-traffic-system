@@ -410,8 +410,10 @@ app.post('/api/violations/:id/images', upload.single('image'), async (req, res) 
         );
         
         if (violationCheck.rows.length === 0) {
-            // Delete uploaded file
-            fs.unlinkSync(req.file.path);
+            // Delete uploaded file asynchronously
+            await fs.promises.unlink(req.file.path).catch(err => {
+                console.error('Error deleting file:', err);
+            });
             return res.status(404).json({ success: false, message: 'المخالفة غير موجودة' });
         }
         
@@ -439,7 +441,9 @@ app.post('/api/violations/:id/images', upload.single('image'), async (req, res) 
     } catch (error) {
         console.error('Upload image error:', error);
         if (req.file && fs.existsSync(req.file.path)) {
-            fs.unlinkSync(req.file.path);
+            await fs.promises.unlink(req.file.path).catch(err => {
+                console.error('Error deleting file:', err);
+            });
         }
         res.status(500).json({ success: false, message: 'خطأ في رفع الصورة' });
     }
@@ -483,9 +487,11 @@ app.delete('/api/violations/:violationId/images/:imageId', async (req, res) => {
         // Delete from database
         await db.query('DELETE FROM violation_images WHERE id = $1', [imageId]);
         
-        // Delete file from disk
+        // Delete file from disk asynchronously
         if (fs.existsSync(image.image_path)) {
-            fs.unlinkSync(image.image_path);
+            await fs.promises.unlink(image.image_path).catch(err => {
+                console.error('Error deleting file:', err);
+            });
         }
         
         // Log audit activity
@@ -570,17 +576,52 @@ app.post('/api/violations/search', async (req, res) => {
         
         const result = await db.query(query, params);
         
-        // Get total count with same filters
+        // Get total count with same filters (build query dynamically)
         let countQuery = 'SELECT COUNT(*) FROM traffic_violations WHERE 1=1';
-        const countParams = params.slice(0, -2); // Remove limit and offset
+        const countParams = [];
+        let countParamIndex = 1;
         
-        if (plate_number) countQuery += ` AND plate_number ILIKE $1`;
-        if (violation_type) countQuery += ` AND violation_type = $${countParams.indexOf(violation_type) + 1}`;
-        if (date_from) countQuery += ` AND violation_date >= $${countParams.indexOf(date_from) + 1}`;
-        if (date_to) countQuery += ` AND violation_date <= $${countParams.indexOf(date_to) + 1}`;
-        if (location) countQuery += ` AND location ILIKE $${countParams.indexOf(`%${location}%`) + 1}`;
-        if (status) countQuery += ` AND status = $${countParams.indexOf(status) + 1}`;
-        if (officer_name) countQuery += ` AND officer_name ILIKE $${countParams.indexOf(`%${officer_name}%`) + 1}`;
+        if (plate_number) {
+            countQuery += ` AND plate_number ILIKE $${countParamIndex}`;
+            countParams.push(`%${plate_number}%`);
+            countParamIndex++;
+        }
+        
+        if (violation_type) {
+            countQuery += ` AND violation_type = $${countParamIndex}`;
+            countParams.push(violation_type);
+            countParamIndex++;
+        }
+        
+        if (date_from) {
+            countQuery += ` AND violation_date >= $${countParamIndex}`;
+            countParams.push(date_from);
+            countParamIndex++;
+        }
+        
+        if (date_to) {
+            countQuery += ` AND violation_date <= $${countParamIndex}`;
+            countParams.push(date_to);
+            countParamIndex++;
+        }
+        
+        if (location) {
+            countQuery += ` AND location ILIKE $${countParamIndex}`;
+            countParams.push(`%${location}%`);
+            countParamIndex++;
+        }
+        
+        if (status) {
+            countQuery += ` AND status = $${countParamIndex}`;
+            countParams.push(status);
+            countParamIndex++;
+        }
+        
+        if (officer_name) {
+            countQuery += ` AND officer_name ILIKE $${countParamIndex}`;
+            countParams.push(`%${officer_name}%`);
+            countParamIndex++;
+        }
         
         const countResult = await db.query(countQuery, countParams);
         const total = parseInt(countResult.rows[0].count);

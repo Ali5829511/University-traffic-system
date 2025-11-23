@@ -627,14 +627,6 @@
                     <div class="results-count">
                         <i class="fas fa-list"></i> النتائج: ${data.length} من أصل ${pagination?.total || data.length}
                     </div>
-                    <div class="results-export">
-                        <button class="btn-export" onclick="exportToExcel('violations')">
-                            <i class="fas fa-file-excel"></i> Excel
-                        </button>
-                        <button class="btn-export" onclick="exportToPDF('violations')">
-                            <i class="fas fa-file-pdf"></i> PDF
-                        </button>
-                    </div>
                 </div>
                 <table class="results-table">
                     <thead>
@@ -735,14 +727,6 @@
                 <div class="results-header">
                     <div class="results-count">
                         <i class="fas fa-list"></i> النتائج: ${data.length}
-                    </div>
-                    <div class="results-export">
-                        <button class="btn-export" onclick="exportToExcel('vehicles')">
-                            <i class="fas fa-file-excel"></i> Excel
-                        </button>
-                        <button class="btn-export" onclick="exportToPDF('vehicles')">
-                            <i class="fas fa-file-pdf"></i> PDF
-                        </button>
                     </div>
                 </div>
                 <table class="results-table">
@@ -908,15 +892,6 @@
             document.getElementById('u-role').value = '';
             document.getElementById('u-active').value = '';
             document.getElementById('users-results').innerHTML = '';
-        }
-
-        // Export functions (placeholders)
-        function exportToExcel(type) {
-            alert('سيتم تصدير البيانات إلى Excel');
-        }
-
-        function exportToPDF(type) {
-            alert('سيتم تصدير البيانات إلى PDF');
         }
 
         function viewViolation(id) {
