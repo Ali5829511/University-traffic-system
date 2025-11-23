@@ -129,7 +129,7 @@ GitHub Pages يوفر HTTPS تلقائياً لجميع المواقع، مما 
 ### 3. Plate Recognizer API
 تأكد من أن مفتاح API صالح ولديه رصيد كافٍ:
 ```
-API Token: 22ba3cf7155a1ea730a0b64787f98ab5f9a3de94
+API Token: 34d1e61be97219205c407e63a0bf0794b3d3d9f5
 ```
 
 ### 4. الأداء
