@@ -57,11 +57,11 @@ class ResidentialUnitsData {
             });
         }
 
-        // 2. المباني الجديدة (21 عمارة)
+        // 2. المباني الجديدة (20 عمارة - لتحقيق 1020 شقة)
         const newBuildings = [
             ...Array.from({length: 4}, (_, i) => 53 + i), // 53-56
             ...Array.from({length: 8}, (_, i) => 61 + i), // 61-68
-            ...Array.from({length: 9}, (_, i) => 71 + i)  // 71-79
+            ...Array.from({length: 8}, (_, i) => 71 + i)  // 71-78 (تم تقليله من 9 إلى 8)
         ];
 
         newBuildings.forEach(buildingNum => {
