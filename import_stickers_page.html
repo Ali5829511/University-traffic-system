@@ -449,14 +449,14 @@
                 // حذف من localStorage
                 localStorage.removeItem('stickers');
                 localStorage.removeItem('stickersData');
+                localStorage.removeItem('stickersMetadata');
                 addStatus('✓ تم حذف البيانات القديمة', 'success');
                 
                 // استيراد البيانات الجديدة
                 updateProgress(60, 'جاري استيراد البيانات الجديدة...');
                 addStatus('استيراد البيانات الجديدة...', 'info');
                 
-                // حفظ في localStorage
-                localStorage.setItem('stickersData', JSON.stringify(stickersData.stickers));
+                // حفظ في localStorage (استخدام مفتاح واحد فقط)
                 localStorage.setItem('stickers', JSON.stringify(stickersData.stickers));
                 
                 // حفظ المعلومات الوصفية

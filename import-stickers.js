@@ -51,7 +51,8 @@ try {
                 const excelDate = row['تاريخ الإصدار'];
                 // Excel dates are stored as numbers (days since 1900-01-01)
                 if (typeof excelDate === 'number') {
-                    const excelEpoch = new Date(1899, 11, 30); // Excel epoch
+                    // Excel incorrectly treats 1900 as a leap year, so we use 1899-12-31
+                    const excelEpoch = new Date(1899, 11, 31);
                     const jsDate = new Date(excelEpoch.getTime() + excelDate * 86400000);
                     issueDate = jsDate.toISOString();
                 } else if (excelDate instanceof Date) {
@@ -60,7 +61,7 @@ try {
             }
             
             const sticker = {
-                id: `${sheetName}_${index + 1}_${Date.now()}`,
+                id: `${sheetName}_${index + 1}`,
                 stickerNumber: row['رقم ملصق'] || row['رقم الملصق'] || '',
                 residentName: row['اسم الساكن'] || '',
                 status: row['حالة ملصق'] || row['حالة الملصق'] || sheetName,
