@@ -562,8 +562,17 @@
     <script src="auth.js"></script>
     <script>
         // التحقق من المصادقة
-        if (!window.authManager || !window.authManager.isAuthenticated()) {
-            window.location.href = 'index.html';
+        function checkAuthentication() {
+            if (!window.authManager || !window.authManager.isAuthenticated()) {
+                window.location.href = 'index.html';
+                return false;
+            }
+            return true;
+        }
+
+        // التحقق من تسجيل الدخول عند تحميل الصفحة
+        if (!checkAuthentication()) {
+            throw new Error('Authentication required');
         }
 
         // تحميل البيانات الإحصائية
@@ -581,7 +590,7 @@
                 document.getElementById('totalResidents').textContent = residents.length;
                 document.getElementById('totalParkingSpots').textContent = parkingSpots.length;
             } catch (error) {
-                console.error('خطأ في تحميل البيانات:', error);
+                console.error('خطأ في تحميل البيانات من localStorage:', error.message, error);
                 // عرض أصفار في حالة وجود خطأ
                 document.getElementById('totalUnits').textContent = '0';
                 document.getElementById('totalVehicles').textContent = '0';
@@ -594,7 +603,12 @@
         loadDashboardStats();
 
         // تحديث البيانات كل 30 ثانية
-        setInterval(loadDashboardStats, 30000);
+        const refreshInterval = setInterval(loadDashboardStats, 30000);
+
+        // تنظيف الموارد عند مغادرة الصفحة
+        window.addEventListener('beforeunload', function() {
+            clearInterval(refreshInterval);
+        });
     </script>
 </body>
 </html>
