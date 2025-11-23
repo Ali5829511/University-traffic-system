@@ -832,7 +832,7 @@ ORDER BY month DESC, count DESC;
 
 ```json
 {
-  "api_token": "22ba3cf7155a1ea730a0b64787f98ab5f9a3de94",
+  "api_token": "34d1e61be97219205c407e63a0bf0794b3d3d9f5",
   "api_url": "https://api.platerecognizer.com/v1/plate-reader/",
   "parkpow_token": "7c13be422713a758a42a0bc453cf3331fbfd346",
   "ftp_host": "ftp.platerecognizer.com",
