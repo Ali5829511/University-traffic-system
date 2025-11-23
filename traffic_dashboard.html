@@ -233,16 +233,16 @@
                 <div class="icon" style="color: #51cf66;">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h3>المخالفات المسددة</h3>
-                <div class="value" id="paidViolations">0</div>
+                <h3>المخالفات المعالجة</h3>
+                <div class="value" id="processedViolations">0</div>
             </div>
 
             <div class="stat-card" style="border-right: 5px solid #ff6b6b;">
                 <div class="icon" style="color: #ff6b6b;">
-                    <i class="fas fa-clock"></i>
+                    <i class="fas fa-hourglass-half"></i>
                 </div>
-                <h3>المخالفات المعلقة</h3>
-                <div class="value" id="pendingViolations">0</div>
+                <h3>المخالفات قيد الإجراء</h3>
+                <div class="value" id="inProgressViolations">0</div>
             </div>
         </div>
 
@@ -309,8 +309,8 @@
                 // تحديث الإحصائيات
                 document.getElementById('totalVehicles').textContent = vehicles.length;
                 document.getElementById('activeViolations').textContent = violations.filter(v => v.status === 'active').length;
-                document.getElementById('paidViolations').textContent = violations.filter(v => v.status === 'paid').length;
-                document.getElementById('pendingViolations').textContent = violations.filter(v => v.status === 'pending').length;
+                document.getElementById('processedViolations').textContent = violations.filter(v => v.status === 'processed' || v.status === 'completed').length;
+                document.getElementById('inProgressViolations').textContent = violations.filter(v => v.status === 'in_progress' || v.status === 'pending').length;
 
                 // تحميل آخر المخالفات
                 loadRecentViolations(violations);
@@ -338,7 +338,9 @@
                     <td>${v.date || new Date().toLocaleDateString('ar-SA')}</td>
                     <td>
                         <span class="status-badge status-${v.status || 'pending'}">
-                            ${v.status === 'paid' ? 'مسددة' : v.status === 'active' ? 'نشطة' : 'معلقة'}
+                            ${v.status === 'processed' || v.status === 'completed' ? 'معالجة' : 
+                              v.status === 'active' ? 'نشطة' : 
+                              v.status === 'in_progress' ? 'قيد الإجراء' : 'قيد الإجراء'}
                         </span>
                     </td>
                 </tr>
