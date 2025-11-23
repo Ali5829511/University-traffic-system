@@ -15,7 +15,7 @@
 
         body {
             font-family: 'Tajawal', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #003c50 0%, #00566f 100%);
             min-height: 100vh;
             padding: 20px;
             direction: rtl;
@@ -41,14 +41,14 @@
 
         .header h1 {
             font-size: 32px;
-            color: #667eea;
+            color: #8B6F47;
             display: flex;
             align-items: center;
             gap: 15px;
         }
 
         .back-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #8B6F47, #A0826D);
             color: white;
             padding: 12px 25px;
             border-radius: 10px;
@@ -62,7 +62,7 @@
 
         .back-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(139, 111, 71, 0.4);
         }
 
         .stats-grid {
@@ -92,14 +92,14 @@
 
         .stat-card h3 {
             font-size: 18px;
-            color: #666;
+            color: #8B6F47;
             margin-bottom: 10px;
         }
 
         .stat-card .value {
             font-size: 36px;
             font-weight: 700;
-            color: #333;
+            color: #6B5537;
         }
 
         .charts-section {
@@ -118,7 +118,7 @@
 
         .chart-card h2 {
             font-size: 22px;
-            color: #333;
+            color: #6B5537;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
@@ -134,7 +134,7 @@
 
         .recent-violations h2 {
             font-size: 22px;
-            color: #333;
+            color: #6B5537;
             margin-bottom: 20px;
         }
 
@@ -144,12 +144,12 @@
         }
 
         .violations-table th {
-            background: #f8f9fa;
+            background: #f8f5f0;
             padding: 12px;
             text-align: right;
             font-weight: 600;
-            color: #333;
-            border-bottom: 2px solid #dee2e6;
+            color: #6B5537;
+            border-bottom: 2px solid #E5D9C6;
         }
 
         .violations-table td {
@@ -168,19 +168,21 @@
             font-weight: 600;
         }
 
-        .status-pending {
+        .status-active {
             background: #fff3cd;
             color: #856404;
         }
 
-        .status-paid {
+        .status-processed,
+        .status-completed {
             background: #d4edda;
             color: #155724;
         }
 
-        .status-unpaid {
-            background: #f8d7da;
-            color: #721c24;
+        .status-in_progress,
+        .status-pending {
+            background: #cfe2ff;
+            color: #084298;
         }
 
         @media (max-width: 768px) {
@@ -233,16 +235,16 @@
                 <div class="icon" style="color: #51cf66;">
                     <i class="fas fa-check-circle"></i>
                 </div>
-                <h3>المخالفات المسددة</h3>
-                <div class="value" id="paidViolations">0</div>
+                <h3>المخالفات المعالجة</h3>
+                <div class="value" id="processedViolations">0</div>
             </div>
 
             <div class="stat-card" style="border-right: 5px solid #ff6b6b;">
                 <div class="icon" style="color: #ff6b6b;">
-                    <i class="fas fa-clock"></i>
+                    <i class="fas fa-hourglass-half"></i>
                 </div>
-                <h3>المخالفات المعلقة</h3>
-                <div class="value" id="pendingViolations">0</div>
+                <h3>المخالفات قيد الإجراء</h3>
+                <div class="value" id="inProgressViolations">0</div>
             </div>
         </div>
 
@@ -309,8 +311,8 @@
                 // تحديث الإحصائيات
                 document.getElementById('totalVehicles').textContent = vehicles.length;
                 document.getElementById('activeViolations').textContent = violations.filter(v => v.status === 'active').length;
-                document.getElementById('paidViolations').textContent = violations.filter(v => v.status === 'paid').length;
-                document.getElementById('pendingViolations').textContent = violations.filter(v => v.status === 'pending').length;
+                document.getElementById('processedViolations').textContent = violations.filter(v => v.status === 'processed' || v.status === 'completed').length;
+                document.getElementById('inProgressViolations').textContent = violations.filter(v => v.status === 'in_progress' || v.status === 'pending').length;
 
                 // تحميل آخر المخالفات
                 loadRecentViolations(violations);
@@ -338,7 +340,9 @@
                     <td>${v.date || new Date().toLocaleDateString('ar-SA')}</td>
                     <td>
                         <span class="status-badge status-${v.status || 'pending'}">
-                            ${v.status === 'paid' ? 'مسددة' : v.status === 'active' ? 'نشطة' : 'معلقة'}
+                            ${v.status === 'processed' || v.status === 'completed' ? 'معالجة' : 
+                              v.status === 'active' ? 'نشطة' : 
+                              v.status === 'in_progress' ? 'قيد الإجراء' : 'قيد الإجراء'}
                         </span>
                     </td>
                 </tr>
