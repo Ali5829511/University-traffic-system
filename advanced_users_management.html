@@ -165,6 +165,25 @@
             color: #2b8a3e;
         }
 
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        .status-active {
+            background: #d3f9d8;
+            color: #2b8a3e;
+        }
+
+        .status-inactive {
+            background: #ffe3e3;
+            color: #c92a2a;
+        }
+
         .user-details {
             margin: 15px 0;
             font-size: 14px;
@@ -211,6 +230,16 @@
 
         .btn-delete:hover {
             background: #ee5a52;
+            transform: translateY(-2px);
+        }
+
+        .btn-toggle-status {
+            background: #ffd43b;
+            color: #333;
+        }
+
+        .btn-toggle-status:hover {
+            background: #fcc419;
             transform: translateY(-2px);
         }
 
@@ -291,6 +320,12 @@
                 const roleClass = user.role === 'admin' ? 'role-admin' : user.role === 'violation_entry' ? 'role-user' : 'role-viewer';
                 const roleName = user.role === 'admin' ? 'مدير النظام' : user.role === 'violation_entry' ? 'مسجل مخالفات' : 'استعلام';
                 const initials = user.name.split(' ').map(n => n[0]).join('');
+                
+                // حالة المستخدم (active أو inactive)
+                const userStatus = user.status || 'active';
+                const statusClass = userStatus === 'active' ? 'status-active' : 'status-inactive';
+                const statusText = userStatus === 'active' ? 'نشط' : 'غير نشط';
+                const statusIcon = userStatus === 'active' ? 'fa-check-circle' : 'fa-times-circle';
 
                 return `
                     <div class="user-card">
@@ -299,6 +334,9 @@
                             <div class="user-info">
                                 <h3>${user.name}</h3>
                                 <span class="user-role ${roleClass}">${roleName}</span>
+                                <span class="status-badge ${statusClass}">
+                                    <i class="fas ${statusIcon}"></i> ${statusText}
+                                </span>
                             </div>
                         </div>
                         <div class="user-details">
@@ -316,6 +354,9 @@
                             </div>
                         </div>
                         <div class="user-actions">
+                            <button class="action-btn btn-toggle-status" onclick="toggleUserStatus('${user.id}')">
+                                <i class="fas fa-power-off"></i> ${userStatus === 'active' ? 'تعطيل' : 'تفعيل'}
+                            </button>
                             <button class="action-btn btn-edit" onclick="editUser('${user.id}')">
                                 <i class="fas fa-edit"></i> تعديل
                             </button>
@@ -345,6 +386,24 @@
                 localStorage.setItem('users', JSON.stringify(users));
                 loadUsers();
                 alert('تم حذف المستخدم بنجاح');
+            }
+        }
+
+        function toggleUserStatus(id) {
+            let users = JSON.parse(localStorage.getItem('users') || '[]');
+            const userIndex = users.findIndex(u => u.id == id);
+            
+            if (userIndex !== -1) {
+                const currentStatus = users[userIndex].status || 'active';
+                const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+                const statusText = newStatus === 'active' ? 'تفعيل' : 'تعطيل';
+                
+                if (confirm(`هل أنت متأكد من ${statusText} هذا المستخدم؟`)) {
+                    users[userIndex].status = newStatus;
+                    localStorage.setItem('users', JSON.stringify(users));
+                    loadUsers();
+                    alert(`تم ${statusText} المستخدم بنجاح`);
+                }
             }
         }
 

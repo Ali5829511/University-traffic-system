@@ -163,6 +163,15 @@ class AuthManager {
             const user = users.find(u => u.username === username && u.password === password);
             
             if (user) {
+                // التحقق من حالة المستخدم
+                if (user.status === 'inactive') {
+                    return {
+                        success: false,
+                        error: 'User account is inactive',
+                        error_ar: 'حساب المستخدم غير نشط. يرجى الاتصال بالمدير'
+                    };
+                }
+                
                 // تسجيل دخول ناجح
                 this.currentUser = {
                     id: user.id,
@@ -170,7 +179,7 @@ class AuthManager {
                     name: user.name,
                     email: user.email,
                     role: user.role,
-                    status: user.status
+                    status: user.status || 'active'
                 };
                 
                 this.lastActivity = Date.now();
