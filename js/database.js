@@ -53,6 +53,16 @@ class DatabaseManager {
                 this.initializeDefaultStickers();
             }
 
+            // إنشاء جدول السيارات المحجوزة إذا لم يكن موجوداً
+            if (!localStorage.getItem('seizedVehicles')) {
+                this.initializeSeizedVehicles();
+            }
+
+            // إنشاء جدول الحوادث المرورية إذا لم يكن موجوداً
+            if (!localStorage.getItem('trafficAccidents')) {
+                this.initializeTrafficAccidents();
+            }
+
             // تحديث حالة الاتصال
             this.connectionStatus = 'connected';
             console.log('✓ قاعدة البيانات متصلة بنجاح (localStorage)');
@@ -129,6 +139,24 @@ class DatabaseManager {
         const defaultStickers = [];
         localStorage.setItem('stickers', JSON.stringify(defaultStickers));
         console.log('✓ تم إنشاء جدول الملصقات');
+    }
+
+    /**
+     * إنشاء السيارات المحجوزة الافتراضية
+     */
+    initializeSeizedVehicles() {
+        const defaultSeizedVehicles = [];
+        localStorage.setItem('seizedVehicles', JSON.stringify(defaultSeizedVehicles));
+        console.log('✓ تم إنشاء جدول السيارات المحجوزة');
+    }
+
+    /**
+     * إنشاء الحوادث المرورية الافتراضية
+     */
+    initializeTrafficAccidents() {
+        const defaultAccidents = [];
+        localStorage.setItem('trafficAccidents', JSON.stringify(defaultAccidents));
+        console.log('✓ تم إنشاء جدول الحوادث المرورية');
     }
 
     /**
@@ -218,6 +246,67 @@ class DatabaseManager {
             return { success: true, id: sticker.id };
         } catch (error) {
             console.error('خطأ في إضافة الملصق:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
+     * الحصول على السيارات المحجوزة
+     */
+    async getSeizedVehicles() {
+        try {
+            const seizedVehicles = localStorage.getItem('seizedVehicles');
+            return seizedVehicles ? JSON.parse(seizedVehicles) : [];
+        } catch (error) {
+            console.error('خطأ في جلب السيارات المحجوزة:', error);
+            return [];
+        }
+    }
+
+    /**
+     * إضافة سيارة محجوزة
+     */
+    async addSeizedVehicle(vehicle) {
+        try {
+            const seizedVehicles = await this.getSeizedVehicles();
+            vehicle.id = Date.now();
+            vehicle.seizedDate = vehicle.seizedDate || new Date().toISOString();
+            seizedVehicles.push(vehicle);
+            localStorage.setItem('seizedVehicles', JSON.stringify(seizedVehicles));
+            return { success: true, id: vehicle.id };
+        } catch (error) {
+            console.error('خطأ في إضافة السيارة المحجوزة:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    /**
+     * الحصول على الحوادث المرورية
+     */
+    async getTrafficAccidents() {
+        try {
+            const accidents = localStorage.getItem('trafficAccidents');
+            return accidents ? JSON.parse(accidents) : [];
+        } catch (error) {
+            console.error('خطأ في جلب الحوادث المرورية:', error);
+            return [];
+        }
+    }
+
+    /**
+     * إضافة حادث مروري
+     */
+    async addTrafficAccident(accident) {
+        try {
+            const accidents = await this.getTrafficAccidents();
+            accident.id = Date.now();
+            accident.dateTime = accident.dateTime || new Date().toISOString();
+            accident.status = accident.status || 'active';
+            accidents.push(accident);
+            localStorage.setItem('trafficAccidents', JSON.stringify(accidents));
+            return { success: true, id: accident.id };
+        } catch (error) {
+            console.error('خطأ في إضافة الحادث المروري:', error);
             return { success: false, error: error.message };
         }
     }
