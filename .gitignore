@@ -19,13 +19,23 @@ logs/
 *.sqlite
 *.sqlite3
 
-# Uploads
+# Data files (sample/test data)
+*.xlsx
+*.xls
+*.csv
+pasted_file_*
+
+# Uploads and images
 uploads/
 *.jpg
 *.jpeg
 *.png
 *.gif
 *.webp
+*.bmp
+*.svg
+# But keep assets folder
+!assets/**
 
 # OS files
 .DS_Store
@@ -35,13 +45,24 @@ Thumbs.db
 *.swp
 *.swo
 
-# Build files
+# Build files and archives
 dist/
 build/
 *.tar.gz
 *.zip
+*.rar
+*.7z
+
+# Backup files
+*.backup
+*.bak
+*~
+*_old.*
+*_new.*
+*_fixed.*
 
 # Temporary files
 tmp/
 temp/
 *.tmp
+*.cache
