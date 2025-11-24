@@ -17,6 +17,9 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Constants
+const PDF_EXPORT_LIMIT = 100; // Limit PDF exports to prevent memory issues
+
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
@@ -562,7 +565,7 @@ app.post('/api/violations/search', async (req, res) => {
         }
         
         if (status) {
-            query += ` AND status = $${paramCount}`;
+            query += ` AND violation_status = $${paramCount}`;
             params.push(status);
             paramCount++;
         }
@@ -614,7 +617,7 @@ app.post('/api/violations/search', async (req, res) => {
         }
         
         if (status) {
-            countQuery += ` AND status = $${countParamIndex}`;
+            countQuery += ` AND violation_status = $${countParamIndex}`;
             countParams.push(status);
             countParamIndex++;
         }
@@ -928,7 +931,7 @@ app.post('/api/export/violations/pdf', async (req, res) => {
             paramCount++;
         }
         
-        query += ' ORDER BY created_at DESC LIMIT 100';
+        query += ` ORDER BY created_at DESC LIMIT ${PDF_EXPORT_LIMIT}`; // Limit to prevent memory issues with large datasets
         
         const result = await db.query(query, params);
         const violations = result.rows;
