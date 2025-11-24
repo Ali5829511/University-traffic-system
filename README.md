@@ -104,8 +104,9 @@ npm install && npm start
 | **Backend API** | ✅ جاهز | Node.js + Express - [التوثيق](CLOUD_DATABASE_GUIDE.md) |
 | **النشر** | ✅ جاهز | GitHub Pages + Render.com - [الدليل](docs/GITHUB_PAGES_SETUP.md) |
 | **Render.com** | ✅ مُصلح | تم إصلاح `render.yaml` - [دليل Render](docs/RENDER_DEPLOYMENT_AR.md) |
-| **الأمان** | ✅ آمن | bcrypt + Helmet + Rate Limiting - [تقرير الأمان](docs/SECURITY_SUMMARY.md) |
-| **المراجعة** | ⭐⭐⭐⭐⭐ | [المراجعة الشاملة للنظام](docs/COMPREHENSIVE_SYSTEM_REVIEW.md) |
+| **الأمان** | ✅ آمن | bcrypt + Helmet + Rate Limiting - [SECURITY.md](SECURITY.md) |
+| **المراجعة الشاملة** | ✅ مكتملة | **[SYSTEM_REVIEW.md](SYSTEM_REVIEW.md)** - مراجعة تفصيلية كاملة |
+| **قائمة النشر** | ✅ محدّثة | [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) |
 
 ### 🔍 التحقق من حالة قاعدة البيانات
 - **صفحة الحالة المباشرة:** [database_status.html](pages/database_status.html)
