@@ -172,16 +172,66 @@ app.post('/api/violations', [
 
 **التوصيات:**
 ```bash
-# نسخ احتياطي يومي تلقائي مع معالجة الأخطاء
+# نسخ احتياطي يومي تلقائي مع معالجة شاملة للأخطاء
 # إضافة في crontab:
-0 2 * * * mkdir -p /backups && pg_dump $DATABASE_URL > /backups/db_$(date +\%Y\%m\%d).sql 2>&1 || echo "Backup failed at $(date)" >> /var/log/backup_errors.log
+0 2 * * * /usr/local/bin/backup-database.sh
+
+# محتوى /usr/local/bin/backup-database.sh:
+#!/bin/bash
+set -e  # Exit on error
+
+# Configuration
+BACKUP_DIR="/backups"
+LOG_FILE="/var/log/database_backup.log"
+ERROR_LOG="/var/log/backup_errors.log"
+DATE=$(date +\%Y\%m\%d_\%H\%M\%S)
+BACKUP_FILE="$BACKUP_DIR/db_$DATE.sql"
+
+# Ensure backup directory exists with proper permissions
+mkdir -p "$BACKUP_DIR"
+chmod 700 "$BACKUP_DIR"
+
+# Function to log messages
+log_message() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
+}
+
+# Test database connection first
+if ! psql "$DATABASE_URL" -c "SELECT 1;" > /dev/null 2>&1; then
+    log_message "ERROR: Database connection failed"
+    echo "Database connection failed at $(date)" >> "$ERROR_LOG"
+    # Send alert (email, Slack, etc.)
+    exit 1
+fi
+
+# Perform backup
+log_message "Starting database backup..."
+if pg_dump "$DATABASE_URL" > "$BACKUP_FILE" 2>> "$ERROR_LOG"; then
+    log_message "Backup completed successfully: $BACKUP_FILE"
+    
+    # Compress backup
+    gzip "$BACKUP_FILE"
+    log_message "Backup compressed: ${BACKUP_FILE}.gz"
+    
+    # Remove backups older than 30 days
+    find "$BACKUP_DIR" -name "db_*.sql.gz" -mtime +30 -delete
+    log_message "Old backups cleaned up"
+else
+    log_message "ERROR: Backup failed"
+    echo "Backup failed at $(date)" >> "$ERROR_LOG"
+    # Send alert notification
+    exit 1
+fi
 ```
 
-**ملاحظة:** يجب التأكد من:
-- وجود مجلد `/backups` أو إنشاؤه تلقائياً
-- صلاحيات الكتابة على المجلد
-- تسجيل الأخطاء في ملف log
-- إرسال تنبيهات عند فشل النسخ الاحتياطي
+**ملاحظات مهمة:**
+- ✅ اختبار الاتصال بقاعدة البيانات قبل النسخ الاحتياطي
+- ✅ إنشاء المجلد تلقائياً مع الصلاحيات المناسبة (700)
+- ✅ تسجيل جميع العمليات في log files منفصلة
+- ✅ ضغط النسخ الاحتياطية لتوفير المساحة
+- ✅ حذف النسخ القديمة تلقائياً (أكثر من 30 يوم)
+- ✅ إرسال تنبيهات عند الفشل (يمكن تكوينها)
+- ✅ معالجة الأخطاء في كل خطوة
 
 **استراتيجية النسخ الاحتياطي:**
 - نسخ احتياطي يومي (الاحتفاظ لمدة 7 أيام)
