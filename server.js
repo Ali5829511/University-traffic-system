@@ -10,6 +10,8 @@ const rateLimit = require('express-rate-limit');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const XLSX = require('xlsx');
+const PDFDocument = require('pdfkit');
 require('dotenv').config();
 
 const app = express();
@@ -754,6 +756,391 @@ app.post('/api/users/search', async (req, res) => {
     } catch (error) {
         console.error('User search error:', error);
         res.status(500).json({ success: false, message: 'خطأ في البحث عن المستخدمين' });
+    }
+});
+
+// ============================================
+// Export Routes
+// ============================================
+
+// Export violations to Excel
+app.post('/api/export/violations/excel', async (req, res) => {
+    try {
+        const {
+            plate_number,
+            violation_type,
+            date_from,
+            date_to,
+            location,
+            status,
+            officer_name
+        } = req.body;
+        
+        // Build query with filters
+        let query = 'SELECT * FROM traffic_violations WHERE 1=1';
+        const params = [];
+        let paramCount = 1;
+        
+        if (plate_number) {
+            query += ` AND plate_number ILIKE $${paramCount}`;
+            params.push(`%${plate_number}%`);
+            paramCount++;
+        }
+        
+        if (violation_type) {
+            query += ` AND violation_type = $${paramCount}`;
+            params.push(violation_type);
+            paramCount++;
+        }
+        
+        if (date_from) {
+            query += ` AND violation_date >= $${paramCount}`;
+            params.push(date_from);
+            paramCount++;
+        }
+        
+        if (date_to) {
+            query += ` AND violation_date <= $${paramCount}`;
+            params.push(date_to);
+            paramCount++;
+        }
+        
+        if (location) {
+            query += ` AND location ILIKE $${paramCount}`;
+            params.push(`%${location}%`);
+            paramCount++;
+        }
+        
+        if (status) {
+            query += ` AND violation_status = $${paramCount}`;
+            params.push(status);
+            paramCount++;
+        }
+        
+        if (officer_name) {
+            query += ` AND officer_name ILIKE $${paramCount}`;
+            params.push(`%${officer_name}%`);
+            paramCount++;
+        }
+        
+        query += ' ORDER BY created_at DESC';
+        
+        const result = await db.query(query, params);
+        const violations = result.rows;
+        
+        // Create Excel workbook
+        const workbook = XLSX.utils.book_new();
+        
+        // Prepare data for Excel
+        const excelData = violations.map((v, index) => ({
+            'م': index + 1,
+            'رقم المخالفة': v.violation_number || '',
+            'رقم اللوحة': v.plate_number || '',
+            'نوع المخالفة': v.violation_type || '',
+            'تاريخ المخالفة': v.violation_date ? new Date(v.violation_date).toLocaleDateString('ar-SA') : '',
+            'وقت المخالفة': v.violation_time || '',
+            'الموقع': v.location || '',
+            'الحالة': v.violation_status || '',
+            'المبلغ': v.fine_amount || 0,
+            'مدفوعة': v.is_paid ? 'نعم' : 'لا',
+            'اسم الضابط': v.officer_name || '',
+            'ملاحظات': v.notes || ''
+        }));
+        
+        // Create worksheet
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'المخالفات');
+        
+        // Generate buffer
+        const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+        
+        // Set headers
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename=violations_${Date.now()}.xlsx`);
+        
+        // Send buffer
+        res.send(buffer);
+    } catch (error) {
+        console.error('Export to Excel error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في تصدير البيانات إلى Excel' });
+    }
+});
+
+// Export violations to PDF
+app.post('/api/export/violations/pdf', async (req, res) => {
+    try {
+        const {
+            plate_number,
+            violation_type,
+            date_from,
+            date_to,
+            location,
+            status,
+            officer_name
+        } = req.body;
+        
+        // Build query with filters
+        let query = 'SELECT * FROM traffic_violations WHERE 1=1';
+        const params = [];
+        let paramCount = 1;
+        
+        if (plate_number) {
+            query += ` AND plate_number ILIKE $${paramCount}`;
+            params.push(`%${plate_number}%`);
+            paramCount++;
+        }
+        
+        if (violation_type) {
+            query += ` AND violation_type = $${paramCount}`;
+            params.push(violation_type);
+            paramCount++;
+        }
+        
+        if (date_from) {
+            query += ` AND violation_date >= $${paramCount}`;
+            params.push(date_from);
+            paramCount++;
+        }
+        
+        if (date_to) {
+            query += ` AND violation_date <= $${paramCount}`;
+            params.push(date_to);
+            paramCount++;
+        }
+        
+        if (location) {
+            query += ` AND location ILIKE $${paramCount}`;
+            params.push(`%${location}%`);
+            paramCount++;
+        }
+        
+        if (status) {
+            query += ` AND violation_status = $${paramCount}`;
+            params.push(status);
+            paramCount++;
+        }
+        
+        if (officer_name) {
+            query += ` AND officer_name ILIKE $${paramCount}`;
+            params.push(`%${officer_name}%`);
+            paramCount++;
+        }
+        
+        query += ' ORDER BY created_at DESC LIMIT 100';
+        
+        const result = await db.query(query, params);
+        const violations = result.rows;
+        
+        // Create PDF document
+        const doc = new PDFDocument({ margin: 50, size: 'A4' });
+        
+        // Set headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=violations_${Date.now()}.pdf`);
+        
+        // Pipe PDF to response
+        doc.pipe(res);
+        
+        // Add title
+        doc.fontSize(20).text('تقرير المخالفات المرورية', { align: 'center' });
+        doc.fontSize(12).text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}`, { align: 'center' });
+        doc.fontSize(10).text('وحدة إسكان هيئة التدريس - جامعة الإمام محمد بن سعود الإسلامية', { align: 'center' });
+        doc.moveDown(2);
+        
+        // Add violations
+        violations.forEach((v, index) => {
+            if (index > 0) {
+                doc.moveDown(0.5);
+                doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+                doc.moveDown(0.5);
+            }
+            
+            doc.fontSize(10);
+            doc.text(`${index + 1}. رقم المخالفة: ${v.violation_number || 'غير متوفر'}`, { continued: false });
+            doc.text(`   رقم اللوحة: ${v.plate_number || 'غير متوفر'}`, { continued: false });
+            doc.text(`   نوع المخالفة: ${v.violation_type || 'غير متوفر'}`, { continued: false });
+            doc.text(`   التاريخ: ${v.violation_date ? new Date(v.violation_date).toLocaleDateString('ar-SA') : 'غير متوفر'}`, { continued: false });
+            doc.text(`   الموقع: ${v.location || 'غير متوفر'}`, { continued: false });
+            doc.text(`   الحالة: ${v.violation_status || 'غير متوفر'}`, { continued: false });
+            
+            // Check if we need a new page
+            if (doc.y > 700) {
+                doc.addPage();
+            }
+        });
+        
+        // Add footer
+        doc.moveDown(2);
+        doc.fontSize(8).text(`إجمالي المخالفات: ${violations.length}`, { align: 'center' });
+        doc.text('تم إنشاء هذا التقرير تلقائياً بواسطة نظام إدارة المرور', { align: 'center' });
+        
+        // Finalize PDF
+        doc.end();
+    } catch (error) {
+        console.error('Export to PDF error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في تصدير البيانات إلى PDF' });
+    }
+});
+
+// Export vehicles to Excel
+app.post('/api/export/vehicles/excel', async (req, res) => {
+    try {
+        const { plate_number, owner_name, vehicle_type, color } = req.body;
+        
+        // Build query with filters
+        let query = 'SELECT v.*, r.full_name as owner_name FROM vehicles v LEFT JOIN residents r ON v.resident_id = r.id WHERE 1=1';
+        const params = [];
+        let paramCount = 1;
+        
+        if (plate_number) {
+            query += ` AND v.plate_number ILIKE $${paramCount}`;
+            params.push(`%${plate_number}%`);
+            paramCount++;
+        }
+        
+        if (owner_name) {
+            query += ` AND r.full_name ILIKE $${paramCount}`;
+            params.push(`%${owner_name}%`);
+            paramCount++;
+        }
+        
+        if (vehicle_type) {
+            query += ` AND v.vehicle_type = $${paramCount}`;
+            params.push(vehicle_type);
+            paramCount++;
+        }
+        
+        if (color) {
+            query += ` AND v.vehicle_color ILIKE $${paramCount}`;
+            params.push(`%${color}%`);
+            paramCount++;
+        }
+        
+        query += ' ORDER BY v.created_at DESC';
+        
+        const result = await db.query(query, params);
+        const vehicles = result.rows;
+        
+        // Create Excel workbook
+        const workbook = XLSX.utils.book_new();
+        
+        // Prepare data for Excel
+        const excelData = vehicles.map((v, index) => ({
+            'م': index + 1,
+            'رقم اللوحة': v.plate_number || '',
+            'اسم المالك': v.owner_name || '',
+            'نوع المركبة': v.vehicle_type || '',
+            'الصنع': v.vehicle_make || '',
+            'الموديل': v.vehicle_model || '',
+            'السنة': v.vehicle_year || '',
+            'اللون': v.vehicle_color || '',
+            'مسجلة': v.is_registered ? 'نعم' : 'لا',
+            'تاريخ التسجيل': v.registration_date ? new Date(v.registration_date).toLocaleDateString('ar-SA') : '',
+            'ملاحظات': v.notes || ''
+        }));
+        
+        // Create worksheet
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'السيارات');
+        
+        // Generate buffer
+        const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+        
+        // Set headers
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename=vehicles_${Date.now()}.xlsx`);
+        
+        // Send buffer
+        res.send(buffer);
+    } catch (error) {
+        console.error('Export vehicles to Excel error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في تصدير بيانات السيارات إلى Excel' });
+    }
+});
+
+// Export users to Excel
+app.post('/api/export/users/excel', async (req, res) => {
+    try {
+        const { username, full_name, email, role, is_active } = req.body;
+        
+        // Build query with filters
+        let query = 'SELECT id, username, full_name, email, phone, role, is_active, last_login, created_at FROM users WHERE 1=1';
+        const params = [];
+        let paramCount = 1;
+        
+        if (username) {
+            query += ` AND username ILIKE $${paramCount}`;
+            params.push(`%${username}%`);
+            paramCount++;
+        }
+        
+        if (full_name) {
+            query += ` AND full_name ILIKE $${paramCount}`;
+            params.push(`%${full_name}%`);
+            paramCount++;
+        }
+        
+        if (email) {
+            query += ` AND email ILIKE $${paramCount}`;
+            params.push(`%${email}%`);
+            paramCount++;
+        }
+        
+        if (role) {
+            query += ` AND role = $${paramCount}`;
+            params.push(role);
+            paramCount++;
+        }
+        
+        if (is_active !== undefined) {
+            query += ` AND is_active = $${paramCount}`;
+            params.push(is_active);
+            paramCount++;
+        }
+        
+        query += ' ORDER BY created_at DESC';
+        
+        const result = await db.query(query, params);
+        const users = result.rows;
+        
+        // Create Excel workbook
+        const workbook = XLSX.utils.book_new();
+        
+        // Prepare data for Excel
+        const excelData = users.map((u, index) => ({
+            'م': index + 1,
+            'اسم المستخدم': u.username || '',
+            'الاسم الكامل': u.full_name || '',
+            'البريد الإلكتروني': u.email || '',
+            'الهاتف': u.phone || '',
+            'الدور': u.role || '',
+            'نشط': u.is_active ? 'نعم' : 'لا',
+            'آخر تسجيل دخول': u.last_login ? new Date(u.last_login).toLocaleString('ar-SA') : '',
+            'تاريخ الإنشاء': u.created_at ? new Date(u.created_at).toLocaleDateString('ar-SA') : ''
+        }));
+        
+        // Create worksheet
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        
+        // Add worksheet to workbook
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'المستخدمين');
+        
+        // Generate buffer
+        const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+        
+        // Set headers
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', `attachment; filename=users_${Date.now()}.xlsx`);
+        
+        // Send buffer
+        res.send(buffer);
+    } catch (error) {
+        console.error('Export users to Excel error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في تصدير بيانات المستخدمين إلى Excel' });
     }
 });
 

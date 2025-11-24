@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تصدير البيانات - نظام إدارة المرور</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #f8f5f0 0%, #e8e4dc 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(139, 111, 71, 0.15);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #8B6F47;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .filter-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(139, 111, 71, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .filter-section h2 {
+            color: #8B6F47;
+            font-size: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #8B6F47;
+            box-shadow: 0 0 0 3px rgba(139, 111, 71, 0.1);
+        }
+
+        .export-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .export-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .export-btn.excel {
+            background: linear-gradient(135deg, #1D6F42, #2d8f5a);
+            color: white;
+        }
+
+        .export-btn.pdf {
+            background: linear-gradient(135deg, #c41e3a, #d63447);
+            color: white;
+        }
+
+        .export-btn i {
+            font-size: 20px;
+        }
+
+        .export-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .data-type-selector {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(139, 111, 71, 0.15);
+            margin-bottom: 30px;
+        }
+
+        .data-type-selector h2 {
+            color: #8B6F47;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .data-type-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .data-type-btn {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        .data-type-btn:hover {
+            border-color: #8B6F47;
+            background: rgba(139, 111, 71, 0.05);
+        }
+
+        .data-type-btn.active {
+            border-color: #8B6F47;
+            background: #8B6F47;
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .loading i {
+            font-size: 48px;
+            color: #8B6F47;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #8B6F47, #A0826D);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 111, 71, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="home.html" class="back-btn">
+            <i class="fas fa-arrow-right"></i>
+            العودة للصفحة الرئيسية
+        </a>
+
+        <div class="header">
+            <h1><i class="fas fa-file-export"></i> تصدير البيانات</h1>
+            <p>قم بتصدير البيانات إلى Excel أو PDF مع إمكانية تطبيق الفلاتر المتقدمة</p>
+        </div>
+
+        <div class="data-type-selector">
+            <h2><i class="fas fa-database"></i> اختر نوع البيانات</h2>
+            <div class="data-type-buttons">
+                <button class="data-type-btn active" onclick="selectDataType('violations')">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    المخالفات
+                </button>
+                <button class="data-type-btn" onclick="selectDataType('vehicles')">
+                    <i class="fas fa-car"></i>
+                    السيارات
+                </button>
+                <button class="data-type-btn" onclick="selectDataType('users')">
+                    <i class="fas fa-users"></i>
+                    المستخدمين
+                </button>
+            </div>
+        </div>
+
+        <!-- Violations Filters -->
+        <div id="violations-filters" class="filter-section">
+            <h2><i class="fas fa-filter"></i> الفلاتر - المخالفات</h2>
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>رقم اللوحة</label>
+                    <input type="text" id="v-plate-number" placeholder="أدخل رقم اللوحة">
+                </div>
+                <div class="form-group">
+                    <label>نوع المخالفة</label>
+                    <select id="v-violation-type">
+                        <option value="">الكل</option>
+                        <option value="مخالفة سرعة">مخالفة سرعة</option>
+                        <option value="توقف خاطئ">توقف خاطئ</option>
+                        <option value="عدم الالتزام بالإشارة">عدم الالتزام بالإشارة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>من تاريخ</label>
+                    <input type="date" id="v-date-from">
+                </div>
+                <div class="form-group">
+                    <label>إلى تاريخ</label>
+                    <input type="date" id="v-date-to">
+                </div>
+                <div class="form-group">
+                    <label>الموقع</label>
+                    <input type="text" id="v-location" placeholder="أدخل الموقع">
+                </div>
+                <div class="form-group">
+                    <label>الحالة</label>
+                    <select id="v-status">
+                        <option value="">الكل</option>
+                        <option value="جديد">جديد</option>
+                        <option value="قيد المراجعة">قيد المراجعة</option>
+                        <option value="مؤكد">مؤكد</option>
+                        <option value="ملغي">ملغي</option>
+                        <option value="مدفوع">مدفوع</option>
+                    </select>
+                </div>
+            </div>
+            <div class="export-buttons">
+                <button class="export-btn excel" onclick="exportData('violations', 'excel')">
+                    <i class="fas fa-file-excel"></i>
+                    تصدير إلى Excel
+                </button>
+                <button class="export-btn pdf" onclick="exportData('violations', 'pdf')">
+                    <i class="fas fa-file-pdf"></i>
+                    تصدير إلى PDF
+                </button>
+            </div>
+        </div>
+
+        <!-- Vehicles Filters -->
+        <div id="vehicles-filters" class="filter-section" style="display: none;">
+            <h2><i class="fas fa-filter"></i> الفلاتر - السيارات</h2>
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>رقم اللوحة</label>
+                    <input type="text" id="ve-plate-number" placeholder="أدخل رقم اللوحة">
+                </div>
+                <div class="form-group">
+                    <label>نوع المركبة</label>
+                    <input type="text" id="ve-vehicle-type" placeholder="سيارة، شاحنة، دراجة">
+                </div>
+                <div class="form-group">
+                    <label>اللون</label>
+                    <input type="text" id="ve-color" placeholder="أدخل اللون">
+                </div>
+            </div>
+            <div class="export-buttons">
+                <button class="export-btn excel" onclick="exportData('vehicles', 'excel')">
+                    <i class="fas fa-file-excel"></i>
+                    تصدير إلى Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Users Filters -->
+        <div id="users-filters" class="filter-section" style="display: none;">
+            <h2><i class="fas fa-filter"></i> الفلاتر - المستخدمين</h2>
+            <div class="filter-grid">
+                <div class="form-group">
+                    <label>اسم المستخدم</label>
+                    <input type="text" id="u-username" placeholder="أدخل اسم المستخدم">
+                </div>
+                <div class="form-group">
+                    <label>الاسم الكامل</label>
+                    <input type="text" id="u-full-name" placeholder="أدخل الاسم الكامل">
+                </div>
+                <div class="form-group">
+                    <label>الدور</label>
+                    <select id="u-role">
+                        <option value="">الكل</option>
+                        <option value="admin">مدير</option>
+                        <option value="violations_officer">مسجل مخالفات</option>
+                        <option value="inquiry_user">موظف استعلام</option>
+                        <option value="manager">مدير</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الحالة</label>
+                    <select id="u-is-active">
+                        <option value="">الكل</option>
+                        <option value="true">نشط</option>
+                        <option value="false">غير نشط</option>
+                    </select>
+                </div>
+            </div>
+            <div class="export-buttons">
+                <button class="export-btn excel" onclick="exportData('users', 'excel')">
+                    <i class="fas fa-file-excel"></i>
+                    تصدير إلى Excel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading" id="loading">
+        <i class="fas fa-circle-notch"></i>
+        <p style="margin-top: 15px; color: #666;">جاري التصدير...</p>
+    </div>
+
+    <script>
+        let currentDataType = 'violations';
+
+        function selectDataType(type) {
+            currentDataType = type;
+            
+            // Update button states
+            document.querySelectorAll('.data-type-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.data-type-btn').classList.add('active');
+            
+            // Show/hide filter sections
+            document.getElementById('violations-filters').style.display = type === 'violations' ? 'block' : 'none';
+            document.getElementById('vehicles-filters').style.display = type === 'vehicles' ? 'block' : 'none';
+            document.getElementById('users-filters').style.display = type === 'users' ? 'block' : 'none';
+        }
+
+        function getFilters(dataType) {
+            const filters = {};
+            
+            if (dataType === 'violations') {
+                const plateNumber = document.getElementById('v-plate-number').value;
+                const violationType = document.getElementById('v-violation-type').value;
+                const dateFrom = document.getElementById('v-date-from').value;
+                const dateTo = document.getElementById('v-date-to').value;
+                const location = document.getElementById('v-location').value;
+                const status = document.getElementById('v-status').value;
+                
+                if (plateNumber) filters.plate_number = plateNumber;
+                if (violationType) filters.violation_type = violationType;
+                if (dateFrom) filters.date_from = dateFrom;
+                if (dateTo) filters.date_to = dateTo;
+                if (location) filters.location = location;
+                if (status) filters.status = status;
+            } else if (dataType === 'vehicles') {
+                const plateNumber = document.getElementById('ve-plate-number').value;
+                const vehicleType = document.getElementById('ve-vehicle-type').value;
+                const color = document.getElementById('ve-color').value;
+                
+                if (plateNumber) filters.plate_number = plateNumber;
+                if (vehicleType) filters.vehicle_type = vehicleType;
+                if (color) filters.color = color;
+            } else if (dataType === 'users') {
+                const username = document.getElementById('u-username').value;
+                const fullName = document.getElementById('u-full-name').value;
+                const role = document.getElementById('u-role').value;
+                const isActive = document.getElementById('u-is-active').value;
+                
+                if (username) filters.username = username;
+                if (fullName) filters.full_name = fullName;
+                if (role) filters.role = role;
+                if (isActive !== '') filters.is_active = isActive === 'true';
+            }
+            
+            return filters;
+        }
+
+        async function exportData(dataType, format) {
+            const loading = document.getElementById('loading');
+            loading.classList.add('show');
+            
+            try {
+                const filters = getFilters(dataType);
+                const endpoint = `/api/export/${dataType}/${format}`;
+                
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(filters)
+                });
+                
+                if (!response.ok) {
+                    throw new Error('فشل التصدير');
+                }
+                
+                // Get the blob from response
+                const blob = await response.blob();
+                
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                
+                // Set filename based on format
+                const extension = format === 'excel' ? 'xlsx' : 'pdf';
+                a.download = `${dataType}_export_${Date.now()}.${extension}`;
+                
+                // Trigger download
+                document.body.appendChild(a);
+                a.click();
+                
+                // Cleanup
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+                
+                alert('تم التصدير بنجاح!');
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            } finally {
+                loading.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>
