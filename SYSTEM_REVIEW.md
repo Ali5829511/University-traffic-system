@@ -172,10 +172,16 @@ app.post('/api/violations', [
 
 **التوصيات:**
 ```bash
-# نسخ احتياطي يومي تلقائي
+# نسخ احتياطي يومي تلقائي مع معالجة الأخطاء
 # إضافة في crontab:
-0 2 * * * pg_dump $DATABASE_URL > /backups/db_$(date +\%Y\%m\%d).sql
+0 2 * * * mkdir -p /backups && pg_dump $DATABASE_URL > /backups/db_$(date +\%Y\%m\%d).sql 2>&1 || echo "Backup failed at $(date)" >> /var/log/backup_errors.log
 ```
+
+**ملاحظة:** يجب التأكد من:
+- وجود مجلد `/backups` أو إنشاؤه تلقائياً
+- صلاحيات الكتابة على المجلد
+- تسجيل الأخطاء في ملف log
+- إرسال تنبيهات عند فشل النسخ الاحتياطي
 
 **استراتيجية النسخ الاحتياطي:**
 - نسخ احتياطي يومي (الاحتفاظ لمدة 7 أيام)
@@ -231,9 +237,26 @@ npm run migrate create add-user-status
 - تفعيل Caching
 
 ```javascript
-// إضافة caching headers
-app.use((req, res, next) => {
-    res.set('Cache-Control', 'public, max-age=3600');
+// إضافة caching headers بشكل انتقائي
+// Static assets - cache لمدة طويلة
+app.use('/assets', express.static('assets', {
+    maxAge: '7d', // 7 أيام
+    immutable: true
+}));
+
+// HTML pages - cache قصير
+app.use(express.static('.', {
+    maxAge: '1h', // ساعة واحدة
+    setHeaders: (res, path) => {
+        if (path.endsWith('.html')) {
+            res.set('Cache-Control', 'public, max-age=3600'); // 1 ساعة
+        }
+    }
+}));
+
+// API routes - no cache
+app.use('/api/', (req, res, next) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     next();
 });
 ```
@@ -593,12 +616,29 @@ app.get('/health', async (req, res) => {
 ### للنشر الفوري (Quick Deploy):
 إذا كنت بحاجة للنشر بسرعة، افعل التالي **كحد أدنى**:
 
-1. **تغيير كلمات المرور**
+1. **تغيير كلمات المرور (CRITICAL)**
    ```javascript
-   // في المتصفح:
+   // ⚠️ ملاحظة: هذا حل مؤقت فقط للنشر السريع
+   // يجب تطبيق JWT authentication و server-side sessions قريباً
+   
+   // 1. احذف البيانات المحلية المخزنة:
    localStorage.clear();
-   // ثم سجل دخول بكلمات مرور جديدة وقوية
+   
+   // 2. سجل دخول بكلمات مرور جديدة وقوية (12+ حرف)
+   // 3. في قاعدة البيانات، استخدم bcrypt لتشفير كلمات المرور:
+   const bcrypt = require('bcryptjs');
+   const hashedPassword = await bcrypt.hash(newPassword, 10);
+   
+   // 4. انقل المصادقة للخادم باستخدام JWT:
+   // - لا تخزن كلمات المرور في localStorage أبداً
+   // - استخدم HTTP-only cookies أو JWT tokens
+   // - تحقق من الـ token في كل طلب API
    ```
+   
+   **⚠️ تحذير مهم:** 
+   - localStorage ليس آمناً لتخزين بيانات حساسة
+   - يجب نقل المصادقة للخادم (server-side) في أقرب وقت
+   - هذا الحل مؤقت فقط للنشر السريع
 
 2. **تفعيل HTTPS**
    - استخدم Let's Encrypt
