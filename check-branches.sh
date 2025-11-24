@@ -2,6 +2,12 @@
 
 # Branch Status Checker Script
 # This script helps verify that branches are properly connected to main
+#
+# Usage: ./check-branches.sh
+# Note: Make sure the script is executable: chmod +x check-branches.sh
+
+# Configuration
+UNMERGED_THRESHOLD=5  # Number of unmerged branches to trigger a recommendation
 
 echo "=================================================="
 echo "Branch Status Checker"
@@ -65,8 +71,8 @@ echo -e "${BLUE}4. Analyzing branch relationships...${NC}"
 echo ""
 
 # Count merged and unmerged branches
-MERGED_COUNT=$(git branch -r --merged origin/main | grep -v "origin/main" | wc -l)
-UNMERGED_COUNT=$(git branch -r --no-merged origin/main | grep -v "origin/main" | wc -l)
+MERGED_COUNT=$(git branch -r --merged origin/main | grep -v -E '^[[:space:]]*origin/main$' | wc -l)
+UNMERGED_COUNT=$(git branch -r --no-merged origin/main | grep -v -E '^[[:space:]]*origin/main$' | wc -l)
 
 echo -e "${GREEN}✓ Merged into main: $MERGED_COUNT branches${NC}"
 echo -e "${YELLOW}⚠ Not yet merged: $UNMERGED_COUNT branches${NC}"
@@ -74,7 +80,7 @@ echo -e "${YELLOW}⚠ Not yet merged: $UNMERGED_COUNT branches${NC}"
 if [ $UNMERGED_COUNT -gt 0 ]; then
     echo ""
     echo "Unmerged branches:"
-    git branch -r --no-merged origin/main | grep -v "origin/main" | sed 's/^/  - /'
+    git branch -r --no-merged origin/main | grep -v -E '^[[:space:]]*origin/main$' | sed 's/^/  - /'
 fi
 
 echo ""
@@ -124,7 +130,7 @@ if [[ "$FETCH_CONFIG" != "+refs/heads/*:refs/remotes/origin/*" ]]; then
     echo "• Fix fetch configuration: git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'"
 fi
 
-if [ $UNMERGED_COUNT -gt 5 ]; then
+if [ $UNMERGED_COUNT -gt $UNMERGED_THRESHOLD ]; then
     echo "• Consider reviewing and merging pending branches"
 fi
 
