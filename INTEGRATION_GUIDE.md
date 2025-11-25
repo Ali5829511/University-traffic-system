@@ -95,6 +95,8 @@ Content-Type: application/json
 Authorization: Token YOUR_PARKPOW_TOKEN
 ```
 
+> ⚠️ **تحذير أمني:** لا تقم بحفظ الرموز (Tokens) في ملفات الكود المصدري. استخدم متغيرات البيئة أو ملفات الإعدادات المحمية.
+
 #### الفوائد:
 - ✅ تسجيل تلقائي للزيارات
 - ✅ تتبع المخالفات في الوقت الفعلي
@@ -137,7 +139,12 @@ CREATE TABLE traffic_violations (
     evidence_image VARCHAR(500),    -- رابط صورة الدليل
     source VARCHAR(30),             -- المصدر (plate_recognizer/يدوي)
     confidence_score DECIMAL(5,2),  -- نسبة الدقة
-    -- ... حقول إضافية
+    violation_status VARCHAR(30),   -- الحالة (جديد/مؤكد/مدفوع)
+    fine_amount DECIMAL(10,2),      -- مبلغ الغرامة
+    is_paid BOOLEAN,                -- هل تم الدفع
+    officer_name VARCHAR(100),      -- اسم الضابط
+    notes TEXT,                     -- ملاحظات
+    created_at TIMESTAMP            -- تاريخ الإنشاء
 );
 ```
 
