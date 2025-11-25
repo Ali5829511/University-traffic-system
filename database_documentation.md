@@ -832,15 +832,17 @@ ORDER BY month DESC, count DESC;
 
 ```json
 {
-  "api_token": "34d1e61be97219205c407e63a0bf0794b3d3d9f5",
+  "api_token": "YOUR_API_TOKEN_HERE",
   "api_url": "https://api.platerecognizer.com/v1/plate-reader/",
-  "parkpow_token": "7c13be422713a758a42a0bc453cf3331fbfd346",
+  "parkpow_token": "YOUR_PARKPOW_TOKEN_HERE",
   "ftp_host": "ftp.platerecognizer.com",
-  "ftp_username": "aliayashi522",
-  "ftp_password": "708c4bbfdde0",
+  "ftp_username": "YOUR_FTP_USERNAME_HERE",
+  "ftp_password": "YOUR_FTP_PASSWORD_HERE",
   "timezone": "Asia/Riyadh"
 }
 ```
+
+> ⚠️ **ملاحظة أمنية:** استبدل القيم أعلاه ببيانات الاعتماد الفعلية الخاصة بك. لا تشارك بيانات الاعتماد الحقيقية في الكود المصدري.
 
 ### سير العمل
 
