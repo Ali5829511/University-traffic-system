@@ -72,6 +72,7 @@
 - 📖 [PRODUCTION_CHECKLIST.md](docs/PRODUCTION_CHECKLIST.md) - قائمة التحقق
 - 🔒 [SECURITY.md](SECURITY.md) - إرشادات الأمان (مهم!)
 - 🔑 [API_SETUP.md](API_SETUP.md) - إعداد Plate Recognizer API
+- 🔗 [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md) - دليل التكامل الشامل 🆕
 
 ---
 
@@ -503,6 +504,7 @@ N-M/
 
 ### وثائق النظام / System Documentation
 - 🗺️ **[SYSTEM_MAP.md](SYSTEM_MAP.md)** - خريطة النظام الكاملة
+- 🔗 **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)** - دليل التكامل الشامل (Plate Recognizer + ParkPow) 🆕
 - 🔍 **[PAGES_VERIFICATION.md](PAGES_VERIFICATION.md)** - تقرير التحقق من الصفحات
 - 📊 **[SYSTEM_REVIEW_REPORT.md](SYSTEM_REVIEW_REPORT.md)** - تقرير المراجعة الشاملة
 - 📋 **[FINAL_SUMMARY.md](FINAL_SUMMARY.md)** - الملخص النهائي
