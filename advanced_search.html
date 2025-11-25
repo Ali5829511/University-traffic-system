@@ -197,10 +197,33 @@
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-export:hover {
             background: #667eea;
+            color: white;
+        }
+
+        .btn-export.excel {
+            border-color: #1D6F42;
+            color: #1D6F42;
+        }
+
+        .btn-export.excel:hover {
+            background: #1D6F42;
+            color: white;
+        }
+
+        .btn-export.pdf {
+            border-color: #c41e3a;
+            color: #c41e3a;
+        }
+
+        .btn-export.pdf:hover {
+            background: #c41e3a;
             color: white;
         }
 
@@ -632,6 +655,16 @@
                     <div class="results-count">
                         <i class="fas fa-list"></i> النتائج: ${data.length} من أصل ${pagination?.total || data.length}
                     </div>
+                    <div class="results-export">
+                        <button class="btn-export excel" onclick="exportViolationsToExcel()">
+                            <i class="fas fa-file-excel"></i>
+                            تصدير Excel
+                        </button>
+                        <button class="btn-export pdf" onclick="exportViolationsToPDF()" title="يتم تصدير أول 100 سجل فقط">
+                            <i class="fas fa-file-pdf"></i>
+                            تصدير PDF
+                        </button>
+                    </div>
                 </div>
                 <table class="results-table">
                     <thead>
@@ -733,6 +766,16 @@
                     <div class="results-count">
                         <i class="fas fa-list"></i> النتائج: ${data.length}
                     </div>
+                    <div class="results-export">
+                        <button class="btn-export excel" onclick="exportVehiclesToExcel()">
+                            <i class="fas fa-file-excel"></i>
+                            تصدير Excel
+                        </button>
+                        <button class="btn-export pdf" onclick="exportVehiclesToPDF()" title="يتم تصدير أول 100 سجل فقط">
+                            <i class="fas fa-file-pdf"></i>
+                            تصدير PDF
+                        </button>
+                    </div>
                 </div>
                 <table class="results-table">
                     <thead>
@@ -832,6 +875,16 @@
                     <div class="results-count">
                         <i class="fas fa-list"></i> النتائج: ${data.length}
                     </div>
+                    <div class="results-export">
+                        <button class="btn-export excel" onclick="exportUsersToExcel()">
+                            <i class="fas fa-file-excel"></i>
+                            تصدير Excel
+                        </button>
+                        <button class="btn-export pdf" onclick="exportUsersToPDF()" title="يتم تصدير أول 100 سجل فقط">
+                            <i class="fas fa-file-pdf"></i>
+                            تصدير PDF
+                        </button>
+                    </div>
                 </div>
                 <table class="results-table">
                     <thead>
@@ -905,6 +958,122 @@
 
         function viewVehicle(id) {
             window.location.href = `vehicle_details.html?id=${id}`;
+        }
+
+        // ============================================
+        // Helper Functions for Export
+        // ============================================
+        
+        // Clean empty filters
+        function cleanFilters(filters) {
+            const cleaned = {};
+            Object.keys(filters).forEach(key => {
+                if (filters[key] !== undefined && filters[key] !== '') {
+                    cleaned[key] = filters[key];
+                }
+            });
+            return cleaned;
+        }
+
+        // Download file from blob
+        function downloadBlob(blob, filename) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Generic export function
+        async function exportData(dataType, format, filters) {
+            const cleanedFilters = cleanFilters(filters);
+            
+            try {
+                const response = await fetch(`/api/export/${dataType}/${format}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cleanedFilters)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`فشل التصدير: ${response.status} ${response.statusText}`);
+                }
+
+                const blob = await response.blob();
+                const extension = format === 'excel' ? 'xlsx' : 'pdf';
+                downloadBlob(blob, `${dataType}_${Date.now()}.${extension}`);
+            } catch (error) {
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            }
+        }
+
+        // Get violations filters
+        function getViolationsFilters() {
+            return {
+                plate_number: document.getElementById('v-plate').value,
+                violation_type: document.getElementById('v-type').value,
+                date_from: document.getElementById('v-date-from').value,
+                date_to: document.getElementById('v-date-to').value,
+                location: document.getElementById('v-location').value,
+                status: document.getElementById('v-status').value,
+                officer_name: document.getElementById('v-officer').value
+            };
+        }
+
+        // Get vehicles filters
+        function getVehiclesFilters() {
+            return {
+                plate_number: document.getElementById('vh-plate').value,
+                owner_name: document.getElementById('vh-owner').value,
+                vehicle_type: document.getElementById('vh-type').value,
+                color: document.getElementById('vh-color').value
+            };
+        }
+
+        // Get users filters
+        function getUsersFilters() {
+            const isActiveVal = document.getElementById('u-active').value;
+            return {
+                username: document.getElementById('u-username').value,
+                full_name: document.getElementById('u-fullname').value,
+                email: document.getElementById('u-email').value,
+                role: document.getElementById('u-role').value,
+                is_active: isActiveVal ? isActiveVal === 'true' : undefined
+            };
+        }
+
+        // ============================================
+        // Export Functions
+        // ============================================
+        
+        // Export violations
+        async function exportViolationsToExcel() {
+            await exportData('violations', 'excel', getViolationsFilters());
+        }
+
+        async function exportViolationsToPDF() {
+            await exportData('violations', 'pdf', getViolationsFilters());
+        }
+
+        // Export vehicles
+        async function exportVehiclesToExcel() {
+            await exportData('vehicles', 'excel', getVehiclesFilters());
+        }
+
+        async function exportVehiclesToPDF() {
+            await exportData('vehicles', 'pdf', getVehiclesFilters());
+        }
+
+        // Export users
+        async function exportUsersToExcel() {
+            await exportData('users', 'excel', getUsersFilters());
+        }
+
+        async function exportUsersToPDF() {
+            await exportData('users', 'pdf', getUsersFilters());
         }
     </script>
 
