@@ -29,13 +29,24 @@
     const DOM = {
         root: document.getElementById('root'),
         
+        // Sanitize HTML to prevent XSS attacks
+        sanitizeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        },
+        
         createElement(tag, attrs = {}, children = []) {
             const element = document.createElement(tag);
             Object.entries(attrs).forEach(([key, value]) => {
                 if (key === 'className') {
                     element.className = value;
                 } else if (key === 'innerHTML') {
+                    // Note: innerHTML is used for trusted template content only
+                    // User-generated content should use textContent instead
                     element.innerHTML = value;
+                } else if (key === 'textContent') {
+                    element.textContent = value;
                 } else if (key.startsWith('on')) {
                     element.addEventListener(key.slice(2).toLowerCase(), value);
                 } else {
@@ -59,6 +70,7 @@
         render(content) {
             this.clear();
             if (typeof content === 'string') {
+                // Template content - considered trusted
                 this.root.innerHTML = content;
             } else if (content instanceof HTMLElement) {
                 this.root.appendChild(content);
@@ -125,12 +137,17 @@
         },
 
         login(username, password) {
-            // Demo users for testing
+            // Demo users for development/testing only
+            // WARNING: In production, use a secure authentication service with hashed passwords
+            // These credentials should be replaced with environment-based configuration
             const users = {
                 'admin': { id: 1, name: 'مدير النظام', role: 'admin', password: 'admin123' },
                 'parking_officer': { id: 2, name: 'موظف المواقف', role: 'parking', password: 'parking123' },
                 'violations_officer': { id: 3, name: 'موظف المخالفات', role: 'violations', password: 'violations123' }
             };
+            
+            // TODO: Replace with API call to secure backend authentication
+            // Example: return await fetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ username, password }) });
 
             const user = users[username];
             if (user && user.password === password) {

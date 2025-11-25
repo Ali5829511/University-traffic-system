@@ -466,7 +466,7 @@ a:hover {
 
 .stat-icon.blue { background-color: #ebf8ff; color: var(--accent-color); }
 .stat-icon.green { background-color: #f0fff4; color: var(--success-color); }
-.stat-icon.yellow { background-color: #fffff0; color: var(--warning-color); }
+.stat-icon.yellow { background-color: #fef3c7; color: #92400e; }
 .stat-icon.red { background-color: #fff5f5; color: var(--error-color); }
 
 .stat-value {
