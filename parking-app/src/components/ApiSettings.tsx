@@ -98,7 +98,7 @@ export default function ApiSettings() {
       {/* Plate Recognizer API */}
       <div className="bg-white p-6 rounded-lg shadow-md border">
         <div className="flex items-center gap-3 mb-4">
-          <Key size={24} className="text-primary" weight="fill" />
+          <Key size={24} className="text-blue-900" weight="fill" />
           <h3 className="text-lg font-bold">Plate Recognizer API</h3>
         </div>
 
@@ -110,7 +110,7 @@ export default function ApiSettings() {
                 type={showKeys ? 'text' : 'password'}
                 value={plateRecognizerKey}
                 onChange={(e) => setPlateRecognizerKey(e.target.value)}
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
                 placeholder="أدخل رمز Plate Recognizer API"
               />
               <button
@@ -121,14 +121,14 @@ export default function ApiSettings() {
               </button>
               <button
                 onClick={testPlateRecognizer}
-                className="px-4 py-2 bg-primary text-white rounded-lg hover:opacity-90"
+                className="px-4 py-2 bg-blue-900 text-white rounded-lg hover:opacity-90"
               >
                 اختبار
               </button>
             </div>
             <p className="text-xs text-gray-600 mt-2">
               احصل على رمز API من: 
-              <a href="https://app.platerecognizer.com/" target="_blank" rel="noopener noreferrer" className="text-primary mr-1">
+              <a href="https://app.platerecognizer.com/" target="_blank" rel="noopener noreferrer" className="text-blue-900 mr-1">
                 app.platerecognizer.com
               </a>
             </p>
@@ -151,7 +151,7 @@ export default function ApiSettings() {
       {/* ParkPow Integration */}
       <div className="bg-white p-6 rounded-lg shadow-md border">
         <div className="flex items-center gap-3 mb-4">
-          <CloudArrowUp size={24} className="text-secondary" weight="fill" />
+          <CloudArrowUp size={24} className="text-green-600" weight="fill" />
           <h3 className="text-lg font-bold">ParkPow Integration</h3>
         </div>
 
@@ -163,12 +163,12 @@ export default function ApiSettings() {
                 type={showKeys ? 'text' : 'password'}
                 value={parkpowToken}
                 onChange={(e) => setParkpowToken(e.target.value)}
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-secondary"
+                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-600"
                 placeholder="أدخل رمز ParkPow Token"
               />
               <button
                 onClick={testParkPow}
-                className="px-4 py-2 bg-secondary text-white rounded-lg hover:opacity-90"
+                className="px-4 py-2 bg-green-600 text-white rounded-lg hover:opacity-90"
               >
                 اختبار
               </button>
@@ -192,7 +192,7 @@ export default function ApiSettings() {
       {/* Cloud Webhook */}
       <div className="bg-white p-6 rounded-lg shadow-md border">
         <div className="flex items-center gap-3 mb-4">
-          <Database size={24} className="text-accent" weight="fill" />
+          <Database size={24} className="text-yellow-600" weight="fill" />
           <h3 className="text-lg font-bold">Cloud Webhook</h3>
         </div>
 
@@ -330,7 +330,7 @@ export default function ApiSettings() {
                 max="60"
                 value={monitoringInterval}
                 onChange={(e) => setMonitoringInterval(parseInt(e.target.value))}
-                className="w-full md:w-48 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                className="w-full md:w-48 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
               />
               <p className="text-xs text-gray-600 mt-2">
                 سيتم فحص جميع التكاملات تلقائياً كل {monitoringInterval} دقيقة
@@ -344,7 +344,7 @@ export default function ApiSettings() {
       <div className="flex justify-end">
         <button
           onClick={saveSettings}
-          className="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition"
+          className="bg-blue-900 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition"
         >
           حفظ جميع الإعدادات
         </button>

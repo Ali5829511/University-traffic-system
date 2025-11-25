@@ -12,7 +12,7 @@ export function cn(...inputs: ClassValue[]) {
  * توليد معرف فريد
  */
 export function generateId(): string {
-  return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 11)}`;
 }
 
 /**

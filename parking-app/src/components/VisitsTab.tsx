@@ -63,7 +63,7 @@ export default function VisitsTab() {
           <h2 className="text-2xl font-bold font-kufi">إدارة الزيارات</h2>
           <p className="text-gray-600 mt-1">عرض جميع زيارات المركبات المسجلة</p>
         </div>
-        <label className="bg-secondary text-secondary-foreground px-6 py-3 rounded-lg flex items-center gap-2 hover:opacity-90 transition cursor-pointer">
+        <label className="bg-green-600 text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:opacity-90 transition cursor-pointer">
           <UploadSimple size={20} weight="bold" />
           <span className="font-semibold">استيراد CSV</span>
           <input
@@ -83,7 +83,7 @@ export default function VisitsTab() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-10 pl-4 py-3 border rounded-lg focus:ring-2 focus:ring-secondary"
+            className="w-full pr-10 pl-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-600"
             placeholder="البحث في الزيارات..."
           />
         </div>

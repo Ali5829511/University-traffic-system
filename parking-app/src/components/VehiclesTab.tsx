@@ -89,7 +89,7 @@ export default function VehiclesTab() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-10 pl-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full pr-10 pl-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-900"
             placeholder="البحث عن مركبة..."
           />
         </div>
@@ -138,7 +138,7 @@ export default function VehiclesTab() {
                     {vehicle.vehicleType || 'غير محدد'}
                   </p>
                 </div>
-                <Car size={32} className="text-primary" weight="fill" />
+                <Car size={32} className="text-blue-900" weight="fill" />
               </div>
 
               <div className="space-y-2 mb-4">

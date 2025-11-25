@@ -163,7 +163,7 @@ export default function ReportsTab() {
             <select
               value={reportType}
               onChange={(e) => setReportType(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
             >
               <option value="violations">تقرير المخالفات</option>
               <option value="visits">تقرير الزيارات</option>
@@ -178,7 +178,7 @@ export default function ReportsTab() {
               type="date"
               value={dateFrom}
               onChange={(e) => setDateFrom(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
             />
           </div>
 
@@ -188,7 +188,7 @@ export default function ReportsTab() {
               type="date"
               value={dateTo}
               onChange={(e) => setDateTo(e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
             />
           </div>
         </div>
@@ -201,7 +201,7 @@ export default function ReportsTab() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <button
             onClick={generateHTML}
-            className="flex flex-col items-center gap-3 p-6 border-2 border-primary rounded-lg hover:bg-primary/5 transition"
+            className="flex flex-col items-center gap-3 p-6 border-2 border-blue-900 rounded-lg hover:bg-blue-900/5 transition"
           >
             <FilePdf size={48} className="text-red-600" weight="fill" />
             <div className="text-center">
@@ -234,7 +234,7 @@ export default function ReportsTab() {
 
           <button
             onClick={generateCSV}
-            className="flex flex-col items-center gap-3 p-6 border-2 border-secondary rounded-lg hover:bg-secondary/5 transition"
+            className="flex flex-col items-center gap-3 p-6 border-2 border-secondary rounded-lg hover:bg-green-600/5 transition"
           >
             <FileCsv size={48} className="text-blue-600" weight="fill" />
             <div className="text-center">

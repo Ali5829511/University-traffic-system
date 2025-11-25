@@ -99,7 +99,7 @@ export default function ViolationsTab() {
         </div>
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="bg-primary text-primary-foreground px-6 py-3 rounded-lg flex items-center gap-2 hover:opacity-90 transition"
+          className="bg-blue-900 text-white px-6 py-3 rounded-lg flex items-center gap-2 hover:opacity-90 transition"
         >
           <Plus size={20} weight="bold" />
           <span className="font-semibold">إضافة مخالفة</span>
@@ -118,7 +118,7 @@ export default function ViolationsTab() {
                   type="text"
                   value={formData.plateNumber}
                   onChange={(e) => setFormData({ ...formData, plateNumber: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
                   placeholder="مثال: أ ب ج 1234"
                   required
                 />
@@ -129,7 +129,7 @@ export default function ViolationsTab() {
                 <select
                   value={formData.violationType}
                   onChange={(e) => setFormData({ ...formData, violationType: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
                 >
                   {violationTypes.map(type => (
                     <option key={type} value={type}>{type}</option>
@@ -143,7 +143,7 @@ export default function ViolationsTab() {
                   type="text"
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
                   placeholder="مثال: موقف المبنى الإداري"
                   required
                 />
@@ -155,7 +155,7 @@ export default function ViolationsTab() {
                   type="number"
                   value={formData.fine}
                   onChange={(e) => setFormData({ ...formData, fine: e.target.value })}
-                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
                   placeholder="مثال: 300"
                 />
               </div>
@@ -166,7 +166,7 @@ export default function ViolationsTab() {
               <textarea
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary"
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-900"
                 rows={3}
                 placeholder="وصف تفصيلي للمخالفة..."
               />
@@ -194,7 +194,7 @@ export default function ViolationsTab() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                className="bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:opacity-90"
+                className="bg-blue-900 text-white px-6 py-2 rounded-lg hover:opacity-90"
               >
                 حفظ المخالفة
               </button>
@@ -218,7 +218,7 @@ export default function ViolationsTab() {
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pr-10 pl-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary"
+            className="w-full pr-10 pl-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-900"
             placeholder="البحث في المخالفات..."
           />
         </div>

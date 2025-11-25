@@ -27,7 +27,7 @@ function App() {
   return (
     <div className="min-h-screen bg-background" dir="rtl">
       {/* Header */}
-      <header className="bg-primary text-primary-foreground shadow-lg">
+      <header className="bg-blue-900 text-white shadow-lg">
         <div className="container mx-auto px-4 py-6">
           <h1 className="text-3xl font-bold font-kufi">
             جامعة الإمام محمد بن سعود الإسلامية
@@ -52,7 +52,7 @@ function App() {
                     flex items-center gap-2 px-6 py-4 font-semibold transition-colors
                     border-b-2 whitespace-nowrap
                     ${activeTab === tab.id
-                      ? 'border-primary text-primary'
+                      ? 'border-blue-900 text-blue-900'
                       : 'border-transparent text-gray-600 hover:text-gray-900'
                     }
                   `}
