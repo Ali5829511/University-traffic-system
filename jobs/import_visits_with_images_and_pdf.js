@@ -62,6 +62,8 @@ function parseTimestamp(date, time) {
 /**
  * Download image from URL and save locally
  * تحميل الصورة من الرابط وحفظها محلياً
+ * 
+ * Security note: Only downloads images with valid content-type headers
  */
 async function downloadImage(imageUrl, licensePlate) {
     return new Promise((resolve, reject) => {
@@ -70,7 +72,23 @@ async function downloadImage(imageUrl, licensePlate) {
             return;
         }
 
-        const sanitizedPlate = String(licensePlate).replace(/[^a-zA-Z0-9\u0600-\u06FF]/g, '_');
+        // Validate URL format
+        let parsedUrl;
+        try {
+            parsedUrl = new URL(imageUrl);
+            if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+                reject(new Error('Invalid URL protocol'));
+                return;
+            }
+        } catch (err) {
+            reject(new Error('Invalid URL format'));
+            return;
+        }
+
+        // Sanitize filename - remove all non-safe characters
+        const sanitizedPlate = String(licensePlate)
+            .replace(/[^a-zA-Z0-9\u0600-\u06FF-_]/g, '_')
+            .substring(0, 50); // Limit filename length
         const imagePath = path.join(IMAGES_DIR, `${sanitizedPlate}.jpg`);
         
         // Check if image already exists
@@ -82,6 +100,13 @@ async function downloadImage(imageUrl, licensePlate) {
         const protocol = imageUrl.startsWith('https') ? https : http;
         
         const request = protocol.get(imageUrl, { timeout: 10000 }, (response) => {
+            // Validate content-type is an image
+            const contentType = response.headers['content-type'] || '';
+            if (!contentType.startsWith('image/')) {
+                reject(new Error(`Invalid content type: ${contentType}`));
+                return;
+            }
+            
             if (response.statusCode === 200) {
                 const fileStream = fs.createWriteStream(imagePath);
                 response.pipe(fileStream);
@@ -268,7 +293,7 @@ async function generatePDFReport(rows) {
  * حفظ السجلات في قاعدة البيانات
  */
 async function saveToDatabase(rows) {
-    if (!db || !db.pool) {
+    if (!db || typeof db.query !== 'function' || !db.isConnected || !db.isConnected()) {
         console.log('⚠️ قاعدة البيانات غير متصلة - تخطي الحفظ في قاعدة البيانات');
         return false;
     }

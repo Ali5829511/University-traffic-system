@@ -14,6 +14,9 @@ const XLSX = require('xlsx');
 const PDFDocument = require('pdfkit');
 require('dotenv').config();
 
+// Import visits module
+const visitsImporter = require('./jobs/import_visits_with_images_and_pdf');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -1360,11 +1363,8 @@ app.post('/api/import/visits', upload.single('csv'), async (req, res) => {
             return res.status(400).json({ success: false, message: 'لم يتم رفع أي ملف CSV' });
         }
         
-        // Import the visits module
-        const { run } = require('./jobs/import_visits_with_images_and_pdf');
-        
-        // Run import with uploaded file
-        const result = await run(tempFilePath);
+        // Run import with uploaded file using pre-loaded module
+        const result = await visitsImporter.run(tempFilePath);
         
         // Clean up uploaded file asynchronously
         if (fs.existsSync(tempFilePath)) {
@@ -1406,11 +1406,11 @@ app.post('/api/import/visits', upload.single('csv'), async (req, res) => {
 // Download generated report files
 app.get('/api/import/reports/:filename', (req, res) => {
     const filename = req.params.filename;
-    const resultsDir = path.join(__dirname, 'data', 'results');
-    const filePath = path.join(resultsDir, filename);
+    const resultsDir = path.resolve(__dirname, 'data', 'results');
+    const filePath = path.resolve(resultsDir, filename);
     
-    // Security: ensure the file is within the results directory
-    if (!filePath.startsWith(resultsDir)) {
+    // Security: ensure the file is within the results directory using resolved paths
+    if (!filePath.startsWith(resultsDir + path.sep) && filePath !== resultsDir) {
         return res.status(403).json({ success: false, message: 'الوصول مرفوض' });
     }
     
