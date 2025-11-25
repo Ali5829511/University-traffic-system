@@ -72,6 +72,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// تحديد معدل الطلبات للـ Webhook / Higher rate limit for webhooks
+const webhookLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 دقيقة / 15 minutes
+    max: 1000, // الحد الأقصى 1000 طلب لكل عنوان IP للـ webhook / Higher limit for webhook endpoints
+    message: { success: false, message: 'تم تجاوز الحد الأقصى للطلبات / Too many requests' }
+});
+app.use('/api/v1/webhook-receiver', webhookLimiter);
+
 // تحديد معدل الطلبات / Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 دقيقة / 15 minutes
@@ -1419,6 +1427,72 @@ app.get('/api/import/reports/:filename', (req, res) => {
     }
     
     res.download(filePath);
+});
+
+// ============================================
+// مستقبل Webhook / Webhook Receiver Routes
+// ============================================
+
+// استقبال بيانات Webhook عبر POST / Receive webhook data via POST
+app.post('/api/v1/webhook-receiver', async (req, res) => {
+    try {
+        const webhookData = req.body;
+        
+        // تسجيل البيانات المستلمة / Log received data
+        console.log('📥 تم استلام Webhook جديد / New webhook received:', JSON.stringify(webhookData, null, 2));
+        
+        // استخراج بيانات اللوحة إن وجدت / Extract plate data if available
+        const plateNumber = webhookData.plate_number || 
+                           webhookData.plate || 
+                           (webhookData.results && webhookData.results[0] && webhookData.results[0].plate) ||
+                           null;
+        
+        const confidence = webhookData.confidence ||
+                          (webhookData.results && webhookData.results[0] && webhookData.results[0].score) ||
+                          null;
+        
+        // تسجيل النشاط / Log activity
+        await logAuditActivity(null, 'webhook', 'WEBHOOK_RECEIVED', 
+            `تم استلام بيانات Webhook${plateNumber ? ': لوحة ' + plateNumber : ''}`, 
+            'webhook', null, req);
+        
+        // إرجاع استجابة ناجحة / Return success response
+        res.json({
+            success: true,
+            message: 'تم استلام البيانات بنجاح / Data received successfully',
+            received_at: new Date().toISOString(),
+            data: {
+                plate_number: plateNumber,
+                confidence: confidence
+            }
+        });
+    } catch (error) {
+        console.error('خطأ في معالجة Webhook / Webhook processing error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'خطأ في معالجة البيانات / Error processing data'
+        });
+    }
+});
+
+// صفحة معلومات Webhook عبر GET / Webhook info page via GET
+app.get('/api/v1/webhook-receiver', (req, res) => {
+    res.json({
+        success: true,
+        message: 'مستقبل Webhook جاهز / Webhook receiver is ready',
+        description: 'استخدم طريقة POST لإرسال بيانات Webhook / Use POST method to send webhook data',
+        allowed_methods: ['GET', 'POST', 'OPTIONS'],
+        example_payload: {
+            plate_number: 'ABC 1234',
+            confidence: 0.95,
+            timestamp: new Date().toISOString(),
+            image_url: 'https://example.com/image.jpg'
+        },
+        endpoints: {
+            webhook_receiver: '/api/v1/webhook-receiver',
+            health_check: '/api/health'
+        }
+    });
 });
 
 // ============================================
