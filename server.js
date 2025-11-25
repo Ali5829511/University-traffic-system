@@ -17,16 +17,16 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Constants
-const PDF_EXPORT_LIMIT = 100; // Limit PDF exports to prevent memory issues
+// ثوابت النظام / System Constants
+const PDF_EXPORT_LIMIT = 100; // الحد الأقصى لتصدير PDF / Limit PDF exports to prevent memory issues
 
-// Create uploads directory if it doesn't exist
+// إنشاء مجلد التحميلات إذا لم يكن موجوداً / Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configure multer for file uploads
+// إعداد multer لتحميل الملفات / Configure multer for file uploads
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, uploadsDir);
@@ -40,7 +40,7 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage,
     limits: {
-        fileSize: 5 * 1024 * 1024 // 5MB limit
+        fileSize: 5 * 1024 * 1024 // الحد الأقصى 5 ميجابايت / 5MB limit
     },
     fileFilter: function (req, file, cb) {
         const allowedTypes = /jpeg|jpg|png|gif/;
@@ -55,7 +55,7 @@ const upload = multer({
     }
 });
 
-// Middleware
+// الوسيطات / Middleware
 app.use(helmet({
     contentSecurityPolicy: false, // للسماح بتحميل الموارد الخارجية
 }));
@@ -63,22 +63,22 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Rate limiting
+// تحديد معدل الطلبات / Rate limiting
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100 // limit each IP to 100 requests per windowMs
+    windowMs: 15 * 60 * 1000, // 15 دقيقة / 15 minutes
+    max: 100 // الحد الأقصى 100 طلب لكل عنوان IP / limit each IP to 100 requests per windowMs
 });
 app.use('/api/', limiter);
 
-// Serve static files
+// خدمة الملفات الثابتة / Serve static files
 app.use(express.static('.'));
 app.use('/uploads', express.static(uploadsDir));
 
-// Database connection
+// اتصال قاعدة البيانات / Database connection
 const db = require('./db-config');
 
 // ============================================
-// Audit Logging Middleware
+// تسجيل الأنشطة / Audit Logging Middleware
 // ============================================
 async function logAuditActivity(userId, username, actionType, actionDescription, entityType = null, entityId = null, req = null) {
     try {
@@ -91,20 +91,20 @@ async function logAuditActivity(userId, username, actionType, actionDescription,
             [userId, username, actionType, actionDescription, entityType, entityId, ipAddress, userAgent]
         );
     } catch (error) {
-        console.error('Error logging audit activity:', error);
+        console.error('خطأ في تسجيل النشاط / Error logging audit activity:', error);
     }
 }
 
-// Test database connection
+// اختبار اتصال قاعدة البيانات / Test database connection
 db.testConnection()
-    .then(() => console.log('✓ Database connected successfully'))
-    .catch(err => console.error('✗ Database connection failed:', err.message));
+    .then(() => console.log('✓ قاعدة البيانات متصلة بنجاح / Database connected successfully'))
+    .catch(err => console.error('✗ فشل اتصال قاعدة البيانات / Database connection failed:', err.message));
 
 // ============================================
-// Authentication Routes
+// مسارات المصادقة / Authentication Routes
 // ============================================
 
-// Login
+// تسجيل الدخول / Login
 app.post('/api/auth/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -174,10 +174,10 @@ app.post('/api/auth/login', async (req, res) => {
 });
 
 // ============================================
-// Users Routes
+// مسارات المستخدمين / Users Routes
 // ============================================
 
-// Get all users
+// جلب جميع المستخدمين / Get all users
 app.get('/api/users', async (req, res) => {
     try {
         const result = await db.query(
@@ -185,16 +185,16 @@ app.get('/api/users', async (req, res) => {
         );
         res.json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Get users error:', error);
+        console.error('خطأ في جلب المستخدمين / Get users error:', error);
         res.status(500).json({ success: false, message: 'خطأ في جلب المستخدمين' });
     }
 });
 
 // ============================================
-// Violations Routes
+// مسارات المخالفات / Violations Routes
 // ============================================
 
-// Get all violations
+// جلب جميع المخالفات / Get all violations
 app.get('/api/violations', async (req, res) => {
     try {
         const result = await db.query(
@@ -202,12 +202,12 @@ app.get('/api/violations', async (req, res) => {
         );
         res.json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Get violations error:', error);
+        console.error('خطأ في جلب المخالفات / Get violations error:', error);
         res.status(500).json({ success: false, message: 'خطأ في جلب المخالفات' });
     }
 });
 
-// Add new violation
+// إضافة مخالفة جديدة / Add new violation
 app.post('/api/violations', async (req, res) => {
     try {
         const {
@@ -239,10 +239,10 @@ app.post('/api/violations', async (req, res) => {
 });
 
 // ============================================
-// Vehicles Routes
+// مسارات السيارات / Vehicles Routes
 // ============================================
 
-// Get all vehicles
+// جلب جميع السيارات / Get all vehicles
 app.get('/api/vehicles', async (req, res) => {
     try {
         const result = await db.query(
@@ -250,16 +250,16 @@ app.get('/api/vehicles', async (req, res) => {
         );
         res.json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Get vehicles error:', error);
+        console.error('خطأ في جلب السيارات / Get vehicles error:', error);
         res.status(500).json({ success: false, message: 'خطأ في جلب السيارات' });
     }
 });
 
 // ============================================
-// Stickers Routes
+// مسارات الملصقات / Stickers Routes
 // ============================================
 
-// Get all stickers
+// جلب جميع الملصقات / Get all stickers
 app.get('/api/stickers', async (req, res) => {
     try {
         const result = await db.query(
@@ -267,12 +267,12 @@ app.get('/api/stickers', async (req, res) => {
         );
         res.json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Get stickers error:', error);
+        console.error('خطأ في جلب الملصقات / Get stickers error:', error);
         res.status(500).json({ success: false, message: 'خطأ في جلب الملصقات' });
     }
 });
 
-// Add new sticker
+// إضافة ملصق جديد / Add new sticker
 app.post('/api/stickers', async (req, res) => {
     try {
         const {
@@ -294,16 +294,16 @@ app.post('/api/stickers', async (req, res) => {
 
         res.json({ success: true, data: result.rows[0] });
     } catch (error) {
-        console.error('Add sticker error:', error);
+        console.error('خطأ في إضافة الملصق / Add sticker error:', error);
         res.status(500).json({ success: false, message: 'خطأ في إضافة الملصق' });
     }
 });
 
 // ============================================
-// Buildings Routes
+// مسارات المباني / Buildings Routes
 // ============================================
 
-// Get all buildings
+// جلب جميع المباني / Get all buildings
 app.get('/api/buildings', async (req, res) => {
     try {
         const result = await db.query(
@@ -311,16 +311,16 @@ app.get('/api/buildings', async (req, res) => {
         );
         res.json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Get buildings error:', error);
+        console.error('خطأ في جلب المباني / Get buildings error:', error);
         res.status(500).json({ success: false, message: 'خطأ في جلب المباني' });
     }
 });
 
 // ============================================
-// Residential Units Routes
+// مسارات الوحدات السكنية / Residential Units Routes
 // ============================================
 
-// Get all residential units
+// جلب جميع الوحدات السكنية / Get all residential units
 app.get('/api/residential-units', async (req, res) => {
     try {
         const result = await db.query(
@@ -331,16 +331,16 @@ app.get('/api/residential-units', async (req, res) => {
         );
         res.json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Get residential units error:', error);
+        console.error('خطأ في جلب الوحدات السكنية / Get residential units error:', error);
         res.status(500).json({ success: false, message: 'خطأ في جلب الوحدات السكنية' });
     }
 });
 
 // ============================================
-// Audit Logs Routes
+// مسارات سجلات الأنشطة / Audit Logs Routes
 // ============================================
 
-// Get all audit logs
+// جلب جميع سجلات الأنشطة / Get all audit logs
 app.get('/api/audit-logs', async (req, res) => {
     try {
         const { page = 1, limit = 50, user_id, action_type, entity_type } = req.query;
@@ -373,7 +373,7 @@ app.get('/api/audit-logs', async (req, res) => {
         
         const result = await db.query(query, params);
         
-        // Get total count
+        // جلب إجمالي العدد / Get total count
         const countResult = await db.query('SELECT COUNT(*) FROM audit_logs');
         const total = parseInt(countResult.rows[0].count);
         
@@ -388,16 +388,16 @@ app.get('/api/audit-logs', async (req, res) => {
             }
         });
     } catch (error) {
-        console.error('Get audit logs error:', error);
+        console.error('خطأ في جلب سجلات الأنشطة / Get audit logs error:', error);
         res.status(500).json({ success: false, message: 'خطأ في جلب سجلات الأنشطة' });
     }
 });
 
 // ============================================
-// Violation Images Routes
+// مسارات صور المخالفات / Violation Images Routes
 // ============================================
 
-// Upload violation image
+// رفع صورة مخالفة / Upload violation image
 app.post('/api/violations/:id/images', upload.single('image'), async (req, res) => {
     try {
         const violationId = req.params.id;
@@ -408,16 +408,16 @@ app.post('/api/violations/:id/images', upload.single('image'), async (req, res) 
             return res.status(400).json({ success: false, message: 'لم يتم رفع أي صورة' });
         }
         
-        // Check if violation exists
+        // التحقق من وجود المخالفة / Check if violation exists
         const violationCheck = await db.query(
             'SELECT id FROM traffic_violations WHERE id = $1',
             [violationId]
         );
         
         if (violationCheck.rows.length === 0) {
-            // Delete uploaded file asynchronously
+            // حذف الملف المرفوع / Delete uploaded file asynchronously
             await fs.promises.unlink(req.file.path).catch(err => {
-                console.error('Error deleting file:', err);
+                console.error('خطأ في حذف الملف / Error deleting file:', err);
             });
             return res.status(404).json({ success: false, message: 'المخالفة غير موجودة' });
         }
@@ -510,10 +510,10 @@ app.delete('/api/violations/:violationId/images/:imageId', async (req, res) => {
 });
 
 // ============================================
-// Advanced Search Routes
+// مسارات البحث المتقدم / Advanced Search Routes
 // ============================================
 
-// Advanced search for violations
+// البحث المتقدم عن المخالفات / Advanced search for violations
 app.post('/api/violations/search', async (req, res) => {
     try {
         const {
@@ -581,7 +581,7 @@ app.post('/api/violations/search', async (req, res) => {
         
         const result = await db.query(query, params);
         
-        // Get total count with same filters (build query dynamically)
+        // جلب إجمالي العدد بنفس الفلاتر / Get total count with same filters
         let countQuery = 'SELECT COUNT(*) FROM traffic_violations WHERE 1=1';
         const countParams = [];
         let countParamIndex = 1;
@@ -647,7 +647,7 @@ app.post('/api/violations/search', async (req, res) => {
     }
 });
 
-// Advanced search for vehicles
+// البحث المتقدم عن السيارات / Advanced search for vehicles
 app.post('/api/vehicles/search', async (req, res) => {
     try {
         const {
@@ -696,7 +696,7 @@ app.post('/api/vehicles/search', async (req, res) => {
         
         res.json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('Vehicle search error:', error);
+        console.error('خطأ في البحث عن السيارات / Vehicle search error:', error);
         res.status(500).json({ success: false, message: 'خطأ في البحث عن السيارات' });
     }
 });
@@ -757,16 +757,16 @@ app.post('/api/users/search', async (req, res) => {
         
         res.json({ success: true, data: result.rows });
     } catch (error) {
-        console.error('User search error:', error);
+        console.error('خطأ في البحث عن المستخدمين / User search error:', error);
         res.status(500).json({ success: false, message: 'خطأ في البحث عن المستخدمين' });
     }
 });
 
 // ============================================
-// Export Routes
+// مسارات التصدير / Export Routes
 // ============================================
 
-// Export violations to Excel
+// تصدير المخالفات إلى Excel / Export violations to Excel
 app.post('/api/export/violations/excel', async (req, res) => {
     try {
         const {
@@ -779,7 +779,7 @@ app.post('/api/export/violations/excel', async (req, res) => {
             officer_name
         } = req.body;
         
-        // Build query with filters
+        // بناء الاستعلام مع الفلاتر / Build query with filters
         let query = 'SELECT * FROM traffic_violations WHERE 1=1';
         const params = [];
         let paramCount = 1;
@@ -1142,50 +1142,50 @@ app.post('/api/export/users/excel', async (req, res) => {
         // Send buffer
         res.send(buffer);
     } catch (error) {
-        console.error('Export users to Excel error:', error);
+        console.error('خطأ في تصدير بيانات المستخدمين / Export users to Excel error:', error);
         res.status(500).json({ success: false, message: 'خطأ في تصدير بيانات المستخدمين إلى Excel' });
     }
 });
 
 // ============================================
-// Health Check
+// فحص حالة النظام / Health Check
 // ============================================
 app.get('/api/health', (req, res) => {
     res.json({ 
         status: 'OK', 
         timestamp: new Date().toISOString(),
-        database: db.isConnected() ? 'connected' : 'disconnected'
+        database: db.isConnected() ? 'متصل' : 'غير متصل'
     });
 });
 
-// 404 handler
+// معالج الصفحات غير الموجودة / 404 handler
 app.use((req, res) => {
     if (req.path.startsWith('/api/')) {
-        res.status(404).json({ success: false, message: 'API endpoint not found' });
+        res.status(404).json({ success: false, message: 'نقطة النهاية غير موجودة / API endpoint not found' });
     } else {
         res.status(404).sendFile(__dirname + '/index.html');
     }
 });
 
-// Error handler
+// معالج الأخطاء / Error handler
 app.use((err, req, res, next) => {
-    console.error('Server error:', err);
+    console.error('خطأ في الخادم / Server error:', err);
     res.status(500).json({ 
         success: false, 
         message: 'حدث خطأ في الخادم' 
     });
 });
 
-// Start server
+// بدء تشغيل الخادم / Start server
 app.listen(PORT, () => {
     console.log(`
 ╔════════════════════════════════════════════════════════════╗
-║  🎓 University Traffic Management System                  ║
-║  نظام إدارة المرور الجامعي                               ║
+║  🎓 نظام إدارة المرور الجامعي                             ║
+║  University Traffic Management System                      ║
 ╠════════════════════════════════════════════════════════════╣
-║  Server running on: http://localhost:${PORT}                ║
-║  API Endpoint: http://localhost:${PORT}/api                 ║
-║  Database: ${process.env.DATABASE_URL ? 'Cloud Database' : 'Not Configured'}                                  ║
+║  الخادم يعمل على: http://localhost:${PORT}                  ║
+║  نقطة API: http://localhost:${PORT}/api                      ║
+║  قاعدة البيانات: ${process.env.DATABASE_URL ? 'سحابية متصلة' : 'غير مهيأة'}                              ║
 ╚════════════════════════════════════════════════════════════╝
     `);
 });
