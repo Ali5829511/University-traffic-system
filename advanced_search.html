@@ -993,7 +993,9 @@
                     body: JSON.stringify(cleanedFilters)
                 });
 
-                if (!response.ok) throw new Error('فشل التصدير');
+                if (!response.ok) {
+                    throw new Error(`فشل التصدير: ${response.status} ${response.statusText}`);
+                }
 
                 const blob = await response.blob();
                 const extension = format === 'excel' ? 'xlsx' : 'pdf';

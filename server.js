@@ -19,6 +19,7 @@ const PORT = process.env.PORT || 3000;
 
 // Constants
 const PDF_EXPORT_LIMIT = 100; // Limit PDF exports to prevent memory issues
+const PDF_PAGE_HEIGHT_LIMIT = 700; // Trigger new page when document y exceeds this value
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -969,7 +970,7 @@ app.post('/api/export/violations/pdf', async (req, res) => {
             doc.text(`   الحالة: ${v.violation_status || 'غير متوفر'}`, { continued: false });
             
             // Check if we need a new page
-            if (doc.y > 700) {
+            if (doc.y > PDF_PAGE_HEIGHT_LIMIT) {
                 doc.addPage();
             }
         });
@@ -1181,7 +1182,8 @@ app.post('/api/export/vehicles/pdf', async (req, res) => {
             paramCount++;
         }
         
-        query += ` ORDER BY v.created_at DESC LIMIT ${PDF_EXPORT_LIMIT}`;
+        query += ` ORDER BY v.created_at DESC LIMIT $${paramCount}`;
+        params.push(PDF_EXPORT_LIMIT);
         
         const result = await db.query(query, params);
         const vehicles = result.rows;
@@ -1219,7 +1221,7 @@ app.post('/api/export/vehicles/pdf', async (req, res) => {
             doc.text(`   اللون: ${v.vehicle_color || 'غير متوفر'}`, { continued: false });
             
             // Check if we need a new page
-            if (doc.y > 700) {
+            if (doc.y > PDF_PAGE_HEIGHT_LIMIT) {
                 doc.addPage();
             }
         });
@@ -1277,7 +1279,8 @@ app.post('/api/export/users/pdf', async (req, res) => {
             paramCount++;
         }
         
-        query += ` ORDER BY created_at DESC LIMIT ${PDF_EXPORT_LIMIT}`;
+        query += ` ORDER BY created_at DESC LIMIT $${paramCount}`;
+        params.push(PDF_EXPORT_LIMIT);
         
         const result = await db.query(query, params);
         const users = result.rows;
@@ -1322,7 +1325,7 @@ app.post('/api/export/users/pdf', async (req, res) => {
             doc.text(`   الحالة: ${u.is_active ? 'نشط' : 'غير نشط'}`, { continued: false });
             
             // Check if we need a new page
-            if (doc.y > 700) {
+            if (doc.y > PDF_PAGE_HEIGHT_LIMIT) {
                 doc.addPage();
             }
         });
