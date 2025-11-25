@@ -154,7 +154,7 @@ The server exposes RESTful APIs for:
    }
    ```
 
-3. **Connection Pooling**: Use the existing pg Pool instance from database.js
+3. **Connection Pooling**: Use the existing pg Pool instance from db-config.js
 
 ## Testing Guidelines
 
