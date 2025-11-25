@@ -197,10 +197,33 @@
             font-size: 14px;
             cursor: pointer;
             transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .btn-export:hover {
             background: #667eea;
+            color: white;
+        }
+
+        .btn-export.excel {
+            border-color: #1D6F42;
+            color: #1D6F42;
+        }
+
+        .btn-export.excel:hover {
+            background: #1D6F42;
+            color: white;
+        }
+
+        .btn-export.pdf {
+            border-color: #c41e3a;
+            color: #c41e3a;
+        }
+
+        .btn-export.pdf:hover {
+            background: #c41e3a;
             color: white;
         }
 
@@ -627,6 +650,16 @@
                     <div class="results-count">
                         <i class="fas fa-list"></i> النتائج: ${data.length} من أصل ${pagination?.total || data.length}
                     </div>
+                    <div class="results-export">
+                        <button class="btn-export excel" onclick="exportViolationsToExcel()">
+                            <i class="fas fa-file-excel"></i>
+                            تصدير Excel
+                        </button>
+                        <button class="btn-export pdf" onclick="exportViolationsToPDF()" title="يتم تصدير أول 100 سجل فقط">
+                            <i class="fas fa-file-pdf"></i>
+                            تصدير PDF
+                        </button>
+                    </div>
                 </div>
                 <table class="results-table">
                     <thead>
@@ -728,6 +761,16 @@
                     <div class="results-count">
                         <i class="fas fa-list"></i> النتائج: ${data.length}
                     </div>
+                    <div class="results-export">
+                        <button class="btn-export excel" onclick="exportVehiclesToExcel()">
+                            <i class="fas fa-file-excel"></i>
+                            تصدير Excel
+                        </button>
+                        <button class="btn-export pdf" onclick="exportVehiclesToPDF()" title="يتم تصدير أول 100 سجل فقط">
+                            <i class="fas fa-file-pdf"></i>
+                            تصدير PDF
+                        </button>
+                    </div>
                 </div>
                 <table class="results-table">
                     <thead>
@@ -827,6 +870,16 @@
                     <div class="results-count">
                         <i class="fas fa-list"></i> النتائج: ${data.length}
                     </div>
+                    <div class="results-export">
+                        <button class="btn-export excel" onclick="exportUsersToExcel()">
+                            <i class="fas fa-file-excel"></i>
+                            تصدير Excel
+                        </button>
+                        <button class="btn-export pdf" onclick="exportUsersToPDF()" title="يتم تصدير أول 100 سجل فقط">
+                            <i class="fas fa-file-pdf"></i>
+                            تصدير PDF
+                        </button>
+                    </div>
                 </div>
                 <table class="results-table">
                     <thead>
@@ -900,6 +953,229 @@
 
         function viewVehicle(id) {
             window.location.href = `vehicle_details.html?id=${id}`;
+        }
+
+        // Export functions for violations
+        async function exportViolationsToExcel() {
+            const filters = {
+                plate_number: document.getElementById('v-plate').value,
+                violation_type: document.getElementById('v-type').value,
+                date_from: document.getElementById('v-date-from').value,
+                date_to: document.getElementById('v-date-to').value,
+                location: document.getElementById('v-location').value,
+                status: document.getElementById('v-status').value,
+                officer_name: document.getElementById('v-officer').value
+            };
+
+            Object.keys(filters).forEach(key => {
+                if (!filters[key]) delete filters[key];
+            });
+
+            try {
+                const response = await fetch('/api/export/violations/excel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(filters)
+                });
+
+                if (!response.ok) throw new Error('فشل التصدير');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `violations_${Date.now()}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            }
+        }
+
+        async function exportViolationsToPDF() {
+            const filters = {
+                plate_number: document.getElementById('v-plate').value,
+                violation_type: document.getElementById('v-type').value,
+                date_from: document.getElementById('v-date-from').value,
+                date_to: document.getElementById('v-date-to').value,
+                location: document.getElementById('v-location').value,
+                status: document.getElementById('v-status').value,
+                officer_name: document.getElementById('v-officer').value
+            };
+
+            Object.keys(filters).forEach(key => {
+                if (!filters[key]) delete filters[key];
+            });
+
+            try {
+                const response = await fetch('/api/export/violations/pdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(filters)
+                });
+
+                if (!response.ok) throw new Error('فشل التصدير');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `violations_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            }
+        }
+
+        // Export functions for vehicles
+        async function exportVehiclesToExcel() {
+            const filters = {
+                plate_number: document.getElementById('vh-plate').value,
+                owner_name: document.getElementById('vh-owner').value,
+                vehicle_type: document.getElementById('vh-type').value,
+                color: document.getElementById('vh-color').value
+            };
+
+            Object.keys(filters).forEach(key => {
+                if (!filters[key]) delete filters[key];
+            });
+
+            try {
+                const response = await fetch('/api/export/vehicles/excel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(filters)
+                });
+
+                if (!response.ok) throw new Error('فشل التصدير');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `vehicles_${Date.now()}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            }
+        }
+
+        // Export functions for users
+        async function exportUsersToExcel() {
+            const filters = {
+                username: document.getElementById('u-username').value,
+                full_name: document.getElementById('u-fullname').value,
+                email: document.getElementById('u-email').value,
+                role: document.getElementById('u-role').value,
+                is_active: document.getElementById('u-active').value ? document.getElementById('u-active').value === 'true' : undefined
+            };
+
+            Object.keys(filters).forEach(key => {
+                if (filters[key] === undefined || filters[key] === '') delete filters[key];
+            });
+
+            try {
+                const response = await fetch('/api/export/users/excel', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(filters)
+                });
+
+                if (!response.ok) throw new Error('فشل التصدير');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `users_${Date.now()}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            }
+        }
+
+        // Export vehicles to PDF
+        async function exportVehiclesToPDF() {
+            const filters = {
+                plate_number: document.getElementById('vh-plate').value,
+                owner_name: document.getElementById('vh-owner').value,
+                vehicle_type: document.getElementById('vh-type').value,
+                color: document.getElementById('vh-color').value
+            };
+
+            Object.keys(filters).forEach(key => {
+                if (!filters[key]) delete filters[key];
+            });
+
+            try {
+                const response = await fetch('/api/export/vehicles/pdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(filters)
+                });
+
+                if (!response.ok) throw new Error('فشل التصدير');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `vehicles_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            }
+        }
+
+        // Export users to PDF
+        async function exportUsersToPDF() {
+            const filters = {
+                username: document.getElementById('u-username').value,
+                full_name: document.getElementById('u-fullname').value,
+                email: document.getElementById('u-email').value,
+                role: document.getElementById('u-role').value,
+                is_active: document.getElementById('u-active').value ? document.getElementById('u-active').value === 'true' : undefined
+            };
+
+            Object.keys(filters).forEach(key => {
+                if (filters[key] === undefined || filters[key] === '') delete filters[key];
+            });
+
+            try {
+                const response = await fetch('/api/export/users/pdf', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(filters)
+                });
+
+                if (!response.ok) throw new Error('فشل التصدير');
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `users_${Date.now()}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+            } catch (error) {
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            }
         }
     </script>
 

@@ -1147,6 +1147,199 @@ app.post('/api/export/users/excel', async (req, res) => {
     }
 });
 
+// Export vehicles to PDF
+app.post('/api/export/vehicles/pdf', async (req, res) => {
+    try {
+        const { plate_number, owner_name, vehicle_type, color } = req.body;
+        
+        // Build query with filters
+        let query = 'SELECT v.*, r.full_name as owner_name FROM vehicles v LEFT JOIN residents r ON v.resident_id = r.id WHERE 1=1';
+        const params = [];
+        let paramCount = 1;
+        
+        if (plate_number) {
+            query += ` AND v.plate_number ILIKE $${paramCount}`;
+            params.push(`%${plate_number}%`);
+            paramCount++;
+        }
+        
+        if (owner_name) {
+            query += ` AND r.full_name ILIKE $${paramCount}`;
+            params.push(`%${owner_name}%`);
+            paramCount++;
+        }
+        
+        if (vehicle_type) {
+            query += ` AND v.vehicle_type = $${paramCount}`;
+            params.push(vehicle_type);
+            paramCount++;
+        }
+        
+        if (color) {
+            query += ` AND v.vehicle_color ILIKE $${paramCount}`;
+            params.push(`%${color}%`);
+            paramCount++;
+        }
+        
+        query += ` ORDER BY v.created_at DESC LIMIT ${PDF_EXPORT_LIMIT}`;
+        
+        const result = await db.query(query, params);
+        const vehicles = result.rows;
+        
+        // Create PDF document
+        const doc = new PDFDocument({ margin: 50, size: 'A4' });
+        
+        // Set headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=vehicles_${Date.now()}.pdf`);
+        
+        // Pipe PDF to response
+        doc.pipe(res);
+        
+        // Add title
+        doc.fontSize(20).text('تقرير السيارات المسجلة', { align: 'center' });
+        doc.fontSize(12).text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}`, { align: 'center' });
+        doc.fontSize(10).text('وحدة إسكان هيئة التدريس - جامعة الإمام محمد بن سعود الإسلامية', { align: 'center' });
+        doc.moveDown(2);
+        
+        // Add vehicles
+        vehicles.forEach((v, index) => {
+            if (index > 0) {
+                doc.moveDown(0.5);
+                doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+                doc.moveDown(0.5);
+            }
+            
+            doc.fontSize(10);
+            doc.text(`${index + 1}. رقم اللوحة: ${v.plate_number || 'غير متوفر'}`, { continued: false });
+            doc.text(`   اسم المالك: ${v.owner_name || 'غير متوفر'}`, { continued: false });
+            doc.text(`   نوع المركبة: ${v.vehicle_type || 'غير متوفر'}`, { continued: false });
+            doc.text(`   الصنع: ${v.vehicle_make || 'غير متوفر'}`, { continued: false });
+            doc.text(`   الموديل: ${v.vehicle_model || 'غير متوفر'}`, { continued: false });
+            doc.text(`   اللون: ${v.vehicle_color || 'غير متوفر'}`, { continued: false });
+            
+            // Check if we need a new page
+            if (doc.y > 700) {
+                doc.addPage();
+            }
+        });
+        
+        // Add footer
+        doc.moveDown(2);
+        doc.fontSize(8).text(`إجمالي السيارات: ${vehicles.length}`, { align: 'center' });
+        doc.text('تم إنشاء هذا التقرير تلقائياً بواسطة نظام إدارة المرور', { align: 'center' });
+        
+        // Finalize PDF
+        doc.end();
+    } catch (error) {
+        console.error('Export vehicles to PDF error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في تصدير بيانات السيارات إلى PDF' });
+    }
+});
+
+// Export users to PDF
+app.post('/api/export/users/pdf', async (req, res) => {
+    try {
+        const { username, full_name, email, role, is_active } = req.body;
+        
+        // Build query with filters
+        let query = 'SELECT id, username, full_name, email, phone, role, is_active, last_login, created_at FROM users WHERE 1=1';
+        const params = [];
+        let paramCount = 1;
+        
+        if (username) {
+            query += ` AND username ILIKE $${paramCount}`;
+            params.push(`%${username}%`);
+            paramCount++;
+        }
+        
+        if (full_name) {
+            query += ` AND full_name ILIKE $${paramCount}`;
+            params.push(`%${full_name}%`);
+            paramCount++;
+        }
+        
+        if (email) {
+            query += ` AND email ILIKE $${paramCount}`;
+            params.push(`%${email}%`);
+            paramCount++;
+        }
+        
+        if (role) {
+            query += ` AND role = $${paramCount}`;
+            params.push(role);
+            paramCount++;
+        }
+        
+        if (is_active !== undefined) {
+            query += ` AND is_active = $${paramCount}`;
+            params.push(is_active);
+            paramCount++;
+        }
+        
+        query += ` ORDER BY created_at DESC LIMIT ${PDF_EXPORT_LIMIT}`;
+        
+        const result = await db.query(query, params);
+        const users = result.rows;
+        
+        // Create PDF document
+        const doc = new PDFDocument({ margin: 50, size: 'A4' });
+        
+        // Set headers
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', `attachment; filename=users_${Date.now()}.pdf`);
+        
+        // Pipe PDF to response
+        doc.pipe(res);
+        
+        // Add title
+        doc.fontSize(20).text('تقرير المستخدمين', { align: 'center' });
+        doc.fontSize(12).text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}`, { align: 'center' });
+        doc.fontSize(10).text('وحدة إسكان هيئة التدريس - جامعة الإمام محمد بن سعود الإسلامية', { align: 'center' });
+        doc.moveDown(2);
+        
+        const roleNames = {
+            'admin': 'مدير النظام',
+            'violations_officer': 'مسجل المخالفات',
+            'inquiry_user': 'موظف الاستعلام',
+            'manager': 'مدير'
+        };
+        
+        // Add users
+        users.forEach((u, index) => {
+            if (index > 0) {
+                doc.moveDown(0.5);
+                doc.moveTo(50, doc.y).lineTo(550, doc.y).stroke();
+                doc.moveDown(0.5);
+            }
+            
+            doc.fontSize(10);
+            doc.text(`${index + 1}. اسم المستخدم: ${u.username || 'غير متوفر'}`, { continued: false });
+            doc.text(`   الاسم الكامل: ${u.full_name || 'غير متوفر'}`, { continued: false });
+            doc.text(`   البريد الإلكتروني: ${u.email || 'غير متوفر'}`, { continued: false });
+            doc.text(`   الهاتف: ${u.phone || 'غير متوفر'}`, { continued: false });
+            doc.text(`   الدور: ${roleNames[u.role] || u.role || 'غير متوفر'}`, { continued: false });
+            doc.text(`   الحالة: ${u.is_active ? 'نشط' : 'غير نشط'}`, { continued: false });
+            
+            // Check if we need a new page
+            if (doc.y > 700) {
+                doc.addPage();
+            }
+        });
+        
+        // Add footer
+        doc.moveDown(2);
+        doc.fontSize(8).text(`إجمالي المستخدمين: ${users.length}`, { align: 'center' });
+        doc.text('تم إنشاء هذا التقرير تلقائياً بواسطة نظام إدارة المرور', { align: 'center' });
+        
+        // Finalize PDF
+        doc.end();
+    } catch (error) {
+        console.error('Export users to PDF error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في تصدير بيانات المستخدمين إلى PDF' });
+    }
+});
+
 // ============================================
 // Health Check
 // ============================================
