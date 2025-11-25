@@ -72,6 +72,14 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// تحديد معدل الطلبات للـ Webhook / Higher rate limit for webhooks
+const webhookLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 دقيقة / 15 minutes
+    max: 1000, // الحد الأقصى 1000 طلب لكل عنوان IP للـ webhook / Higher limit for webhook endpoints
+    message: { success: false, message: 'تم تجاوز الحد الأقصى للطلبات / Too many requests' }
+});
+app.use('/api/v1/webhook-receiver', webhookLimiter);
+
 // تحديد معدل الطلبات / Rate limiting
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 دقيقة / 15 minutes
@@ -1422,130 +1430,69 @@ app.get('/api/import/reports/:filename', (req, res) => {
 });
 
 // ============================================
-// مستقبل هوك ويب / Webhook Receiver
+// مستقبل Webhook / Webhook Receiver Routes
 // ============================================
 
-// GET - معلومات نقطة استقبال Webhook / Information about webhook receiver endpoint
-app.get('/api/v1/webhook-receiver', (req, res) => {
-    res.json({
-        success: true,
-        message: 'نقطة استقبال Webhook لخدمات التعرف على اللوحات',
-        description: 'Webhook receiver endpoint for plate recognition services',
-        allowedMethods: ['POST', 'OPTIONS'],
-        usage: {
-            method: 'POST',
-            contentType: 'application/json',
-            body: {
-                plate_number: 'رقم اللوحة المكتشفة / Detected plate number',
-                confidence: 'نسبة الثقة / Confidence score (0-1)',
-                timestamp: 'وقت الالتقاط / Capture timestamp (ISO 8601)',
-                camera_id: 'معرف الكاميرا / Camera identifier (optional)',
-                image_url: 'رابط الصورة / Image URL (optional)',
-                vehicle_type: 'نوع المركبة / Vehicle type (optional)',
-                direction: 'اتجاه الحركة / Direction of movement (optional)'
-            }
-        },
-        supportedServices: ['ParkPow', 'Plate Recognizer', 'Custom'],
-        timestamp: new Date().toISOString()
-    });
-});
-
-// POST - استقبال بيانات Webhook / Receive webhook data
+// استقبال بيانات Webhook عبر POST / Receive webhook data via POST
 app.post('/api/v1/webhook-receiver', async (req, res) => {
     try {
         const webhookData = req.body;
         
-        // استخراج بيانات اللوحة / Extract plate data
-        // دعم تنسيقات مختلفة من خدمات التعرف على اللوحات
-        // Support different formats from plate recognition services
-        let plateNumber = null;
-        let confidence = null;
-        let timestamp = null;
-        let cameraId = null;
-        let imageUrl = null;
-        let sourceService = 'unknown';
+        // تسجيل البيانات المستلمة / Log received data
+        console.log('📥 تم استلام Webhook جديد / New webhook received:', JSON.stringify(webhookData, null, 2));
         
-        // تنسيق ParkPow
-        if (webhookData.data && webhookData.data.results) {
-            sourceService = 'parkpow';
-            const result = webhookData.data.results[0];
-            if (result) {
-                plateNumber = result.plate;
-                confidence = result.score;
-                cameraId = webhookData.data.camera_id;
-                timestamp = webhookData.data.timestamp;
-            }
-        }
-        // تنسيق Plate Recognizer
-        else if (webhookData.results && Array.isArray(webhookData.results)) {
-            sourceService = 'plate_recognizer';
-            const result = webhookData.results[0];
-            if (result) {
-                plateNumber = result.plate;
-                confidence = result.score;
-                timestamp = webhookData.timestamp;
-                cameraId = webhookData.camera_id;
-            }
-        }
-        // تنسيق مباشر / Direct format
-        else if (webhookData.plate_number || webhookData.plate) {
-            sourceService = 'custom';
-            plateNumber = webhookData.plate_number || webhookData.plate;
-            confidence = webhookData.confidence || webhookData.score;
-            timestamp = webhookData.timestamp;
-            cameraId = webhookData.camera_id;
-            imageUrl = webhookData.image_url;
-        }
+        // استخراج بيانات اللوحة إن وجدت / Extract plate data if available
+        const plateNumber = webhookData.plate_number || 
+                           webhookData.plate || 
+                           (webhookData.results && webhookData.results[0] && webhookData.results[0].plate) ||
+                           null;
         
-        // تسجيل معلومات غير حساسة فقط / Log only non-sensitive metadata
-        console.log(`📥 Webhook received - Source: ${sourceService}, Plate: ${plateNumber || 'Unknown'}, Camera: ${cameraId || 'N/A'}`);
+        const confidence = webhookData.confidence ||
+                          (webhookData.results && webhookData.results[0] && webhookData.results[0].score) ||
+                          null;
         
-        // تسجيل النشاط في قاعدة البيانات / Log activity to database
-        await logAuditActivity(
-            null, 
-            `system-webhook-${sourceService}`, 
-            'WEBHOOK_RECEIVED', 
-            `Webhook data received from ${sourceService} - Plate: ${plateNumber || 'Unknown'}`,
-            'webhook',
-            null,
-            req
-        );
+        // تسجيل النشاط / Log activity
+        await logAuditActivity(null, 'webhook', 'WEBHOOK_RECEIVED', 
+            `تم استلام بيانات Webhook${plateNumber ? ': لوحة ' + plateNumber : ''}`, 
+            'webhook', null, req);
         
-        // التحقق من وجود السيارة في قاعدة البيانات / Check if vehicle exists in database
-        let isRegistered = false;
-        if (plateNumber) {
-            try {
-                const vehicleCheck = await db.query(
-                    'SELECT id, plate_number, is_registered FROM vehicles WHERE plate_number = $1',
-                    [plateNumber]
-                );
-                
-                isRegistered = vehicleCheck.rows.length > 0 && vehicleCheck.rows[0].is_registered;
-                console.log(`✅ Plate detected: ${plateNumber} (Registered: ${isRegistered})`);
-            } catch (dbError) {
-                // إذا فشل الاستعلام من قاعدة البيانات، نستمر ونسجل الخطأ
-                console.error('Database error while checking plate:', dbError.message);
-            }
-        }
-        
-        res.status(200).json({
+        // إرجاع استجابة ناجحة / Return success response
+        res.json({
             success: true,
             message: 'تم استلام البيانات بنجاح / Data received successfully',
-            received: {
+            received_at: new Date().toISOString(),
+            data: {
                 plate_number: plateNumber,
-                confidence: confidence,
-                timestamp: timestamp || new Date().toISOString(),
-                is_registered: isRegistered
+                confidence: confidence
             }
         });
-        
     } catch (error) {
-        console.error('Webhook processing error:', error);
+        console.error('خطأ في معالجة Webhook / Webhook processing error:', error);
         res.status(500).json({
             success: false,
-            message: 'خطأ في معالجة بيانات Webhook / Error processing webhook data'
+            message: 'خطأ في معالجة البيانات / Error processing data'
         });
     }
+});
+
+// صفحة معلومات Webhook عبر GET / Webhook info page via GET
+app.get('/api/v1/webhook-receiver', (req, res) => {
+    res.json({
+        success: true,
+        message: 'مستقبل Webhook جاهز / Webhook receiver is ready',
+        description: 'استخدم طريقة POST لإرسال بيانات Webhook / Use POST method to send webhook data',
+        allowed_methods: ['GET', 'POST', 'OPTIONS'],
+        example_payload: {
+            plate_number: 'ABC 1234',
+            confidence: 0.95,
+            timestamp: new Date().toISOString(),
+            image_url: 'https://example.com/image.jpg'
+        },
+        endpoints: {
+            webhook_receiver: '/api/v1/webhook-receiver',
+            health_check: '/api/health'
+        }
+    });
 });
 
 // ============================================
