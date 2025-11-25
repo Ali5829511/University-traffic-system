@@ -10,7 +10,8 @@
     "test": "node test-api.js",
     "test:api": "node test-api.js",
     "import-stickers": "node import-stickers.js",
-    "import-all": "node import-all-data.js"
+    "import-all": "node import-all-data.js",
+    "import-visits": "node jobs/import_visits_with_images_and_pdf.js"
   },
   "keywords": [
     "traffic",
