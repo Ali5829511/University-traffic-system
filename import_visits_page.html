@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>استيراد الزيارات - نظام إدارة المرور</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #ddd;
+            border-radius: 10px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+        
+        .upload-area:hover, .upload-area.drag-over {
+            border-color: #667eea;
+            background-color: #f8f9ff;
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .upload-area p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #f8f9fa;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+        
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .file-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .file-info.show {
+            display: block;
+        }
+        
+        .file-info p {
+            margin-bottom: 5px;
+        }
+        
+        .progress-container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .progress-container.show {
+            display: block;
+        }
+        
+        .progress-bar {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 10px;
+            color: #666;
+        }
+        
+        .result-container {
+            display: none;
+        }
+        
+        .result-container.show {
+            display: block;
+        }
+        
+        .result-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .result-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card h4 {
+            font-size: 2rem;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .download-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        .download-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .download-link:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        .csv-template {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .csv-template h3 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .csv-template table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .csv-template th, .csv-template td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: right;
+        }
+        
+        .csv-template th {
+            background: #f8f9fa;
+            color: #333;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+        
+        .back-link:hover {
+            opacity: 1;
+        }
+        
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .upload-area {
+                padding: 30px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="home.html" class="back-link">
+            ← العودة للرئيسية
+        </a>
+        
+        <div class="header">
+            <h1>📦 استيراد الزيارات</h1>
+            <p>استيراد بيانات الزيارات من ملف CSV مع تحميل الصور وتوليد التقارير</p>
+        </div>
+        
+        <div class="card">
+            <h2>📤 رفع ملف CSV</h2>
+            
+            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div style="font-size: 3rem; margin-bottom: 15px;">📄</div>
+                <h3>اسحب وأفلت ملف CSV هنا</h3>
+                <p>أو انقر لاختيار الملف</p>
+            </div>
+            
+            <input type="file" id="fileInput" accept=".csv">
+            
+            <div class="file-info" id="fileInfo">
+                <p><strong>الملف:</strong> <span id="fileName"></span></p>
+                <p><strong>الحجم:</strong> <span id="fileSize"></span></p>
+            </div>
+            
+            <div class="progress-container" id="progressContainer">
+                <div class="progress-bar">
+                    <div class="progress-bar-fill" id="progressFill"></div>
+                </div>
+                <p class="progress-text" id="progressText">جاري التحميل...</p>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn btn-primary" id="importBtn" disabled onclick="startImport()">
+                    🚀 بدء الاستيراد
+                </button>
+                <button class="btn btn-secondary" id="resetBtn" onclick="resetForm()">
+                    🔄 إعادة تعيين
+                </button>
+            </div>
+        </div>
+        
+        <div class="result-container" id="resultContainer">
+            <div class="card">
+                <div class="result-success" id="resultSuccess" style="display: none;">
+                    <h3>✅ تم الاستيراد بنجاح!</h3>
+                    <p id="successMessage"></p>
+                </div>
+                
+                <div class="result-error" id="resultError" style="display: none;">
+                    <h3>❌ فشل الاستيراد</h3>
+                    <p id="errorMessage"></p>
+                </div>
+                
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <h4 id="statRecords">0</h4>
+                        <p>سجل مستورد</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="statImages">0</h4>
+                        <p>صورة محمّلة</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4 id="statFailed">0</h4>
+                        <p>صور فاشلة</p>
+                    </div>
+                </div>
+                
+                <h3 style="margin-bottom: 15px;">📥 تحميل التقارير</h3>
+                <div class="download-links" id="downloadLinks">
+                    <!-- Links will be added dynamically -->
+                </div>
+            </div>
+        </div>
+        
+        <div class="card csv-template">
+            <h3>📋 تنسيق ملف CSV المطلوب</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>اسم العمود</th>
+                        <th>الوصف</th>
+                        <th>مطلوب</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>license_plate</td>
+                        <td>رقم اللوحة</td>
+                        <td>نعم</td>
+                    </tr>
+                    <tr>
+                        <td>type</td>
+                        <td>نوع المركبة (سيدان، دفع رباعي، إلخ)</td>
+                        <td>لا</td>
+                    </tr>
+                    <tr>
+                        <td>color</td>
+                        <td>لون المركبة</td>
+                        <td>لا</td>
+                    </tr>
+                    <tr>
+                        <td>site</td>
+                        <td>موقع الدخول</td>
+                        <td>لا</td>
+                    </tr>
+                    <tr>
+                        <td>entrance_date</td>
+                        <td>تاريخ الدخول (YYYY-MM-DD)</td>
+                        <td>لا</td>
+                    </tr>
+                    <tr>
+                        <td>entrance_time</td>
+                        <td>وقت الدخول (HH:MM)</td>
+                        <td>لا</td>
+                    </tr>
+                    <tr>
+                        <td>image_url</td>
+                        <td>رابط صورة المركبة</td>
+                        <td>لا</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p style="margin-top: 15px; color: #666; font-size: 0.9rem;">
+                💡 <strong>ملاحظة:</strong> يمكنك أيضاً استخدام الأسماء العربية للأعمدة مثل: رقم اللوحة، النوع، اللون، الموقع، تاريخ الدخول، وقت الدخول، رابط الصورة
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const importBtn = document.getElementById('importBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultContainer = document.getElementById('resultContainer');
+        
+        let selectedFile = null;
+        
+        // Drag and drop handlers
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('drag-over');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+        
+        function handleFile(file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                alert('يجب اختيار ملف CSV');
+                return;
+            }
+            
+            selectedFile = file;
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('show');
+            importBtn.disabled = false;
+        }
+        
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' بايت';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' كيلوبايت';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' ميجابايت';
+        }
+        
+        async function startImport() {
+            if (!selectedFile) return;
+            
+            importBtn.disabled = true;
+            progressContainer.classList.add('show');
+            progressFill.style.width = '10%';
+            progressText.textContent = 'جاري رفع الملف...';
+            
+            const formData = new FormData();
+            formData.append('csv', selectedFile);
+            
+            try {
+                progressFill.style.width = '30%';
+                progressText.textContent = 'جاري معالجة البيانات...';
+                
+                const response = await fetch('/api/import/visits', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                progressFill.style.width = '80%';
+                progressText.textContent = 'جاري إنشاء التقارير...';
+                
+                const result = await response.json();
+                
+                progressFill.style.width = '100%';
+                progressText.textContent = 'اكتمل!';
+                
+                setTimeout(() => {
+                    progressContainer.classList.remove('show');
+                    showResult(result);
+                }, 500);
+                
+            } catch (error) {
+                progressContainer.classList.remove('show');
+                showResult({
+                    success: false,
+                    message: 'خطأ في الاتصال بالخادم: ' + error.message
+                });
+            }
+        }
+        
+        function showResult(result) {
+            resultContainer.classList.add('show');
+            
+            const successDiv = document.getElementById('resultSuccess');
+            const errorDiv = document.getElementById('resultError');
+            const statsGrid = document.getElementById('statsGrid');
+            const downloadLinks = document.getElementById('downloadLinks');
+            
+            if (result.success) {
+                successDiv.style.display = 'block';
+                errorDiv.style.display = 'none';
+                document.getElementById('successMessage').textContent = result.message;
+                
+                // Update stats
+                document.getElementById('statRecords').textContent = result.data.recordsImported || 0;
+                document.getElementById('statImages').textContent = result.data.imagesDownloaded || 0;
+                document.getElementById('statFailed').textContent = result.data.imagesFailed || 0;
+                statsGrid.style.display = 'grid';
+                
+                // Add download links
+                downloadLinks.innerHTML = '';
+                if (result.data.excelFile) {
+                    downloadLinks.innerHTML += `
+                        <a href="/api/import/reports/${encodeURIComponent(result.data.excelFile)}" class="download-link">
+                            📊 تحميل تقرير Excel
+                        </a>
+                    `;
+                }
+                if (result.data.pdfFile) {
+                    downloadLinks.innerHTML += `
+                        <a href="/api/import/reports/${encodeURIComponent(result.data.pdfFile)}" class="download-link">
+                            📄 تحميل تقرير PDF
+                        </a>
+                    `;
+                }
+            } else {
+                successDiv.style.display = 'none';
+                errorDiv.style.display = 'block';
+                document.getElementById('errorMessage').textContent = result.message;
+                statsGrid.style.display = 'none';
+                downloadLinks.innerHTML = '';
+            }
+        }
+        
+        function resetForm() {
+            selectedFile = null;
+            fileInput.value = '';
+            fileInfo.classList.remove('show');
+            importBtn.disabled = true;
+            progressContainer.classList.remove('show');
+            progressFill.style.width = '0%';
+            resultContainer.classList.remove('show');
+        }
+    </script>
+</body>
+</html>

@@ -23,8 +23,16 @@ logs/
 # Note: Production data should be managed through secure deployment processes
 *.xlsx
 *.xls
-*.csv
 pasted_file_*
+
+# Keep sample CSV for testing
+!data/visits.csv
+
+# Generated reports and images
+data/images/*
+data/results/*
+!data/images/.gitkeep
+!data/results/.gitkeep
 
 # Uploads and images
 uploads/

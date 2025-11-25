@@ -43,15 +43,21 @@ const upload = multer({
         fileSize: 5 * 1024 * 1024 // الحد الأقصى 5 ميجابايت / 5MB limit
     },
     fileFilter: function (req, file, cb) {
-        const allowedTypes = /jpeg|jpg|png|gif/;
-        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
-        const mimetype = allowedTypes.test(file.mimetype);
+        const imageTypes = /jpeg|jpg|png|gif/;
+        const csvTypes = /csv/;
+        const ext = path.extname(file.originalname).toLowerCase();
         
-        if (mimetype && extname) {
+        // Allow images
+        if (imageTypes.test(ext) && imageTypes.test(file.mimetype)) {
             return cb(null, true);
-        } else {
-            cb(new Error('فقط الصور مسموح بها (JPEG, JPG, PNG, GIF)'));
         }
+        
+        // Allow CSV files
+        if (csvTypes.test(ext) || file.mimetype === 'text/csv' || file.mimetype === 'application/vnd.ms-excel') {
+            return cb(null, true);
+        }
+        
+        cb(new Error('فقط الصور (JPEG, JPG, PNG, GIF) أو ملفات CSV مسموح بها'));
     }
 });
 
@@ -1340,6 +1346,79 @@ app.post('/api/export/users/pdf', async (req, res) => {
         console.error('Export users to PDF error:', error);
         res.status(500).json({ success: false, message: 'خطأ في تصدير بيانات المستخدمين إلى PDF' });
     }
+});
+
+// ============================================
+// مسارات استيراد الزيارات / Import Visits Routes
+// ============================================
+
+// استيراد الزيارات من CSV وتوليد PDF / Import visits from CSV and generate PDF
+app.post('/api/import/visits', upload.single('csv'), async (req, res) => {
+    const tempFilePath = req.file ? req.file.path : null;
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'لم يتم رفع أي ملف CSV' });
+        }
+        
+        // Import the visits module
+        const { run } = require('./jobs/import_visits_with_images_and_pdf');
+        
+        // Run import with uploaded file
+        const result = await run(tempFilePath);
+        
+        // Clean up uploaded file asynchronously
+        if (fs.existsSync(tempFilePath)) {
+            await fs.promises.unlink(tempFilePath).catch(err => {
+                console.error('Error cleaning up temp file:', err);
+            });
+        }
+        
+        if (result.success) {
+            res.json({
+                success: true,
+                message: 'تم استيراد الزيارات بنجاح',
+                data: {
+                    recordsImported: result.recordsImported,
+                    imagesDownloaded: result.imagesDownloaded,
+                    imagesFailed: result.imagesFailed,
+                    excelFile: result.excelFile ? path.basename(result.excelFile) : null,
+                    pdfFile: result.pdfFile ? path.basename(result.pdfFile) : null
+                }
+            });
+        } else {
+            res.status(400).json({
+                success: false,
+                message: result.error || 'فشل استيراد الزيارات'
+            });
+        }
+    } catch (error) {
+        console.error('Import visits error:', error);
+        // Clean up temp file on error
+        if (tempFilePath && fs.existsSync(tempFilePath)) {
+            await fs.promises.unlink(tempFilePath).catch(err => {
+                console.error('Error cleaning up temp file:', err);
+            });
+        }
+        res.status(500).json({ success: false, message: 'خطأ في استيراد الزيارات: ' + error.message });
+    }
+});
+
+// Download generated report files
+app.get('/api/import/reports/:filename', (req, res) => {
+    const filename = req.params.filename;
+    const resultsDir = path.join(__dirname, 'data', 'results');
+    const filePath = path.join(resultsDir, filename);
+    
+    // Security: ensure the file is within the results directory
+    if (!filePath.startsWith(resultsDir)) {
+        return res.status(403).json({ success: false, message: 'الوصول مرفوض' });
+    }
+    
+    if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ success: false, message: 'الملف غير موجود' });
+    }
+    
+    res.download(filePath);
 });
 
 // ============================================
