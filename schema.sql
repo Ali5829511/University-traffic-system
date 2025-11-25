@@ -549,10 +549,11 @@ INSERT INTO users (username, password_hash, full_name, role, is_active) VALUES
 ('inquiry_user', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'موظف الاستعلام', 'inquiry_user', TRUE);
 
 -- إضافة إعدادات النظام الافتراضية
+-- ⚠️ ملاحظة أمنية: استبدل القيم أدناه ببيانات الاعتماد الفعلية الخاصة بك
 INSERT INTO system_settings (setting_key, setting_value, setting_type, description) VALUES
 ('system_name', 'نظام إدارة المرور - وحدة إسكان هيئة التدريس', 'string', 'اسم النظام'),
-('plate_recognizer_api_token', '22ba3cf7155a1ea730a0b64787f98ab5f9a3de94', 'string', 'مفتاح API لـ Plate Recognizer'),
-('parkpow_token', '7c13be422713a758a42a0bc453cf3331fbfd346', 'string', 'مفتاح ParkPow'),
+('plate_recognizer_api_token', 'YOUR_API_TOKEN_HERE', 'string', 'مفتاح API لـ Plate Recognizer'),
+('parkpow_token', 'YOUR_PARKPOW_TOKEN_HERE', 'string', 'مفتاح ParkPow'),
 ('default_fine_amount', '500.00', 'decimal', 'قيمة الغرامة الافتراضية'),
 ('max_violations_before_warning', '3', 'integer', 'عدد المخالفات قبل التحذير'),
 ('email_notifications_enabled', 'true', 'boolean', 'تفعيل إشعارات البريد الإلكتروني');
