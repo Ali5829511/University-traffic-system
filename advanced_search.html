@@ -955,9 +955,57 @@
             window.location.href = `vehicle_details.html?id=${id}`;
         }
 
-        // Export functions for violations
-        async function exportViolationsToExcel() {
-            const filters = {
+        // ============================================
+        // Helper Functions for Export
+        // ============================================
+        
+        // Clean empty filters
+        function cleanFilters(filters) {
+            const cleaned = {};
+            Object.keys(filters).forEach(key => {
+                if (filters[key] !== undefined && filters[key] !== '') {
+                    cleaned[key] = filters[key];
+                }
+            });
+            return cleaned;
+        }
+
+        // Download file from blob
+        function downloadBlob(blob, filename) {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+
+        // Generic export function
+        async function exportData(dataType, format, filters) {
+            const cleanedFilters = cleanFilters(filters);
+            
+            try {
+                const response = await fetch(`/api/export/${dataType}/${format}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(cleanedFilters)
+                });
+
+                if (!response.ok) throw new Error('فشل التصدير');
+
+                const blob = await response.blob();
+                const extension = format === 'excel' ? 'xlsx' : 'pdf';
+                downloadBlob(blob, `${dataType}_${Date.now()}.${extension}`);
+            } catch (error) {
+                alert('حدث خطأ أثناء التصدير: ' + error.message);
+            }
+        }
+
+        // Get violations filters
+        function getViolationsFilters() {
+            return {
                 plate_number: document.getElementById('v-plate').value,
                 violation_type: document.getElementById('v-type').value,
                 date_from: document.getElementById('v-date-from').value,
@@ -966,216 +1014,59 @@
                 status: document.getElementById('v-status').value,
                 officer_name: document.getElementById('v-officer').value
             };
+        }
 
-            Object.keys(filters).forEach(key => {
-                if (!filters[key]) delete filters[key];
-            });
+        // Get vehicles filters
+        function getVehiclesFilters() {
+            return {
+                plate_number: document.getElementById('vh-plate').value,
+                owner_name: document.getElementById('vh-owner').value,
+                vehicle_type: document.getElementById('vh-type').value,
+                color: document.getElementById('vh-color').value
+            };
+        }
 
-            try {
-                const response = await fetch('/api/export/violations/excel', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(filters)
-                });
+        // Get users filters
+        function getUsersFilters() {
+            const isActiveVal = document.getElementById('u-active').value;
+            return {
+                username: document.getElementById('u-username').value,
+                full_name: document.getElementById('u-fullname').value,
+                email: document.getElementById('u-email').value,
+                role: document.getElementById('u-role').value,
+                is_active: isActiveVal ? isActiveVal === 'true' : undefined
+            };
+        }
 
-                if (!response.ok) throw new Error('فشل التصدير');
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `violations_${Date.now()}.xlsx`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                alert('حدث خطأ أثناء التصدير: ' + error.message);
-            }
+        // ============================================
+        // Export Functions
+        // ============================================
+        
+        // Export violations
+        async function exportViolationsToExcel() {
+            await exportData('violations', 'excel', getViolationsFilters());
         }
 
         async function exportViolationsToPDF() {
-            const filters = {
-                plate_number: document.getElementById('v-plate').value,
-                violation_type: document.getElementById('v-type').value,
-                date_from: document.getElementById('v-date-from').value,
-                date_to: document.getElementById('v-date-to').value,
-                location: document.getElementById('v-location').value,
-                status: document.getElementById('v-status').value,
-                officer_name: document.getElementById('v-officer').value
-            };
-
-            Object.keys(filters).forEach(key => {
-                if (!filters[key]) delete filters[key];
-            });
-
-            try {
-                const response = await fetch('/api/export/violations/pdf', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(filters)
-                });
-
-                if (!response.ok) throw new Error('فشل التصدير');
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `violations_${Date.now()}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                alert('حدث خطأ أثناء التصدير: ' + error.message);
-            }
+            await exportData('violations', 'pdf', getViolationsFilters());
         }
 
-        // Export functions for vehicles
+        // Export vehicles
         async function exportVehiclesToExcel() {
-            const filters = {
-                plate_number: document.getElementById('vh-plate').value,
-                owner_name: document.getElementById('vh-owner').value,
-                vehicle_type: document.getElementById('vh-type').value,
-                color: document.getElementById('vh-color').value
-            };
-
-            Object.keys(filters).forEach(key => {
-                if (!filters[key]) delete filters[key];
-            });
-
-            try {
-                const response = await fetch('/api/export/vehicles/excel', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(filters)
-                });
-
-                if (!response.ok) throw new Error('فشل التصدير');
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `vehicles_${Date.now()}.xlsx`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                alert('حدث خطأ أثناء التصدير: ' + error.message);
-            }
+            await exportData('vehicles', 'excel', getVehiclesFilters());
         }
 
-        // Export functions for users
-        async function exportUsersToExcel() {
-            const filters = {
-                username: document.getElementById('u-username').value,
-                full_name: document.getElementById('u-fullname').value,
-                email: document.getElementById('u-email').value,
-                role: document.getElementById('u-role').value,
-                is_active: document.getElementById('u-active').value ? document.getElementById('u-active').value === 'true' : undefined
-            };
-
-            Object.keys(filters).forEach(key => {
-                if (filters[key] === undefined || filters[key] === '') delete filters[key];
-            });
-
-            try {
-                const response = await fetch('/api/export/users/excel', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(filters)
-                });
-
-                if (!response.ok) throw new Error('فشل التصدير');
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `users_${Date.now()}.xlsx`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                alert('حدث خطأ أثناء التصدير: ' + error.message);
-            }
-        }
-
-        // Export vehicles to PDF
         async function exportVehiclesToPDF() {
-            const filters = {
-                plate_number: document.getElementById('vh-plate').value,
-                owner_name: document.getElementById('vh-owner').value,
-                vehicle_type: document.getElementById('vh-type').value,
-                color: document.getElementById('vh-color').value
-            };
-
-            Object.keys(filters).forEach(key => {
-                if (!filters[key]) delete filters[key];
-            });
-
-            try {
-                const response = await fetch('/api/export/vehicles/pdf', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(filters)
-                });
-
-                if (!response.ok) throw new Error('فشل التصدير');
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `vehicles_${Date.now()}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                alert('حدث خطأ أثناء التصدير: ' + error.message);
-            }
+            await exportData('vehicles', 'pdf', getVehiclesFilters());
         }
 
-        // Export users to PDF
+        // Export users
+        async function exportUsersToExcel() {
+            await exportData('users', 'excel', getUsersFilters());
+        }
+
         async function exportUsersToPDF() {
-            const filters = {
-                username: document.getElementById('u-username').value,
-                full_name: document.getElementById('u-fullname').value,
-                email: document.getElementById('u-email').value,
-                role: document.getElementById('u-role').value,
-                is_active: document.getElementById('u-active').value ? document.getElementById('u-active').value === 'true' : undefined
-            };
-
-            Object.keys(filters).forEach(key => {
-                if (filters[key] === undefined || filters[key] === '') delete filters[key];
-            });
-
-            try {
-                const response = await fetch('/api/export/users/pdf', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(filters)
-                });
-
-                if (!response.ok) throw new Error('فشل التصدير');
-
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `users_${Date.now()}.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (error) {
-                alert('حدث خطأ أثناء التصدير: ' + error.message);
-            }
+            await exportData('users', 'pdf', getUsersFilters());
         }
     </script>
 
