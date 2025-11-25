@@ -1422,6 +1422,133 @@ app.get('/api/import/reports/:filename', (req, res) => {
 });
 
 // ============================================
+// مستقبل هوك ويب / Webhook Receiver
+// ============================================
+
+// GET - معلومات نقطة استقبال Webhook / Information about webhook receiver endpoint
+app.get('/api/v1/webhook-receiver', (req, res) => {
+    res.json({
+        success: true,
+        message: 'نقطة استقبال Webhook لخدمات التعرف على اللوحات',
+        description: 'Webhook receiver endpoint for plate recognition services',
+        allowedMethods: ['POST', 'OPTIONS'],
+        usage: {
+            method: 'POST',
+            contentType: 'application/json',
+            body: {
+                plate_number: 'رقم اللوحة المكتشفة / Detected plate number',
+                confidence: 'نسبة الثقة / Confidence score (0-1)',
+                timestamp: 'وقت الالتقاط / Capture timestamp (ISO 8601)',
+                camera_id: 'معرف الكاميرا / Camera identifier (optional)',
+                image_url: 'رابط الصورة / Image URL (optional)',
+                vehicle_type: 'نوع المركبة / Vehicle type (optional)',
+                direction: 'اتجاه الحركة / Direction of movement (optional)'
+            }
+        },
+        supportedServices: ['ParkPow', 'Plate Recognizer', 'Custom'],
+        timestamp: new Date().toISOString()
+    });
+});
+
+// POST - استقبال بيانات Webhook / Receive webhook data
+app.post('/api/v1/webhook-receiver', async (req, res) => {
+    try {
+        const webhookData = req.body;
+        
+        // استخراج بيانات اللوحة / Extract plate data
+        // دعم تنسيقات مختلفة من خدمات التعرف على اللوحات
+        // Support different formats from plate recognition services
+        let plateNumber = null;
+        let confidence = null;
+        let timestamp = null;
+        let cameraId = null;
+        let imageUrl = null;
+        let sourceService = 'unknown';
+        
+        // تنسيق ParkPow
+        if (webhookData.data && webhookData.data.results) {
+            sourceService = 'parkpow';
+            const result = webhookData.data.results[0];
+            if (result) {
+                plateNumber = result.plate;
+                confidence = result.score;
+                cameraId = webhookData.data.camera_id;
+                timestamp = webhookData.data.timestamp;
+            }
+        }
+        // تنسيق Plate Recognizer
+        else if (webhookData.results && Array.isArray(webhookData.results)) {
+            sourceService = 'plate_recognizer';
+            const result = webhookData.results[0];
+            if (result) {
+                plateNumber = result.plate;
+                confidence = result.score;
+                timestamp = webhookData.timestamp;
+                cameraId = webhookData.camera_id;
+            }
+        }
+        // تنسيق مباشر / Direct format
+        else if (webhookData.plate_number || webhookData.plate) {
+            sourceService = 'custom';
+            plateNumber = webhookData.plate_number || webhookData.plate;
+            confidence = webhookData.confidence || webhookData.score;
+            timestamp = webhookData.timestamp;
+            cameraId = webhookData.camera_id;
+            imageUrl = webhookData.image_url;
+        }
+        
+        // تسجيل معلومات غير حساسة فقط / Log only non-sensitive metadata
+        console.log(`📥 Webhook received - Source: ${sourceService}, Plate: ${plateNumber || 'Unknown'}, Camera: ${cameraId || 'N/A'}`);
+        
+        // تسجيل النشاط في قاعدة البيانات / Log activity to database
+        await logAuditActivity(
+            null, 
+            `system-webhook-${sourceService}`, 
+            'WEBHOOK_RECEIVED', 
+            `Webhook data received from ${sourceService} - Plate: ${plateNumber || 'Unknown'}`,
+            'webhook',
+            null,
+            req
+        );
+        
+        // التحقق من وجود السيارة في قاعدة البيانات / Check if vehicle exists in database
+        let isRegistered = false;
+        if (plateNumber) {
+            try {
+                const vehicleCheck = await db.query(
+                    'SELECT id, plate_number, is_registered FROM vehicles WHERE plate_number = $1',
+                    [plateNumber]
+                );
+                
+                isRegistered = vehicleCheck.rows.length > 0 && vehicleCheck.rows[0].is_registered;
+                console.log(`✅ Plate detected: ${plateNumber} (Registered: ${isRegistered})`);
+            } catch (dbError) {
+                // إذا فشل الاستعلام من قاعدة البيانات، نستمر ونسجل الخطأ
+                console.error('Database error while checking plate:', dbError.message);
+            }
+        }
+        
+        res.status(200).json({
+            success: true,
+            message: 'تم استلام البيانات بنجاح / Data received successfully',
+            received: {
+                plate_number: plateNumber,
+                confidence: confidence,
+                timestamp: timestamp || new Date().toISOString(),
+                is_registered: isRegistered
+            }
+        });
+        
+    } catch (error) {
+        console.error('Webhook processing error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'خطأ في معالجة بيانات Webhook / Error processing webhook data'
+        });
+    }
+});
+
+// ============================================
 // فحص حالة النظام / Health Check
 // ============================================
 app.get('/api/health', (req, res) => {
