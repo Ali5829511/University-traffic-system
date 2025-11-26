@@ -246,7 +246,6 @@ CREATE TABLE IF NOT EXISTS violation_stats (
     vehicle_id INTEGER REFERENCES vehicles(id) ON DELETE CASCADE,
     violation_type VARCHAR(100) NOT NULL,
     total_count INTEGER DEFAULT 0,
-    total_actions INTEGER DEFAULT 0,
     total_fines DECIMAL(12,2) DEFAULT 0,
     avg_fine DECIMAL(12,2),
     last_violation TIMESTAMP,

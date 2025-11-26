@@ -448,7 +448,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="js/database.js"></script>
     <script src="js/auth.js"></script>
     <script>
         'use strict';
@@ -635,8 +634,8 @@
         // تحميل البيانات عند فتح الصفحة / Load data on page load
         document.addEventListener('DOMContentLoaded', loadAllData);
 
-        // تحديث البيانات كل دقيقة / Refresh data every minute
-        setInterval(loadAllData, 60000);
+        // تحديث البيانات كل 5 دقائق / Refresh data every 5 minutes
+        setInterval(loadAllData, 300000);
     </script>
 </body>
 </html>

@@ -553,18 +553,22 @@ app.post('/api/violation-stats', async (req, res) => {
             return res.status(400).json({ success: false, message: 'معرف المركبة ونوع المخالفة مطلوبان' });
         }
 
+        // حساب متوسط الغرامة بشكل صحيح / Calculate avg_fine correctly
+        // للسجل الجديد: avg_fine = fine_amount / count_increment
+        const initialAvgFine = count_increment > 0 ? fine_amount / count_increment : 0;
+
         const result = await db.query(`
             INSERT INTO violation_stats (vehicle_id, violation_type, total_count, total_fines, avg_fine, last_violation)
-            VALUES ($1, $2, $3, $4, $4, NOW())
+            VALUES ($1, $2, $3, $4, $5, NOW())
             ON CONFLICT (vehicle_id, violation_type) 
             DO UPDATE SET 
                 total_count = violation_stats.total_count + $3,
                 total_fines = violation_stats.total_fines + $4,
-                avg_fine = (violation_stats.total_fines + $4) / (violation_stats.total_count + $3),
+                avg_fine = (violation_stats.total_fines + $4) / NULLIF(violation_stats.total_count + $3, 0),
                 last_violation = NOW(),
                 updated_at = NOW()
             RETURNING *
-        `, [vehicle_id, violation_type, count_increment, fine_amount]);
+        `, [vehicle_id, violation_type, count_increment, fine_amount, initialAvgFine]);
 
         res.json({ success: true, data: result.rows[0], message: 'تم تحديث الإحصائيات بنجاح' });
     } catch (error) {
