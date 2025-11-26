@@ -239,6 +239,26 @@ CREATE INDEX IF NOT EXISTS idx_violation_images_violation ON violation_images(vi
 CREATE INDEX IF NOT EXISTS idx_violation_images_uploaded ON violation_images(uploaded_by);
 
 -- ============================================
+-- 12. جدول إحصائيات المخالفات (Violation Statistics)
+-- ============================================
+CREATE TABLE IF NOT EXISTS violation_stats (
+    id SERIAL PRIMARY KEY,
+    vehicle_id INTEGER REFERENCES vehicles(id) ON DELETE CASCADE,
+    violation_type VARCHAR(100) NOT NULL,
+    total_count INTEGER DEFAULT 0,
+    total_fines DECIMAL(12,2) DEFAULT 0,
+    avg_fine DECIMAL(12,2),
+    last_violation TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (vehicle_id, violation_type)
+);
+
+CREATE INDEX IF NOT EXISTS idx_violation_stats_vehicle ON violation_stats(vehicle_id);
+CREATE INDEX IF NOT EXISTS idx_violation_stats_type ON violation_stats(violation_type);
+CREATE INDEX IF NOT EXISTS idx_violation_stats_count ON violation_stats(total_count DESC);
+
+-- ============================================
 -- إدراج بيانات المستخدمين الافتراضية
 -- ============================================
 -- ملاحظة: كلمات المرور يجب تشفيرها في التطبيق الفعلي

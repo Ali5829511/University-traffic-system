@@ -411,6 +411,173 @@ app.get('/api/audit-logs', async (req, res) => {
 });
 
 // ============================================
+// مسارات الإحصائيات / Statistics Routes
+// ============================================
+
+// جلب إحصائيات النظام العامة / Get general system statistics
+app.get('/api/stats', async (req, res) => {
+    try {
+        // جلب إحصائيات المركبات / Get vehicle stats
+        const vehiclesResult = await db.query('SELECT COUNT(*) AS total_vehicles FROM vehicles');
+        const totalVehicles = parseInt(vehiclesResult.rows[0].total_vehicles);
+
+        // جلب إحصائيات المخالفات / Get violations stats
+        const violationsResult = await db.query('SELECT COUNT(*) AS total_violations FROM traffic_violations');
+        const totalViolations = parseInt(violationsResult.rows[0].total_violations);
+
+        // جلب إحصائيات السكان / Get residents stats
+        const residentsResult = await db.query('SELECT COUNT(*) AS total_residents FROM residents WHERE is_active = true');
+        const totalResidents = parseInt(residentsResult.rows[0].total_residents);
+
+        // جلب إحصائيات الوحدات السكنية / Get residential units stats
+        const unitsResult = await db.query('SELECT COUNT(*) AS total_units FROM residential_units');
+        const totalUnits = parseInt(unitsResult.rows[0].total_units);
+
+        // جلب إحصائيات المخالفات النشطة / Get active violations
+        const activeViolationsResult = await db.query(
+            "SELECT COUNT(*) AS active_violations FROM traffic_violations WHERE violation_status IN ('جديد', 'قيد المراجعة')"
+        );
+        const activeViolations = parseInt(activeViolationsResult.rows[0].active_violations);
+
+        // جلب إحصائيات المركبات المسجلة / Get registered vehicles
+        const registeredVehiclesResult = await db.query('SELECT COUNT(*) AS registered_vehicles FROM vehicles WHERE is_registered = true');
+        const registeredVehicles = parseInt(registeredVehiclesResult.rows[0].registered_vehicles);
+
+        res.json({
+            success: true,
+            data: {
+                totalVehicles,
+                totalViolations,
+                totalResidents,
+                totalUnits,
+                activeViolations,
+                registeredVehicles
+            }
+        });
+    } catch (error) {
+        console.error('خطأ في جلب الإحصائيات / Get stats error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في جلب الإحصائيات' });
+    }
+});
+
+// جلب إحصائيات المخالفات حسب المركبة / Get violation statistics by vehicle
+app.get('/api/stats/violations', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT 
+                v.plate_number,
+                v.vehicle_make,
+                v.vehicle_model,
+                COUNT(tv.id) AS violation_count,
+                COALESCE(SUM(tv.fine_amount), 0) AS total_fines,
+                MAX(tv.violation_date) AS last_violation
+            FROM vehicles v
+            LEFT JOIN traffic_violations tv ON v.plate_number = tv.plate_number
+            GROUP BY v.id, v.plate_number, v.vehicle_make, v.vehicle_model
+            HAVING COUNT(tv.id) > 0
+            ORDER BY violation_count DESC
+            LIMIT 50
+        `);
+
+        res.json({ success: true, data: result.rows });
+    } catch (error) {
+        console.error('خطأ في جلب إحصائيات المخالفات / Get violation stats error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في جلب إحصائيات المخالفات' });
+    }
+});
+
+// جلب إحصائيات المخالفات حسب النوع / Get violation statistics by type
+app.get('/api/stats/violations/by-type', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT 
+                violation_type,
+                COUNT(*) AS count,
+                COALESCE(SUM(fine_amount), 0) AS total_fines,
+                COALESCE(AVG(fine_amount), 0) AS avg_fine
+            FROM traffic_violations
+            GROUP BY violation_type
+            ORDER BY count DESC
+        `);
+
+        res.json({ success: true, data: result.rows });
+    } catch (error) {
+        console.error('خطأ في جلب إحصائيات أنواع المخالفات / Get violation type stats error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في جلب إحصائيات أنواع المخالفات' });
+    }
+});
+
+// جلب إحصائيات المخالفات الشهرية / Get monthly violation statistics
+app.get('/api/stats/violations/monthly', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT 
+                TO_CHAR(violation_date, 'YYYY-MM') AS month,
+                COUNT(*) AS count,
+                COALESCE(SUM(fine_amount), 0) AS total_fines
+            FROM traffic_violations
+            WHERE violation_date >= NOW() - INTERVAL '12 months'
+            GROUP BY TO_CHAR(violation_date, 'YYYY-MM')
+            ORDER BY month DESC
+        `);
+
+        res.json({ success: true, data: result.rows });
+    } catch (error) {
+        console.error('خطأ في جلب الإحصائيات الشهرية / Get monthly stats error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في جلب الإحصائيات الشهرية' });
+    }
+});
+
+// جلب جميع إحصائيات المخالفات المحفوظة / Get all saved violation statistics
+app.get('/api/violation-stats', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT vs.*, v.plate_number, v.vehicle_make, v.vehicle_model
+            FROM violation_stats vs
+            LEFT JOIN vehicles v ON vs.vehicle_id = v.id
+            ORDER BY vs.total_count DESC
+        `);
+        res.json({ success: true, data: result.rows });
+    } catch (error) {
+        console.error('خطأ في جلب إحصائيات المخالفات / Get violation stats error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في جلب إحصائيات المخالفات' });
+    }
+});
+
+// تحديث/إضافة إحصائيات مخالفة / Update/Add violation statistics
+app.post('/api/violation-stats', async (req, res) => {
+    try {
+        const { vehicle_id, violation_type, count_increment = 1, fine_amount = 0 } = req.body;
+
+        if (!vehicle_id || !violation_type) {
+            return res.status(400).json({ success: false, message: 'معرف المركبة ونوع المخالفة مطلوبان' });
+        }
+
+        // حساب متوسط الغرامة بشكل صحيح / Calculate avg_fine correctly
+        // للسجل الجديد: avg_fine = fine_amount / count_increment
+        const initialAvgFine = count_increment > 0 ? fine_amount / count_increment : 0;
+
+        const result = await db.query(`
+            INSERT INTO violation_stats (vehicle_id, violation_type, total_count, total_fines, avg_fine, last_violation)
+            VALUES ($1, $2, $3, $4, $5, NOW())
+            ON CONFLICT (vehicle_id, violation_type) 
+            DO UPDATE SET 
+                total_count = violation_stats.total_count + $3,
+                total_fines = violation_stats.total_fines + $4,
+                avg_fine = (violation_stats.total_fines + $4) / NULLIF(violation_stats.total_count + $3, 0),
+                last_violation = NOW(),
+                updated_at = NOW()
+            RETURNING *
+        `, [vehicle_id, violation_type, count_increment, fine_amount, initialAvgFine]);
+
+        res.json({ success: true, data: result.rows[0], message: 'تم تحديث الإحصائيات بنجاح' });
+    } catch (error) {
+        console.error('خطأ في تحديث الإحصائيات / Update stats error:', error);
+        res.status(500).json({ success: false, message: 'خطأ في تحديث الإحصائيات' });
+    }
+});
+
+// ============================================
 // مسارات صور المخالفات / Violation Images Routes
 // ============================================
 
