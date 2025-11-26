@@ -22,6 +22,7 @@ const PORT = process.env.PORT || 3000;
 
 // ثوابت النظام / System Constants
 const PDF_EXPORT_LIMIT = 100; // الحد الأقصى لتصدير PDF / Limit PDF exports to prevent memory issues
+const PDF_PAGE_HEIGHT_LIMIT = 700; // الحد الأقصى لارتفاع الصفحة قبل إضافة صفحة جديدة / Max page height before adding new page
 
 // إنشاء مجلد التحميلات إذا لم يكن موجوداً / Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
