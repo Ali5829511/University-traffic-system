@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نشر Docker - نظام إدارة المرور الجامعي</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            /* نظام الألوان الجديد - تباين عالي */
+            --primary-white: #FFFFFF;
+            --primary-steel-blue: #4682B4;
+            --neutral-700: #4a5568;
+            --neutral-600: #718096;
+            --neutral-100: #f7fafc;
+            
+            /* الألوان الأساسية */
+            --primary-color: #4682B4;
+            --primary-dark: #2c5282;
+            --secondary-color: #3182ce;
+            --accent-color: #87CEEB;
+            --docker-blue: #2496ed;
+            --docker-dark: #1a73e8;
+            --white: #ffffff;
+            --light-bg: #f8fafc;
+            --text-dark: #4a5568;
+            --text-light: #718096;
+            --success-color: #52c41a;
+            --warning-color: #f59e0b;
+            --danger-color: #d32f2f;
+            --code-bg: #1e293b;
+            
+            /* التدرجات الملونة */
+            --gradient-blue: linear-gradient(135deg, #4682B4 0%, #87CEEB 100%);
+            --gradient-gold: linear-gradient(135deg, #8B7355 0%, #D4AF37 100%);
+            --gradient-green: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+            --gradient-red: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
+            
+            /* الظلال */
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background: var(--primary-white);
+            direction: rtl;
+            min-height: 100vh;
+            font-weight: 500;
+        }
+
+        /* Header - تصميم محسن */
+        .page-header {
+            background: var(--primary-white);
+            color: var(--text-dark);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid var(--primary-steel-blue);
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .page-header h1 {
+            font-size: 48px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            color: var(--neutral-600);
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--gradient-blue);
+            color: var(--white);
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            z-index: 2;
+            box-shadow: var(--shadow-md);
+        }
+
+        .back-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 30px;
+        }
+
+        /* Section Card - بطاقات محسنة */
+        .section-card {
+            background: var(--primary-white);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-md);
+            border-top: 4px solid var(--primary-steel-blue);
+            transition: all 0.3s ease;
+        }
+
+        .section-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .section-card h2 {
+            color: var(--primary-steel-blue);
+            font-size: 30px;
+            font-weight: 900;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-card h2 i {
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-card p {
+            color: var(--neutral-700);
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Code Block - كتلة الكود المحسنة */
+        .code-block {
+            background: var(--code-bg);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            overflow-x: auto;
+            position: relative;
+            border: 2px solid #334155;
+        }
+
+        .code-block pre {
+            color: #e2e8f0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 15px;
+            line-height: 1.8;
+            margin: 0;
+            direction: ltr;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .code-block .comment {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .code-block .command {
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        .code-block .option {
+            color: #f472b6;
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: var(--gradient-blue);
+            border: none;
+            color: var(--white);
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-md);
+        }
+
+        .copy-btn.copied {
+            background: var(--gradient-green);
+        }
+
+        /* Steps List - قائمة الخطوات المحسنة */
+        .steps-list {
+            list-style: none;
+            counter-reset: step-counter;
+        }
+
+        .steps-list li {
+            counter-increment: step-counter;
+            padding: 25px 25px 25px 80px;
+            position: relative;
+            border-bottom: 1px solid #e2e8f0;
+            background: var(--neutral-100);
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border-right: 4px solid var(--primary-steel-blue);
+            transition: all 0.3s ease;
+        }
+
+        .steps-list li:hover {
+            transform: translateX(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .steps-list li:last-child {
+            border-bottom: none;
+        }
+
+        .steps-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-blue);
+            color: var(--white);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 18px;
+        }
+
+        .steps-list li strong {
+            color: var(--primary-steel-blue);
+            display: block;
+            margin-bottom: 8px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .steps-list li span {
+            color: var(--neutral-600);
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Features Grid - شبكة الميزات المحسنة */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .feature-item {
+            background: var(--neutral-100);
+            padding: 25px;
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            border-right: 4px solid var(--primary-steel-blue);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-item i {
+            font-size: 36px;
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 3px;
+        }
+
+        .feature-item h4 {
+            color: var(--primary-steel-blue);
+            margin-bottom: 8px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .feature-item p {
+            color: var(--neutral-600);
+            font-size: 14px;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Environment Variables - جدول المتغيرات المحسن */
+        .env-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+        }
+
+        .env-table th,
+        .env-table td {
+            padding: 16px 20px;
+            text-align: right;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .env-table th {
+            background: var(--gradient-blue);
+            color: var(--white);
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .env-table td {
+            color: var(--neutral-700);
+            font-weight: 500;
+            background: var(--primary-white);
+        }
+
+        .env-table tr:hover td {
+            background: var(--neutral-100);
+        }
+
+        .env-table code {
+            background: var(--code-bg);
+            color: #e2e8f0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 14px;
+            direction: ltr;
+            font-weight: 600;
+        }
+
+        /* Warning Box - صندوق التحذير المحسن */
+        .warning-box {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            box-shadow: var(--shadow-md);
+        }
+
+        .warning-box i {
+            color: #d97706;
+            font-size: 36px;
+        }
+
+        .warning-box-content h4 {
+            color: #92400e;
+            margin-bottom: 8px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .warning-box-content p {
+            color: #a16207;
+            margin: 0;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Cloud Providers - بطاقات المنصات المحسنة */
+        .providers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .provider-card {
+            background: var(--primary-white);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid var(--neutral-100);
+            box-shadow: var(--shadow-md);
+        }
+
+        .provider-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-steel-blue);
+        }
+
+        .provider-card i {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .provider-card.aws i { 
+            background: linear-gradient(135deg, #ff9900 0%, #ffb84d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .provider-card.azure i { 
+            background: linear-gradient(135deg, #0089d6 0%, #00a8e8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .provider-card.gcp i { 
+            background: linear-gradient(135deg, #4285f4 0%, #669df6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .provider-card.docker i { 
+            background: var(--gradient-blue);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .provider-card h4 {
+            color: var(--primary-steel-blue);
+            margin-bottom: 8px;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .provider-card p {
+            color: var(--neutral-600);
+            font-size: 14px;
+            margin: 0;
+            font-weight: 500;
+        }
+
+        /* Responsive - التصميم المتجاوب المحسن */
+        @media (max-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .providers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 30px 20px;
+            }
+
+            .page-header h1 {
+                font-size: 32px;
+            }
+
+            .page-header p {
+                font-size: 14px;
+            }
+
+            .back-btn {
+                position: static;
+                margin-bottom: 20px;
+                display: inline-flex;
+                font-size: 14px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .section-card {
+                padding: 20px;
+            }
+
+            .section-card h2 {
+                font-size: 24px;
+            }
+
+            .steps-list li {
+                padding-right: 65px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .providers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .feature-item i {
+                font-size: 28px;
+            }
+
+            .provider-card i {
+                font-size: 36px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .providers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header h1 {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="page-header">
+        <a href="home.html" class="back-btn">
+            <i class="fas fa-arrow-right"></i>
+            الرجوع للرئيسية
+        </a>
+        <div class="header-content">
+            <h1>
+                <i class="fab fa-docker"></i>
+                نشر Docker
+            </h1>
+            <p>نشر النظام كـ Container على أي منصة سحابية</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Introduction -->
+        <section class="section-card">
+            <h2>
+                <i class="fas fa-info-circle"></i>
+                نظرة عامة
+            </h2>
+            <p>
+                يدعم نظام إدارة المرور الجامعي النشر كحاوية Docker، مما يتيح لك تشغيل النظام بسهولة على أي منصة سحابية (Azure, AWS, GCP) أو على خادم داخلي.
+            </p>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-server"></i>
+                    <div>
+                        <h4>بيئة معزولة</h4>
+                        <p>تشغيل التطبيق في بيئة معزولة ومستقلة</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-sync-alt"></i>
+                    <div>
+                        <h4>سهولة التحديث</h4>
+                        <p>تحديث النظام بأمر واحد فقط</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                    <div>
+                        <h4>قابلية التوسع</h4>
+                        <p>تشغيل نسخ متعددة حسب الحاجة</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-database"></i>
+                    <div>
+                        <h4>قاعدة بيانات مدمجة</h4>
+                        <p>PostgreSQL مع تهيئة تلقائية</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Start -->
+        <section class="section-card">
+            <h2>
+                <i class="fas fa-rocket"></i>
+                البدء السريع
+            </h2>
+            <p>لتشغيل النظام كاملاً مع قاعدة البيانات بأمر واحد:</p>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">
+                    <i class="fas fa-copy"></i> نسخ
+                </button>
+                <pre><span class="comment"># تشغيل النظام مع قاعدة البيانات</span>
+<span class="command">docker compose up -d</span>
+
+<span class="comment"># عرض السجلات</span>
+<span class="command">docker compose logs -f</span>
+
+<span class="comment"># إيقاف النظام</span>
+<span class="command">docker compose down</span></pre>
+            </div>
+
+            <p>بعد التشغيل، يمكنك الوصول للنظام على: <strong>http://localhost:3000</strong></p>
+        </section>
+
+        <!-- Steps -->
+        <section class="section-card">
+            <h2>
+                <i class="fas fa-list-ol"></i>
+                خطوات النشر
+            </h2>
+            
+            <ul class="steps-list">
+                <li>
+                    <strong>تثبيت Docker</strong>
+                    <span>تأكد من تثبيت Docker و Docker Compose على الخادم</span>
+                </li>
+                <li>
+                    <strong>نسخ المشروع</strong>
+                    <span>انسخ ملفات المشروع إلى الخادم أو استخدم git clone</span>
+                </li>
+                <li>
+                    <strong>إعداد متغيرات البيئة</strong>
+                    <span>قم بتعديل كلمات المرور الافتراضية في ملف .env</span>
+                </li>
+                <li>
+                    <strong>تشغيل Docker Compose</strong>
+                    <span>شغّل الأمر docker compose up -d لبدء النظام</span>
+                </li>
+                <li>
+                    <strong>التحقق من التشغيل</strong>
+                    <span>افتح http://localhost:3000 للتأكد من عمل النظام</span>
+                </li>
+            </ul>
+        </section>
+
+        <!-- Environment Variables -->
+        <section class="section-card">
+            <h2>
+                <i class="fas fa-cogs"></i>
+                متغيرات البيئة
+            </h2>
+            <p>يمكنك تخصيص إعدادات النظام من خلال متغيرات البيئة:</p>
+
+            <table class="env-table">
+                <thead>
+                    <tr>
+                        <th>المتغير</th>
+                        <th>الوصف</th>
+                        <th>القيمة الافتراضية</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>DB_USER</code></td>
+                        <td>اسم مستخدم قاعدة البيانات</td>
+                        <td><code>traffic_user</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>DB_PASSWORD</code></td>
+                        <td>كلمة مرور قاعدة البيانات</td>
+                        <td><code>traffic_password</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>DB_NAME</code></td>
+                        <td>اسم قاعدة البيانات</td>
+                        <td><code>traffic_system</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>PORT</code></td>
+                        <td>منفذ التطبيق</td>
+                        <td><code>3000</code></td>
+                    </tr>
+                    <tr>
+                        <td><code>DB_PORT</code></td>
+                        <td>منفذ قاعدة البيانات</td>
+                        <td><code>5432</code></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">
+                    <i class="fas fa-copy"></i> نسخ
+                </button>
+                <pre><span class="comment"># تشغيل مع إعدادات مخصصة</span>
+<span class="command">DB_PASSWORD</span>=<span class="option">your_secure_password</span> <span class="command">docker compose up -d</span></pre>
+            </div>
+        </section>
+
+        <!-- Security Warning -->
+        <section class="section-card">
+            <div class="warning-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div class="warning-box-content">
+                    <h4>تحذير أمني مهم</h4>
+                    <p>
+                        تأكد من تغيير كلمات المرور الافتراضية قبل النشر في بيئة الإنتاج!
+                        استخدم كلمات مرور قوية ولا تشارك ملف .env مع أي شخص.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Commands -->
+        <section class="section-card">
+            <h2>
+                <i class="fas fa-terminal"></i>
+                أوامر متقدمة
+            </h2>
+            
+            <div class="code-block">
+                <button class="copy-btn" onclick="copyCode(this)">
+                    <i class="fas fa-copy"></i> نسخ
+                </button>
+                <pre><span class="comment"># بناء الصورة بشكل منفصل</span>
+<span class="command">docker build -t</span> <span class="option">university-traffic-system</span> .
+
+<span class="comment"># تشغيل مع قاعدة بيانات خارجية</span>
+<span class="command">docker run -d</span> \
+  <span class="option">-e DATABASE_URL=postgresql://user:pass@host:5432/db</span> \
+  <span class="option">-e DB_SSL=true</span> \
+  <span class="option">-p 3000:3000</span> \
+  <span class="option">university-traffic-system</span>
+
+<span class="comment"># عرض حالة الحاويات</span>
+<span class="command">docker compose ps</span>
+
+<span class="comment"># إعادة بناء الصورة</span>
+<span class="command">docker compose build --no-cache</span>
+
+<span class="comment"># حذف البيانات وإعادة البدء</span>
+<span class="command">docker compose down -v</span>
+<span class="command">docker compose up -d</span></pre>
+            </div>
+        </section>
+
+        <!-- Cloud Providers -->
+        <section class="section-card">
+            <h2>
+                <i class="fas fa-cloud"></i>
+                المنصات السحابية المدعومة
+            </h2>
+            <p>يمكنك نشر النظام على أي منصة تدعم Docker:</p>
+            
+            <div class="providers-grid">
+                <div class="provider-card aws">
+                    <i class="fab fa-aws"></i>
+                    <h4>Amazon AWS</h4>
+                    <p>ECS, EKS, Elastic Beanstalk</p>
+                </div>
+                <div class="provider-card azure">
+                    <i class="fab fa-microsoft"></i>
+                    <h4>Microsoft Azure</h4>
+                    <p>Container Instances, AKS</p>
+                </div>
+                <div class="provider-card gcp">
+                    <i class="fab fa-google"></i>
+                    <h4>Google Cloud</h4>
+                    <p>Cloud Run, GKE</p>
+                </div>
+                <div class="provider-card docker">
+                    <i class="fab fa-docker"></i>
+                    <h4>Docker Hub</h4>
+                    <p>نشر الصورة ومشاركتها</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Files Overview -->
+        <section class="section-card">
+            <h2>
+                <i class="fas fa-file-code"></i>
+                ملفات Docker
+            </h2>
+            
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-file"></i>
+                    <div>
+                        <h4>Dockerfile</h4>
+                        <p>تعريف صورة التطبيق (Node.js 18 Alpine)</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-file"></i>
+                    <div>
+                        <h4>docker-compose.yml</h4>
+                        <p>تنسيق التطبيق وقاعدة البيانات</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-file"></i>
+                    <div>
+                        <h4>.dockerignore</h4>
+                        <p>استثناء الملفات غير الضرورية</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-file"></i>
+                    <div>
+                        <h4>.env.example</h4>
+                        <p>نموذج متغيرات البيئة</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Copy code to clipboard
+        function copyCode(btn) {
+            const codeBlock = btn.parentElement;
+            const code = codeBlock.querySelector('pre').textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                btn.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
+                btn.classList.add('copied');
+                
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-copy"></i> نسخ';
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+    </script>
+</body>
+</html>

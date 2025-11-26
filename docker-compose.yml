@@ -1,0 +1,90 @@
+# ============================================
+# Docker Compose - نظام إدارة المرور الجامعي
+# University Traffic Management System
+# ============================================
+# استخدام: / Usage:
+# docker compose up -d
+# docker compose logs -f
+# docker compose down
+# ============================================
+# ⚠️ تحذير أمني: قم بتغيير كلمات المرور الافتراضية قبل النشر!
+# ⚠️ Security Warning: Change default passwords before deployment!
+# يمكنك تعيين متغيرات البيئة في ملف .env أو عند التشغيل:
+# DB_PASSWORD=your_secure_password docker compose up -d
+# ============================================
+
+services:
+  # ============================================
+  # خدمة التطبيق / Application Service
+  # ============================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: traffic-system-app
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - DATABASE_URL=postgresql://${DB_USER:-traffic_user}:${DB_PASSWORD:-traffic_password}@db:5432/${DB_NAME:-traffic_system}
+      - DB_SSL=false
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    volumes:
+      - uploads_data:/app/uploads
+      - reports_data:/app/reports
+    networks:
+      - traffic-network
+
+  # ============================================
+  # خدمة قاعدة البيانات PostgreSQL / PostgreSQL Database Service
+  # ============================================
+  db:
+    image: postgres:15-alpine
+    container_name: traffic-system-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=${DB_USER:-traffic_user}
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-traffic_password}
+      - POSTGRES_DB=${DB_NAME:-traffic_system}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./schema.postgres.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-traffic_user} -d ${DB_NAME:-traffic_system}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - traffic-network
+
+# ============================================
+# الشبكات / Networks
+# ============================================
+networks:
+  traffic-network:
+    driver: bridge
+
+# ============================================
+# وحدات التخزين / Volumes
+# ============================================
+volumes:
+  postgres_data:
+    driver: local
+  uploads_data:
+    driver: local
+  reports_data:
+    driver: local

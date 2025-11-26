@@ -100,10 +100,11 @@ npm install && npm start
 
 | المكون | الحالة | التفاصيل |
 |--------|--------|-----------|
+| **Docker** | ✅ جاهز | Dockerfile + docker-compose.yml - Container deployment ready |
 | **الخادم المحلي** | ✅ جاهز | 4 خوادم عالية الجودة - [الدليل](docs/SERVER_SETUP_AR.md) |
 | **قاعدة البيانات** | ✅ سحابية | PostgreSQL Cloud Database - **[دليل الربط](DATABASE_CONNECTION_AR.md)** |
 | **Backend API** | ✅ جاهز | Node.js + Express - [التوثيق](CLOUD_DATABASE_GUIDE.md) |
-| **النشر** | ✅ جاهز | GitHub Pages + Render.com - [الدليل](docs/GITHUB_PAGES_SETUP.md) |
+| **النشر** | ✅ جاهز | GitHub Pages + Render.com + Docker - [الدليل](docs/GITHUB_PAGES_SETUP.md) |
 | **Render.com** | ✅ مُصلح | تم إصلاح `render.yaml` - [دليل Render](docs/RENDER_DEPLOYMENT_AR.md) |
 | **الأمان** | ✅ آمن | bcrypt + Helmet + Rate Limiting - [SECURITY.md](SECURITY.md) |
 | **المراجعة الشاملة** | ✅ مكتملة | **[SYSTEM_REVIEW.md](SYSTEM_REVIEW.md)** - مراجعة تفصيلية كاملة |
@@ -208,6 +209,43 @@ N-M/
 ```
 
 ## 🚀 التشغيل
+
+### 🐳 النشر باستخدام Docker (موصى به جداً ⭐⭐⭐⭐)
+
+**أسهل طريقة لتشغيل النظام كـ Container:**
+
+```bash
+# تشغيل التطبيق مع قاعدة البيانات
+docker compose up -d
+
+# عرض السجلات
+docker compose logs -f
+
+# إيقاف الخدمات
+docker compose down
+```
+
+سيعمل النظام على `http://localhost:3000` مع:
+- ✅ قاعدة بيانات PostgreSQL في Container
+- ✅ تهيئة تلقائية للجداول والمستخدمين
+- ✅ تخزين دائم للبيانات
+- ✅ جاهز للنشر على أي منصة سحابية (Azure, AWS, GCP)
+
+**بناء الصورة بشكل منفصل:**
+```bash
+docker build -t university-traffic-system .
+```
+
+**تشغيل مع قاعدة بيانات خارجية:**
+```bash
+docker run -d \
+  -e DATABASE_URL=postgresql://user:pass@host:5432/db \
+  -e DB_SSL=true \
+  -p 3000:3000 \
+  university-traffic-system
+```
+
+---
 
 ### 🌐 الطريقة المحدثة: مع قاعدة بيانات سحابية (موصى به ⭐⭐⭐)
 
