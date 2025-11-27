@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Car, MagnifyingGlass } from '@phosphor-icons/react';
 import { useLocalStorage } from '../hooks/use-local-storage';
 import { formatDateTime } from '../lib/utils';
@@ -11,11 +11,10 @@ import type { Vehicle, Visit, Violation } from '../lib/types';
 export default function VehiclesTab() {
   const [visits] = useLocalStorage<Visit[]>('visits', []);
   const [violations] = useLocalStorage<Violation[]>('violations', []);
-  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
 
-  // تجميع المركبات تلقائياً
-  useEffect(() => {
+  // تجميع المركبات تلقائياً باستخدام useMemo لتجنب إعادة الحساب غير الضرورية
+  const vehicles = useMemo(() => {
     const vehicleMap = new Map<string, Vehicle>();
 
     // معالجة الزيارات
@@ -64,7 +63,7 @@ export default function VehiclesTab() {
       }
     });
 
-    setVehicles(Array.from(vehicleMap.values()));
+    return Array.from(vehicleMap.values());
   }, [visits, violations]);
 
   const filteredVehicles = vehicles.filter(v =>

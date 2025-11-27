@@ -81,13 +81,26 @@ export interface ParkPowData {
 }
 
 /**
+ * بيانات حدث Webhook
+ */
+export interface WebhookEventData {
+  plate_number?: string;
+  confidence?: number;
+  image_url?: string;
+  location?: string;
+  camera_id?: string;
+  timestamp?: string;
+  [key: string]: unknown;
+}
+
+/**
  * حدث Webhook
  */
 export interface WebhookEvent {
   id: string;
   timestamp: string;
   type: 'plate_recognized' | 'violation_detected';
-  data: any;
+  data: WebhookEventData;
   status: 'pending' | 'processed' | 'failed';
   forwardedToParkPow?: boolean;
 }
