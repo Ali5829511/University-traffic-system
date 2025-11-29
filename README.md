@@ -47,8 +47,6 @@
 ├── advanced_vehicle_analyzer.html       # تحليل المركبات
 ├── advanced_export_page.html            # تصدير البيانات
 ├── webhook_configuration.html           # إعدادات Webhook
-├── auth.js                              # نظام المصادقة والصلاحيات
-├── database.js                          # إدارة قاعدة البيانات
 ├── vehicle_database.js                  # قاعدة بيانات المركبات
 ├── residential_units_data.js            # بيانات الوحدات السكنية
 ├── real_data_loader.js                  # تحميل البيانات الحقيقية

@@ -305,13 +305,15 @@ traffic_dashboard.html (لوحة المرور الرئيسية)
 │   ├── email_settings.html 🆕
 │   └── webhook_configuration.html
 │
-├── 🔧 JavaScript Files - 6 files
-│   ├── auth.js (المصادقة)
-│   ├── database.js (قاعدة البيانات)
+├── 🔧 JavaScript Files - 4 files
 │   ├── vehicle_database.js
 │   ├── residential_units_data.js
 │   ├── real_data_loader.js
 │   └── advanced_export.js
+│
+├── 📁 js/ Directory - Frontend modules
+│   ├── auth.js (المصادقة)
+│   └── database.js (قاعدة البيانات المحلية)
 │
 └── 📚 Documentation - 4 files
     ├── README.md
