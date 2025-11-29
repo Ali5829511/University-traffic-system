@@ -29,24 +29,40 @@
 
 ```
 /
-├── index.html                           # صفحة تسجيل الدخول (نقطة البداية)
+├── index.html                           # صفحة التحويل (تحول إلى تسجيل الدخول)
+├── login.html                           # صفحة تسجيل الدخول الرئيسية
 ├── home.html                            # الصفحة الرئيسية
 ├── unified_dashboard.html               # لوحة التحكم الرئيسية
 ├── traffic_dashboard.html               # لوحة المرور 🆕
 ├── building_monitoring.html             # مراقبة المباني 🆕
+├── parking_management.html              # إدارة المواقف 🆕
 ├── enhanced_stickers_management.html    # إدارة الملصقات 🆕
 ├── plate_recognition.html               # التعرف على اللوحات 🆕
 ├── advanced_users_management.html       # إدارة المستخدمين 🆕
 ├── comprehensive_reports_enhanced.html  # التقارير الشاملة 🆕
+├── statistics_management.html           # إحصائيات النظام 🆕
+├── advanced_search.html                 # البحث المتقدم 🆕
 ├── email_settings.html                  # إعدادات البريد الإلكتروني 🆕
 ├── residential_units_management.html    # إدارة الوحدات السكنية
 ├── apartments_management.html           # إدارة الشقق
 ├── villas_management.html               # إدارة الفلل
 ├── violations_report.html               # تقارير المخالفات
+├── violation_images.html                # صور المخالفات 🆕
 ├── vehicle_database_manager.html        # إدارة قاعدة بيانات المركبات
 ├── advanced_vehicle_analyzer.html       # تحليل المركبات
-├── advanced_export_page.html            # تصدير البيانات
+├── api_export_page.html                 # تصدير البيانات عبر API 🆕
+├── advanced_export_page.html            # تصدير البيانات المتقدم
+├── import_all_data_page.html            # استيراد البيانات 🆕
+├── import_stickers_page.html            # استيراد الملصقات 🆕
+├── import_visits_page.html              # استيراد الزيارات 🆕
 ├── webhook_configuration.html           # إعدادات Webhook
+├── audit_logs.html                      # سجلات الأنشطة 🆕
+├── docker_deployment.html               # نشر Docker 🆕
+├── server.js                            # خادم Node.js/Express (Backend)
+├── db-config.js                         # إعدادات قاعدة البيانات
+├── schema.postgres.sql                  # مخطط قاعدة البيانات PostgreSQL
+├── js/auth.js                           # نظام المصادقة
+├── js/database.js                       # قاعدة البيانات المحلية
 ├── vehicle_database.js                  # قاعدة بيانات المركبات
 ├── residential_units_data.js            # بيانات الوحدات السكنية
 ├── real_data_loader.js                  # تحميل البيانات الحقيقية
