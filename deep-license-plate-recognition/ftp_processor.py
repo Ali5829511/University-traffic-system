@@ -29,7 +29,7 @@ Use the Snapshot SDK instead of the Cloud Api: ftp_processor.py --ftp-host host 
     parser.add_argument(
         '-r',
         '--regions',
-        help='Match the license plate pattern fo specific region',
+        help='Match the license plate pattern for specific region',
         required=False,
         action="append")
     parser.add_argument(

@@ -16,7 +16,7 @@ def parse_arguments(args_hook=lambda _: _):
     parser = argparse.ArgumentParser(
         description=
         'Read license plates from images and output the result as JSON or CSV.',
-        epilog="""Examples:'
+        epilog="""Examples:
 Process images from a folder: python plate_recognition.py -a MY_API_KEY /path/to/vehicle-*.jpg
 Use the Snapshot SDK instead of the Cloud Api: python plate_recognition.py -s http://localhost:8080 /path/to/vehicle-*.jpg
 Specify Camera ID and/or two Regions: plate_recognition.py -a MY_API_KEY --camera-id Camera1 -r us-ca -r th-37 /path/to/vehicle-*.jpg""",

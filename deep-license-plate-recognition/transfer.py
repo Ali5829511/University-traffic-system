@@ -8,6 +8,7 @@ import uuid
 from argparse import RawTextHelpFormatter
 from datetime import datetime
 from pathlib import Path
+from urllib.parse import urlparse
 
 try:
     from watchdog.events import PatternMatchingEventHandler
@@ -230,7 +231,7 @@ class Handler(PatternMatchingEventHandler):
         try:
             _queue.put(event.src_path)
         except queue.Full:
-            print('Queue is full. Skipping %s.' % event.scr_path)
+            print('Queue is full. Skipping %s.' % event.src_path)
 
 
 def main(args, debug=False):
@@ -275,11 +276,14 @@ def validate_env(args):
             "Pass argument --use-parkpow or the argument --output-file")
     if 'http' not in args.alpr_api:
         messages.append("--alpr-api is not a valid URL")
-    if 'api.platerecognizer.com' in args.alpr_api and not args.platerec_token:
+    # Use proper URL parsing for security - check if the hostname matches exactly
+    parsed_url = urlparse(args.alpr_api)
+    is_cloud_api = parsed_url.netloc == 'api.platerecognizer.com'
+    if is_cloud_api and not args.platerec_token:
         messages.append(
             "Missing argument --platerec-token or SDK argument --alpr-api")
 
-    elif 'api.platerecognizer.com' not in args.alpr_api:
+    elif not is_cloud_api:
         try:
             response = requests.get(args.alpr_api.rsplit('/v1', 1)[0],
                                     timeout=2)
