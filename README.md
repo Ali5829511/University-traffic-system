@@ -453,6 +453,29 @@ pages/advanced_analytics_dashboard.html
 - `plate_recognition_config.json.example` - ملف الإعدادات النموذجي
 - `requirements.txt` - المتطلبات
 
+## 🔧 أدوات التعرف على اللوحات المدمجة (Deep License Plate Recognition)
+
+تم دمج مستودع [deep-license-plate-recognition](https://github.com/parkpow/deep-license-plate-recognition) في هذا المشروع:
+
+### الميزات:
+- ✅ **قراءة اللوحات من الصور** - `plate_recognition.py`
+- ✅ **طمس/إخفاء اللوحات** - `number_plate_redaction.py`
+- ✅ **معالجة صور FTP** - `ftp_processor.py`
+- ✅ **نقل الصور تلقائياً** - `transfer.py`
+- ✅ **قياس الأداء** - `benchmark.py`
+- ✅ **أدوات Webhook** - للتكامل مع الأنظمة الأخرى
+- ✅ **مراقبة البث المباشر** - للكاميرات
+- ✅ **أمثلة بلغات متعددة** - C++, C#, Java
+
+### الاستخدام السريع:
+```bash
+cd deep-license-plate-recognition
+pip install requests pillow
+python plate_recognition.py --api-key MY_API_KEY /path/to/vehicle.jpg
+```
+
+**للمزيد من التفاصيل:** راجع [deep-license-plate-recognition/README.md](deep-license-plate-recognition/README.md) و [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)
+
 ## 📧 نظام الإشعارات عبر البريد الإلكتروني
 
 تم إضافة نظام متكامل لإرسال الإشعارات عبر البريد الإلكتروني:
