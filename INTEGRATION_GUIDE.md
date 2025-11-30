@@ -395,12 +395,60 @@ npm start
 
 ---
 
+## 🚀 أدوات التعرف على اللوحات المدمجة / Integrated ALPR Tools
+
+تم دمج مستودع [deep-license-plate-recognition](https://github.com/parkpow/deep-license-plate-recognition) في هذا المشروع ضمن المجلد `deep-license-plate-recognition/`:
+
+### السكريبتات الرئيسية / Main Scripts
+
+| الملف | الوصف |
+|-------|-------|
+| `deep-license-plate-recognition/plate_recognition.py` | قراءة لوحات السيارات من الصور |
+| `deep-license-plate-recognition/number_plate_redaction.py` | طمس/إخفاء اللوحات في الصور |
+| `deep-license-plate-recognition/ftp_processor.py` | معالجة صور FTP |
+| `deep-license-plate-recognition/benchmark.py` | قياس أداء SDK |
+| `deep-license-plate-recognition/transfer.py` | نقل الصور تلقائياً |
+
+### مجلدات الأدوات / Tools Directories
+
+| المجلد | الوصف |
+|--------|-------|
+| `deep-license-plate-recognition/webhooks/` | أدوات استقبال البيانات عبر Webhook |
+| `deep-license-plate-recognition/stream/` | أدوات البث المباشر ومراقبة الكاميرات |
+| `deep-license-plate-recognition/docker/` | أدوات Docker للتشغيل المحلي |
+| `deep-license-plate-recognition/cpp/` | مثال C++ |
+| `deep-license-plate-recognition/csharp/` | مثال C# |
+| `deep-license-plate-recognition/java/` | مثال Java |
+
+### استخدام الأدوات / Using the Tools
+
+#### قراءة لوحة من صورة:
+```bash
+cd deep-license-plate-recognition
+pip install requests pillow
+python plate_recognition.py --api-key MY_API_KEY /path/to/vehicle.jpg
+```
+
+#### معالجة صور FTP:
+```bash
+python ftp_processor.py --api-key MY_API_KEY --ftp-host hostname --ftp-user user --ftp-password password --folder /path/to/folder
+```
+
+#### مراقبة دفق الكاميرا:
+```bash
+cd stream
+python stream_monitor.py -c stream_container_name -p 8001
+```
+
+---
+
 ## 🔗 روابط مفيدة / Useful Links
 
 - 📖 [Plate Recognizer Documentation](https://docs.platerecognizer.com)
 - 🔧 [Plate Recognizer Dashboard](https://app.platerecognizer.com)
 - 🅿️ [ParkPow Dashboard](https://app.parkpow.com)
 - 📊 [ParkPow API](https://app.parkpow.com/api/v1/webhook-receiver/)
+- 📚 [Deep License Plate Recognition GitHub](https://github.com/parkpow/deep-license-plate-recognition)
 
 ---
 
@@ -411,10 +459,11 @@ npm start
 2. تحقق من `SECURITY.md` للأمان
 3. راجع `API_SETUP.md` للإعدادات التفصيلية
 4. راجع `WEBHOOK_ARCHITECTURE.md` لبنية Webhook
+5. راجع `deep-license-plate-recognition/README.md` لأدوات التعرف على اللوحات
 
 ---
 
 **تم إنشاء هذا الدليل بواسطة:** نظام إدارة المرور الجامعي  
 **جامعة الإمام محمد بن سعود الإسلامية**  
-**التاريخ:** 2025-11-25  
-**الإصدار:** 1.0
+**التاريخ:** 2025-11-30  
+**الإصدار:** 1.1
