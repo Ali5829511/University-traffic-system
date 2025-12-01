@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="#003c50" stroke="#d4af37" stroke-width="3"/>
+  
+  <!-- University Building Icon -->
+  <g fill="#ffffff">
+    <!-- Main Building -->
+    <rect x="60" y="90" width="80" height="60" rx="2"/>
+    
+    <!-- Dome -->
+    <ellipse cx="100" cy="90" rx="30" ry="20"/>
+    
+    <!-- Columns -->
+    <rect x="70" y="100" width="8" height="45"/>
+    <rect x="86" y="100" width="8" height="45"/>
+    <rect x="106" y="100" width="8" height="45"/>
+    <rect x="122" y="100" width="8" height="45"/>
+    
+    <!-- Door -->
+    <rect x="90" y="120" width="20" height="30" rx="10" ry="10"/>
+    
+    <!-- Minaret/Tower Left -->
+    <rect x="45" y="70" width="12" height="80"/>
+    <polygon points="51,70 45,85 57,85"/>
+    <circle cx="51" cy="65" r="5"/>
+    
+    <!-- Minaret/Tower Right -->
+    <rect x="143" y="70" width="12" height="80"/>
+    <polygon points="149,70 143,85 155,85"/>
+    <circle cx="149" cy="65" r="5"/>
+  </g>
+  
+  <!-- Decorative Crescent -->
+  <path d="M100 45 Q105 35 100 25 Q90 35 100 45" fill="#d4af37"/>
+  
+  <!-- Stars -->
+  <circle cx="70" cy="55" r="3" fill="#d4af37"/>
+  <circle cx="130" cy="55" r="3" fill="#d4af37"/>
+</svg>
