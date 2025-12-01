@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Initialize Data</title>
+</head>
+<body>
+    <h1>Initializing Data...</h1>
+    <div id="status"></div>
+    
+    <script src="residential_units_data.js"></script>
+    <script>
+        const statusDiv = document.getElementById('status');
+        
+        try {
+            // Initialize residential units data
+            const dataManager = new ResidentialUnitsData();
+            statusDiv.innerHTML += '<p>✓ Data initialized successfully!</p>';
+            statusDiv.innerHTML += '<p>Redirecting to residential units management...</p>';
+            
+            setTimeout(() => {
+                window.location.href = 'residential_units_management.html';
+            }, 2000);
+        } catch (error) {
+            statusDiv.innerHTML += '<p>❌ Error: ' + error.message + '</p>';
+        }
+    </script>
+
+    <!-- تحميل مكتبات النظام -->
+    <script src="/js/database.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // التحقق من تسجيل الدخول (مطلوب صلاحيات مدير)
+        if (!window.authManager || !window.authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        } else if (!window.authManager.hasRole('admin')) {
+            alert('عذراً، هذه الصفحة متاحة للمديرين فقط');
+            window.location.href = 'home.html';
+        }
+    </script>
+</body>
+</html>

@@ -34,7 +34,7 @@ if (!fs.existsSync(RESULTS_DIR)) {
 // Database connection (optional, only if DATABASE_URL is configured)
 let db = null;
 try {
-    const dbConfig = require('../db-config');
+    const dbConfig = require('../src/server/config/db-config');
     db = dbConfig;
 } catch (error) {
     console.log('⚠️ قاعدة البيانات غير متصلة - سيتم الاستمرار بدون حفظ في قاعدة البيانات');

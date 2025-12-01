@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقارير الشاملة - نظام إدارة المرور</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #003c50 0%, #00566f 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #8B6F47;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #8B6F47, #A0826D);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 111, 71, 0.4);
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .report-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .report-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .report-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .report-description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .report-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #5568d3;
+        }
+
+        .btn-export {
+            background: #51cf66;
+            color: white;
+        }
+
+        .btn-export:hover {
+            background: #40c057;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-chart-bar"></i>
+                التقارير الشاملة
+            </h1>
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-right"></i>
+                العودة للصفحة الرئيسية
+            </a>
+        </div>
+
+        <div class="reports-grid">
+            <div class="report-card">
+                <div class="report-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="report-title">تقرير المركبات</div>
+                <div class="report-description">تقرير شامل عن جميع المركبات المسجلة والملصقات</div>
+                <div class="report-actions">
+                    <button class="btn-action btn-view" onclick="viewReport('vehicles')">
+                        <i class="fas fa-eye"></i> عرض
+                    </button>
+                    <button class="btn-action btn-export" onclick="exportReport('vehicles')">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div class="report-title">تقرير المخالفات</div>
+                <div class="report-description">تقرير تفصيلي عن المخالفات المرورية والأرصدة</div>
+                <div class="report-actions">
+                    <button class="btn-action btn-view" onclick="viewReport('violations')">
+                        <i class="fas fa-eye"></i> عرض
+                    </button>
+                    <button class="btn-action btn-export" onclick="exportReport('violations')">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-icon" style="background: linear-gradient(135deg, #11998e, #38ef7d);">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <div class="report-title">تقرير المباني</div>
+                <div class="report-description">تقرير حول الوحدات السكنية ونسب الإشغال</div>
+                <div class="report-actions">
+                    <button class="btn-action btn-view" onclick="viewReport('buildings')">
+                        <i class="fas fa-eye"></i> عرض
+                    </button>
+                    <button class="btn-action btn-export" onclick="exportReport('buildings')">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-icon" style="background: linear-gradient(135deg, #ffd93d, #f9ca24);">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <div class="report-title">تقرير المستخدمين</div>
+                <div class="report-description">تقرير عن المستخدمين والصلاحيات ونشاط النظام</div>
+                <div class="report-actions">
+                    <button class="btn-action btn-view" onclick="viewReport('users')">
+                        <i class="fas fa-eye"></i> عرض
+                    </button>
+                    <button class="btn-action btn-export" onclick="exportReport('users')">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a52);">
+                    <i class="fas fa-file-chart-line"></i>
+                </div>
+                <div class="report-title">التقرير الإحصائي</div>
+                <div class="report-description">إحصائيات شاملة وتحليلات متقدمة للنظام</div>
+                <div class="report-actions">
+                    <button class="btn-action btn-view" onclick="viewReport('statistics')">
+                        <i class="fas fa-eye"></i> عرض
+                    </button>
+                    <button class="btn-action btn-export" onclick="exportReport('statistics')">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                    <i class="fas fa-file-pdf"></i>
+                </div>
+                <div class="report-title">التقرير الشهري</div>
+                <div class="report-description">تقرير شهري شامل لجميع الأنشطة والعمليات</div>
+                <div class="report-actions">
+                    <button class="btn-action btn-view" onclick="viewReport('monthly')">
+                        <i class="fas fa-eye"></i> عرض
+                    </button>
+                    <button class="btn-action btn-export" onclick="exportReport('monthly')">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                </div>
+            </div>
+
+            <div class="report-card">
+                <div class="report-icon" style="background: linear-gradient(135deg, #fa8c16, #fa541c);">
+                    <i class="fas fa-file-image"></i>
+                </div>
+                <div class="report-title">تقرير المخالفات بالصور</div>
+                <div class="report-description">تقرير المركبات المخالفة مع صور مصغرة للمخالفات</div>
+                <div class="report-actions">
+                    <button class="btn-action btn-view" onclick="viewReport('violations-images')">
+                        <i class="fas fa-eye"></i> عرض
+                    </button>
+                    <button class="btn-action btn-export" onclick="exportReport('violations-images')">
+                        <i class="fas fa-download"></i> تصدير
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/database.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="residential_units_data.js"></script>
+    <script src="advanced_export.js"></script>
+    <script>
+        // التحقق من المصادقة
+        if (!window.authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        /**
+         * عرض التقرير
+         */
+        async function viewReport(type) {
+            try {
+                const data = await getReportData(type);
+                if (!data || data.length === 0) {
+                    alert('لا توجد بيانات متاحة لهذا التقرير');
+                    return;
+                }
+
+                // إنشاء نافذة لعرض التقرير
+                const reportWindow = window.open('', '_blank');
+                const html = generateReportHTML(type, data);
+                reportWindow.document.write(html);
+                reportWindow.document.close();
+            } catch (error) {
+                console.error('خطأ في عرض التقرير:', error);
+                alert('حدث خطأ أثناء عرض التقرير');
+            }
+        }
+
+        /**
+         * تصدير التقرير
+         */
+        async function exportReport(type) {
+            try {
+                // عرض خيارات التصدير
+                const format = await showExportOptions();
+                if (!format) return;
+
+                const data = await getReportData(type);
+                if (!data || data.length === 0) {
+                    alert('لا توجد بيانات متاحة للتصدير');
+                    return;
+                }
+
+                // تصدير بالصيغة المحددة
+                await exportData(type, data, format);
+            } catch (error) {
+                console.error('خطأ في تصدير التقرير:', error);
+                alert('حدث خطأ أثناء تصدير التقرير');
+            }
+        }
+
+        /**
+         * عرض خيارات التصدير
+         */
+        function showExportOptions() {
+            return new Promise((resolve) => {
+                const format = prompt(
+                    'اختر صيغة التصدير:\n' +
+                    '1 - Excel (XLS)\n' +
+                    '2 - PDF (طباعة)\n' +
+                    '3 - HTML\n\n' +
+                    'أدخل رقم الخيار:',
+                    '1'
+                );
+
+                if (!format) {
+                    resolve(null);
+                    return;
+                }
+
+                const formats = {
+                    '1': 'excel',
+                    '2': 'pdf',
+                    '3': 'html'
+                };
+
+                resolve(formats[format] || 'excel');
+            });
+        }
+
+        /**
+         * الحصول على بيانات التقرير
+         */
+        async function getReportData(type) {
+            switch (type) {
+                case 'vehicles':
+                    return await getVehiclesReport();
+                case 'violations':
+                    return await getViolationsReport();
+                case 'violations-images':
+                    return await getViolationsWithImagesReport();
+                case 'buildings':
+                    return await getBuildingsReport();
+                case 'users':
+                    return await getUsersReport();
+                case 'statistics':
+                    return await getStatisticsReport();
+                case 'monthly':
+                    return await getMonthlyReport();
+                default:
+                    return [];
+            }
+        }
+
+        /**
+         * تقرير المركبات
+         */
+        async function getVehiclesReport() {
+            const stickers = await window.db.getStickers();
+            return stickers.map((sticker, index) => ({
+                index: index + 1,
+                plateNumber: sticker.plateNumber || '-',
+                ownerName: sticker.ownerName || '-',
+                unitNumber: sticker.unitNumber || '-',
+                buildingNumber: sticker.buildingNumber || '-',
+                vehicleType: sticker.vehicleType || '-',
+                color: sticker.color || '-',
+                stickerType: sticker.stickerType || '-',
+                issueDate: sticker.issueDate || '-',
+                status: sticker.status || 'نشط'
+            }));
+        }
+
+        /**
+         * تقرير المخالفات
+         */
+        async function getViolationsReport() {
+            const violations = await window.db.getViolations();
+            return violations.map((violation, index) => ({
+                index: index + 1,
+                plateNumber: violation.plateNumber || '-',
+                violationType: violation.violationType || '-',
+                violationDate: violation.violationDate || '-',
+                location: violation.location || '-',
+                amount: violation.amount || 0,
+                status: violation.status || 'معلق',
+                notes: violation.notes || '-'
+            }));
+        }
+
+        /**
+         * تقرير المخالفات مع الصور
+         */
+        async function getViolationsWithImagesReport() {
+            const violations = await window.db.getViolations();
+            return violations.map((violation, index) => ({
+                index: index + 1,
+                plateNumber: violation.plateNumber || '-',
+                violationType: violation.violationType || '-',
+                violationDate: violation.violationDate || '-',
+                location: violation.location || '-',
+                amount: violation.amount || 0,
+                status: violation.status || 'معلق',
+                notes: violation.notes || '-',
+                imageUrl: violation.imageUrl || violation.image || null
+            }));
+        }
+
+        /**
+         * تقرير المباني
+         */
+        async function getBuildingsReport() {
+            const units = JSON.parse(localStorage.getItem('residential_units') || '[]');
+            
+            // تجميع البيانات حسب المبنى
+            const buildingsMap = {};
+            units.forEach(unit => {
+                const key = unit.building_number;
+                if (!buildingsMap[key]) {
+                    buildingsMap[key] = {
+                        buildingNumber: unit.building_number,
+                        category: unit.building_category || '-',
+                        unitType: unit.unit_type || '-',
+                        totalUnits: 0,
+                        occupiedUnits: 0,
+                        vacantUnits: 0
+                    };
+                }
+                buildingsMap[key].totalUnits++;
+                if (unit.is_occupied) {
+                    buildingsMap[key].occupiedUnits++;
+                } else {
+                    buildingsMap[key].vacantUnits++;
+                }
+            });
+
+            return Object.values(buildingsMap).map((building, index) => ({
+                index: index + 1,
+                buildingNumber: building.buildingNumber,
+                category: building.category,
+                unitType: building.unitType,
+                totalUnits: building.totalUnits,
+                occupiedUnits: building.occupiedUnits,
+                vacantUnits: building.vacantUnits,
+                occupancyRate: ((building.occupiedUnits / building.totalUnits) * 100).toFixed(1) + '%'
+            }));
+        }
+
+        /**
+         * تقرير المستخدمين
+         */
+        async function getUsersReport() {
+            const users = await window.db.getUsers();
+            return users.map((user, index) => ({
+                index: index + 1,
+                username: user.username || '-',
+                name: user.name || '-',
+                email: user.email || '-',
+                role: user.role || '-',
+                status: user.status || '-',
+                createdDate: user.createdDate || '-',
+                lastLogin: user.lastLogin ? new Date(user.lastLogin).toLocaleString('ar-SA') : 'لم يسجل دخول بعد'
+            }));
+        }
+
+        /**
+         * التقرير الإحصائي
+         */
+        async function getStatisticsReport() {
+            const stickers = await window.db.getStickers();
+            const violations = await window.db.getViolations();
+            const users = await window.db.getUsers();
+            const units = JSON.parse(localStorage.getItem('residential_units') || '[]');
+
+            const occupiedUnits = units.filter(u => u.is_occupied).length;
+            const vacantUnits = units.filter(u => !u.is_occupied).length;
+
+            return [
+                { category: 'إجمالي المركبات المسجلة', value: stickers.length, type: 'عدد' },
+                { category: 'إجمالي المخالفات', value: violations.length, type: 'عدد' },
+                { category: 'إجمالي المستخدمين', value: users.length, type: 'عدد' },
+                { category: 'إجمالي الوحدات السكنية', value: units.length, type: 'عدد' },
+                { category: 'الوحدات المشغولة', value: occupiedUnits, type: 'عدد' },
+                { category: 'الوحدات الشاغرة', value: vacantUnits, type: 'عدد' },
+                { category: 'نسبة الإشغال', value: units.length > 0 ? ((occupiedUnits / units.length) * 100).toFixed(1) + '%' : '0%', type: 'نسبة' }
+            ];
+        }
+
+        /**
+         * التقرير الشهري
+         */
+        async function getMonthlyReport() {
+            const currentMonth = new Date().getMonth();
+            const currentYear = new Date().getFullYear();
+            
+            const stickers = await window.db.getStickers();
+            const violations = await window.db.getViolations();
+            
+            // تصفية البيانات حسب الشهر الحالي
+            const monthlyStickers = stickers.filter(s => {
+                const date = new Date(s.issueDate);
+                return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+            });
+
+            const monthlyViolations = violations.filter(v => {
+                const date = new Date(v.violationDate);
+                return date.getMonth() === currentMonth && date.getFullYear() === currentYear;
+            });
+
+            return [
+                { 
+                    item: 'الملصقات الصادرة هذا الشهر', 
+                    count: monthlyStickers.length,
+                    details: 'ملصقات جديدة'
+                },
+                { 
+                    item: 'المخالفات المسجلة هذا الشهر', 
+                    count: monthlyViolations.length,
+                    details: 'مخالفات جديدة'
+                },
+                { 
+                    item: 'إجمالي الملصقات', 
+                    count: stickers.length,
+                    details: 'منذ بداية النظام'
+                },
+                { 
+                    item: 'إجمالي المخالفات', 
+                    count: violations.length,
+                    details: 'منذ بداية النظام'
+                }
+            ];
+        }
+
+        /**
+         * توليد HTML للتقرير
+         */
+        function generateReportHTML(type, data) {
+            const titles = {
+                vehicles: 'تقرير المركبات',
+                violations: 'تقرير المخالفات',
+                'violations-images': 'تقرير المخالفات بالصور',
+                buildings: 'تقرير المباني',
+                users: 'تقرير المستخدمين',
+                statistics: 'التقرير الإحصائي',
+                monthly: 'التقرير الشهري'
+            };
+
+            let tableHeaders = '';
+            let tableRows = '';
+            let colCount = 3; // default column count
+
+            // تحديد رؤوس الجدول والبيانات حسب نوع التقرير
+            switch (type) {
+                case 'vehicles':
+                    colCount = 10;
+                    tableHeaders = '<th>م</th><th>رقم اللوحة</th><th>اسم المالك</th><th>رقم الوحدة</th><th>رقم المبنى</th><th>نوع المركبة</th><th>اللون</th><th>نوع الملصق</th><th>تاريخ الإصدار</th><th>الحالة</th>';
+                    tableRows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td><strong>${row.plateNumber}</strong></td>
+                            <td>${row.ownerName}</td>
+                            <td>${row.unitNumber}</td>
+                            <td>${row.buildingNumber}</td>
+                            <td>${row.vehicleType}</td>
+                            <td>${row.color}</td>
+                            <td>${row.stickerType}</td>
+                            <td>${row.issueDate}</td>
+                            <td>${row.status}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'violations':
+                    colCount = 8;
+                    tableHeaders = '<th>م</th><th>رقم اللوحة</th><th>نوع المخالفة</th><th>التاريخ</th><th>الموقع</th><th>المبلغ</th><th>الحالة</th><th>ملاحظات</th>';
+                    tableRows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td><strong>${row.plateNumber}</strong></td>
+                            <td>${row.violationType}</td>
+                            <td>${row.violationDate}</td>
+                            <td>${row.location}</td>
+                            <td>${row.amount} ريال</td>
+                            <td>${row.status}</td>
+                            <td>${row.notes}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'violations-images':
+                    colCount = 9;
+                    tableHeaders = '<th>م</th><th>الصورة</th><th>رقم اللوحة</th><th>نوع المخالفة</th><th>التاريخ</th><th>الموقع</th><th>المبلغ</th><th>الحالة</th><th>ملاحظات</th>';
+                    tableRows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td style="text-align: center;">
+                                ${row.imageUrl ? `<img src="${row.imageUrl}" style="width: 100px; height: 75px; object-fit: cover; border: 2px solid #f5576c; border-radius: 5px;" alt="صورة المخالفة" />` : '<span style="color: #999;">لا توجد صورة</span>'}
+                            </td>
+                            <td><strong>${row.plateNumber}</strong></td>
+                            <td>${row.violationType}</td>
+                            <td>${row.violationDate}</td>
+                            <td>${row.location}</td>
+                            <td>${row.amount} ريال</td>
+                            <td>${row.status}</td>
+                            <td>${row.notes}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'buildings':
+                    colCount = 8;
+                    tableHeaders = '<th>م</th><th>رقم المبنى</th><th>الفئة</th><th>نوع الوحدة</th><th>إجمالي الوحدات</th><th>الوحدات المشغولة</th><th>الوحدات الشاغرة</th><th>نسبة الإشغال</th>';
+                    tableRows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td><strong>${row.buildingNumber}</strong></td>
+                            <td>${row.category}</td>
+                            <td>${row.unitType}</td>
+                            <td>${row.totalUnits}</td>
+                            <td>${row.occupiedUnits}</td>
+                            <td>${row.vacantUnits}</td>
+                            <td><strong>${row.occupancyRate}</strong></td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'users':
+                    colCount = 8;
+                    tableHeaders = '<th>م</th><th>اسم المستخدم</th><th>الاسم</th><th>البريد الإلكتروني</th><th>الدور</th><th>الحالة</th><th>تاريخ الإنشاء</th><th>آخر تسجيل دخول</th>';
+                    tableRows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td><strong>${row.username}</strong></td>
+                            <td>${row.name}</td>
+                            <td>${row.email}</td>
+                            <td>${row.role}</td>
+                            <td>${row.status}</td>
+                            <td>${row.createdDate}</td>
+                            <td>${row.lastLogin}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'statistics':
+                    colCount = 3;
+                    tableHeaders = '<th>الفئة</th><th>القيمة</th><th>النوع</th>';
+                    tableRows = data.map(row => `
+                        <tr>
+                            <td><strong>${row.category}</strong></td>
+                            <td style="font-size: 18px; color: #8B6F47;"><strong>${row.value}</strong></td>
+                            <td>${row.type}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'monthly':
+                    colCount = 3;
+                    tableHeaders = '<th>البند</th><th>العدد</th><th>التفاصيل</th>';
+                    tableRows = data.map(row => `
+                        <tr>
+                            <td><strong>${row.item}</strong></td>
+                            <td style="font-size: 18px; color: #8B6F47;"><strong>${row.count}</strong></td>
+                            <td>${row.details}</td>
+                        </tr>
+                    `).join('');
+                    break;
+            }
+
+            return `
+                <!DOCTYPE html>
+                <html lang="ar" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>${titles[type]}</title>
+                    <style>
+                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                        body {
+                            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                            padding: 20px;
+                            background: #f5f5f5;
+                            direction: rtl;
+                        }
+                        .container {
+                            max-width: 1400px;
+                            margin: 0 auto;
+                            background: white;
+                            padding: 30px;
+                            border-radius: 10px;
+                            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+                        }
+                        .header {
+                            text-align: center;
+                            margin-bottom: 30px;
+                            border-bottom: 3px solid #8B6F47;
+                            padding-bottom: 20px;
+                        }
+                        .header h1 {
+                            color: #8B6F47;
+                            font-size: 32px;
+                            margin-bottom: 10px;
+                        }
+                        .header p {
+                            color: #666;
+                            font-size: 14px;
+                            margin: 5px 0;
+                        }
+                        .actions {
+                            display: flex;
+                            gap: 10px;
+                            margin-bottom: 20px;
+                            justify-content: center;
+                        }
+                        .btn {
+                            padding: 12px 25px;
+                            border: none;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-weight: 600;
+                            font-size: 16px;
+                            transition: all 0.3s ease;
+                        }
+                        .btn-print {
+                            background: #51cf66;
+                            color: white;
+                        }
+                        .btn-print:hover {
+                            background: #40c057;
+                        }
+                        table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin-top: 20px;
+                        }
+                        th, td {
+                            border: 1px solid #ddd;
+                            padding: 12px;
+                            text-align: center;
+                        }
+                        th {
+                            background: #8B6F47;
+                            color: white;
+                            font-weight: 700;
+                        }
+                        tr:nth-child(even) {
+                            background: #f8f5f0;
+                        }
+                        tr:hover {
+                            background: #e8e4dc;
+                        }
+                        .footer {
+                            margin-top: 30px;
+                            text-align: center;
+                            color: #666;
+                            font-size: 12px;
+                            border-top: 2px solid #ddd;
+                            padding-top: 20px;
+                        }
+                        @media print {
+                            .actions { display: none; }
+                            body { background: white; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="container">
+                        <div class="header">
+                            <h1>${titles[type]}</h1>
+                            <p>تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')} - ${new Date().toLocaleTimeString('ar-SA')}</p>
+                            <p>وحدة إسكان هيئة التدريس - جامعة الإمام محمد بن سعود الإسلامية</p>
+                            <p>عدد السجلات: ${data.length}</p>
+                        </div>
+                        
+                        <div class="actions">
+                            <button class="btn btn-print" onclick="window.print()">
+                                <i class="fas fa-print"></i> طباعة
+                            </button>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>${tableHeaders}</tr>
+                            </thead>
+                            <tbody>
+                                ${tableRows || `<tr><td colspan="${colCount}">لا توجد بيانات</td></tr>`}
+                            </tbody>
+                        </table>
+
+                        <div class="footer">
+                            <p>تم إنشاء هذا التقرير تلقائياً بواسطة نظام إدارة المرور</p>
+                            <p>© ${new Date().getFullYear()} جامعة الإمام محمد بن سعود الإسلامية - جميع الحقوق محفوظة</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+        }
+
+        /**
+         * تصدير البيانات
+         */
+        async function exportData(type, data, format) {
+            const titles = {
+                vehicles: 'تقرير المركبات',
+                violations: 'تقرير المخالفات',
+                buildings: 'تقرير المباني',
+                users: 'تقرير المستخدمين',
+                statistics: 'التقرير الإحصائي',
+                monthly: 'التقرير الشهري'
+            };
+
+            if (typeof advancedExporter !== 'undefined') {
+                advancedExporter.title = titles[type];
+                advancedExporter.setData(data, []);
+            }
+
+            switch (format) {
+                case 'excel':
+                    await exportToExcelFormat(type, data);
+                    break;
+                case 'pdf':
+                    const html = generateReportHTML(type, data);
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(html);
+                    printWindow.document.close();
+                    setTimeout(() => printWindow.print(), 500);
+                    break;
+                case 'html':
+                    await exportToHTMLFormat(type, data);
+                    break;
+            }
+        }
+
+        /**
+         * تصدير إلى Excel
+         */
+        async function exportToExcelFormat(type, data) {
+            const titles = {
+                vehicles: 'تقرير المركبات',
+                violations: 'تقرير المخالفات',
+                'violations-images': 'تقرير المخالفات بالصور',
+                buildings: 'تقرير المباني',
+                users: 'تقرير المستخدمين',
+                statistics: 'التقرير الإحصائي',
+                monthly: 'التقرير الشهري'
+            };
+
+            let html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" 
+                      xmlns:x="urn:schemas-microsoft-com:office:excel" 
+                      xmlns="http://www.w3.org/1999/xhtml">
+                <head>
+                    <meta charset="UTF-8">
+                    <style>
+                        table { border-collapse: collapse; width: 100%; direction: rtl; font-family: Arial; }
+                        th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }
+                        th { background-color: #8B6F47; color: white; font-weight: bold; }
+                        tr:nth-child(even) { background-color: #f8f5f0; }
+                        .header { text-align: center; margin-bottom: 20px; }
+                        .header h1 { color: #8B6F47; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>${titles[type]}</h1>
+                        <p>تاريخ التقرير: ${new Date().toLocaleDateString('ar-SA')}</p>
+                        <p>وحدة إسكان هيئة التدريس - جامعة الإمام محمد بن سعود الإسلامية</p>
+                    </div>
+                    ${convertDataToTable(type, data)}
+                    <div style="margin-top: 30px; text-align: center; color: #666;">
+                        <p>تم إنشاء هذا التقرير تلقائياً بواسطة نظام إدارة المرور</p>
+                        <p>© ${new Date().getFullYear()} جامعة الإمام محمد بن سعود الإسلامية</p>
+                    </div>
+                </body>
+                </html>
+            `;
+
+            const blob = new Blob(['\ufeff' + html], { type: 'application/vnd.ms-excel;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${type}_report_${Date.now()}.xls`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        /**
+         * تصدير إلى HTML
+         */
+        async function exportToHTMLFormat(type, data) {
+            const html = generateReportHTML(type, data);
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${type}_report_${Date.now()}.html`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(link.href);
+        }
+
+        /**
+         * تحويل البيانات إلى جدول HTML
+         */
+        function convertDataToTable(type, data) {
+            let headers = '';
+            let rows = '';
+
+            switch (type) {
+                case 'vehicles':
+                    headers = '<th>م</th><th>رقم اللوحة</th><th>اسم المالك</th><th>رقم الوحدة</th><th>رقم المبنى</th><th>نوع المركبة</th><th>اللون</th><th>نوع الملصق</th><th>تاريخ الإصدار</th><th>الحالة</th>';
+                    rows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td><strong>${row.plateNumber}</strong></td>
+                            <td>${row.ownerName}</td>
+                            <td>${row.unitNumber}</td>
+                            <td>${row.buildingNumber}</td>
+                            <td>${row.vehicleType}</td>
+                            <td>${row.color}</td>
+                            <td>${row.stickerType}</td>
+                            <td>${row.issueDate}</td>
+                            <td>${row.status}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'violations':
+                    headers = '<th>م</th><th>رقم اللوحة</th><th>نوع المخالفة</th><th>التاريخ</th><th>الموقع</th><th>المبلغ</th><th>الحالة</th><th>ملاحظات</th>';
+                    rows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td><strong>${row.plateNumber}</strong></td>
+                            <td>${row.violationType}</td>
+                            <td>${row.violationDate}</td>
+                            <td>${row.location}</td>
+                            <td>${row.amount} ريال</td>
+                            <td>${row.status}</td>
+                            <td>${row.notes}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'violations-images':
+                    headers = '<th>م</th><th>الصورة</th><th>رقم اللوحة</th><th>نوع المخالفة</th><th>التاريخ</th><th>الموقع</th><th>المبلغ</th><th>الحالة</th><th>ملاحظات</th>';
+                    rows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td style="text-align: center;">
+                                ${row.imageUrl ? `<img src="${row.imageUrl}" style="width: 120px; height: 90px; object-fit: cover; border: 2px solid #f5576c; border-radius: 5px;" alt="صورة المخالفة" />` : 'لا توجد صورة'}
+                            </td>
+                            <td><strong>${row.plateNumber}</strong></td>
+                            <td>${row.violationType}</td>
+                            <td>${row.violationDate}</td>
+                            <td>${row.location}</td>
+                            <td>${row.amount} ريال</td>
+                            <td>${row.status}</td>
+                            <td>${row.notes}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'buildings':
+                    headers = '<th>م</th><th>رقم المبنى</th><th>الفئة</th><th>نوع الوحدة</th><th>إجمالي الوحدات</th><th>الوحدات المشغولة</th><th>الوحدات الشاغرة</th><th>نسبة الإشغال</th>';
+                    rows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td><strong>${row.buildingNumber}</strong></td>
+                            <td>${row.category}</td>
+                            <td>${row.unitType}</td>
+                            <td>${row.totalUnits}</td>
+                            <td>${row.occupiedUnits}</td>
+                            <td>${row.vacantUnits}</td>
+                            <td><strong>${row.occupancyRate}</strong></td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'users':
+                    headers = '<th>م</th><th>اسم المستخدم</th><th>الاسم</th><th>البريد الإلكتروني</th><th>الدور</th><th>الحالة</th><th>تاريخ الإنشاء</th><th>آخر تسجيل دخول</th>';
+                    rows = data.map(row => `
+                        <tr>
+                            <td>${row.index}</td>
+                            <td><strong>${row.username}</strong></td>
+                            <td>${row.name}</td>
+                            <td>${row.email}</td>
+                            <td>${row.role}</td>
+                            <td>${row.status}</td>
+                            <td>${row.createdDate}</td>
+                            <td>${row.lastLogin}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'statistics':
+                    headers = '<th>الفئة</th><th>القيمة</th><th>النوع</th>';
+                    rows = data.map(row => `
+                        <tr>
+                            <td><strong>${row.category}</strong></td>
+                            <td><strong>${row.value}</strong></td>
+                            <td>${row.type}</td>
+                        </tr>
+                    `).join('');
+                    break;
+
+                case 'monthly':
+                    headers = '<th>البند</th><th>العدد</th><th>التفاصيل</th>';
+                    rows = data.map(row => `
+                        <tr>
+                            <td><strong>${row.item}</strong></td>
+                            <td><strong>${row.count}</strong></td>
+                            <td>${row.details}</td>
+                        </tr>
+                    `).join('');
+                    break;
+            }
+
+            return `
+                <table>
+                    <thead><tr>${headers}</tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+    </script>
+</body>
+</html>
