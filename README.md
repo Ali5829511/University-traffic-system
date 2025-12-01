@@ -2,8 +2,8 @@
 
 [![Deploy to GitHub Pages](https://github.com/Ali5829511/N-M/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ali5829511/N-M/actions/workflows/deploy.yml)
 [![Version](https://img.shields.io/badge/version-5.0-blue.svg)](UPDATES_LOG.md)
-[![Security](https://img.shields.io/badge/security-protected-green.svg)](SECURITY.md)
-[![Database](https://img.shields.io/badge/database-cloud_ready-brightgreen.svg)](CLOUD_DATABASE_GUIDE.md)
+[![Security](https://img.shields.io/badge/security-protected-green.svg)](docs/SECURITY.md)
+[![Database](https://img.shields.io/badge/database-cloud_ready-brightgreen.svg)](docs/CLOUD_DATABASE_GUIDE.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 نظام شامل لإدارة المخالفات المرورية بنظام أدوار وصلاحيات متقدم للتحكم في الوصول.
@@ -21,37 +21,47 @@
 - ✅ نظام احتياطي تلقائي
 - ✅ دعم متعدد لمزودي الخدمات السحابية (Supabase, Neon, Railway)
 
-📖 **[دليل ربط قاعدة البيانات السحابية](DATABASE_CONNECTION_AR.md)** | **[Cloud Database Guide](CLOUD_DATABASE_GUIDE.md)**
+📖 **[دليل ربط قاعدة البيانات السحابية](docs/DATABASE_CONNECTION_AR.md)** | **[Cloud Database Guide](docs/CLOUD_DATABASE_GUIDE.md)**
 
-⚠️ **ملحوظة أمنية:** يرجى قراءة [إرشادات الأمان](SECURITY.md) قبل النشر الرسمي
+⚠️ **ملحوظة أمنية:** يرجى قراءة [إرشادات الأمان](docs/SECURITY.md) قبل النشر الرسمي
 
 ## 📁 هيكل المشروع - Project Structure
 
+> **ملاحظة:** تم إعادة هيكلة المشروع لتحسين التنظيم والصيانة! 🎉
+
 ```
 /
-├── index.html                           # صفحة تسجيل الدخول (نقطة البداية)
-├── home.html                            # الصفحة الرئيسية
-├── unified_dashboard.html               # لوحة التحكم الرئيسية
-├── traffic_dashboard.html               # لوحة المرور 🆕
-├── building_monitoring.html             # مراقبة المباني 🆕
-├── enhanced_stickers_management.html    # إدارة الملصقات 🆕
-├── plate_recognition.html               # التعرف على اللوحات 🆕
-├── advanced_users_management.html       # إدارة المستخدمين 🆕
-├── comprehensive_reports_enhanced.html  # التقارير الشاملة 🆕
-├── email_settings.html                  # إعدادات البريد الإلكتروني 🆕
-├── residential_units_management.html    # إدارة الوحدات السكنية
-├── apartments_management.html           # إدارة الشقق
-├── villas_management.html               # إدارة الفلل
-├── violations_report.html               # تقارير المخالفات
-├── vehicle_database_manager.html        # إدارة قاعدة بيانات المركبات
-├── advanced_vehicle_analyzer.html       # تحليل المركبات
-├── advanced_export_page.html            # تصدير البيانات
-├── webhook_configuration.html           # إعدادات Webhook
-├── vehicle_database.js                  # قاعدة بيانات المركبات
-├── residential_units_data.js            # بيانات الوحدات السكنية
-├── real_data_loader.js                  # تحميل البيانات الحقيقية
-└── advanced_export.js                   # نظام التصدير المتقدم
+├── src/                           # كود المصدر / Source code
+│   ├── server/                    # الخادم الخلفي / Backend server
+│   │   ├── config/               # إعدادات قاعدة البيانات
+│   │   ├── server.js             # الخادم الرئيسي
+│   │   └── utils/                # أدوات الخادم
+│   ├── public/                    # الملفات العامة / Public files
+│   │   ├── pages/                # صفحات HTML (31 صفحة)
+│   │   ├── js/                   # JavaScript للعميل
+│   │   ├── css/                  # ملفات الأنماط
+│   │   └── assets/               # الأصول (صور، أيقونات)
+│   └── scripts/                   # سكريبتات المساعدة
+├── tests/                         # الاختبارات / Tests
+├── docs/                          # التوثيق / Documentation
+├── data/                          # ملفات البيانات / Data files
+├── reports/                       # التقارير المُنشأة / Generated reports
+├── jobs/                          # المهام الخلفية / Background jobs
+├── index.js                       # نقطة الدخول الرئيسية / Main entry point
+└── package.json                   # إعدادات NPM
 ```
+
+📖 **للتفاصيل الكاملة:** راجع [دليل الهيكل](docs/STRUCTURE.md)
+
+### الصفحات الرئيسية / Main Pages:
+- 🔐 تسجيل الدخول: `src/public/pages/index.html`
+- 🏠 الصفحة الرئيسية: `src/public/pages/home.html`
+- 🚦 لوحة المرور: `src/public/pages/traffic_dashboard.html`
+- 🏢 مراقبة المباني: `src/public/pages/building_monitoring.html`
+- 👥 إدارة المستخدمين: `src/public/pages/advanced_users_management.html`
+- 📊 التقارير الشاملة: `src/public/pages/comprehensive_reports_enhanced.html`
+
+... و 25 صفحة إضافية في `src/public/pages/`
 
 ---
 
@@ -68,9 +78,9 @@
 - 📖 [DEPLOYMENT.md](docs/DEPLOYMENT.md) - دليل النشر الكامل
 - 📖 [QUICKSTART.md](docs/QUICKSTART.md) - البدء السريع
 - 📖 [PRODUCTION_CHECKLIST.md](docs/PRODUCTION_CHECKLIST.md) - قائمة التحقق
-- 🔒 [SECURITY.md](SECURITY.md) - إرشادات الأمان (مهم!)
-- 🔑 [API_SETUP.md](API_SETUP.md) - إعداد Plate Recognizer API
-- 🔗 [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md) - دليل التكامل الشامل 🆕
+- 🔒 [SECURITY.md](docs/SECURITY.md) - إرشادات الأمان (مهم!)
+- 🔑 [API_SETUP.md](docs/API_SETUP.md) - إعداد Plate Recognizer API
+- 🔗 [INTEGRATION_GUIDE.md](docs/INTEGRATION_GUIDE.md) - دليل التكامل الشامل 🆕
 
 ---
 
@@ -100,15 +110,15 @@ npm install && npm start
 |--------|--------|-----------|
 | **Docker** | ✅ جاهز | Dockerfile + docker-compose.yml - Container deployment ready |
 | **الخادم المحلي** | ✅ جاهز | 4 خوادم عالية الجودة - [الدليل](docs/SERVER_SETUP_AR.md) |
-| **قاعدة البيانات** | ✅ سحابية | PostgreSQL Cloud Database - **[دليل الربط](DATABASE_CONNECTION_AR.md)** |
-| **Backend API** | ✅ جاهز | Node.js + Express - [التوثيق](CLOUD_DATABASE_GUIDE.md) |
+| **قاعدة البيانات** | ✅ سحابية | PostgreSQL Cloud Database - **[دليل الربط](docs/DATABASE_CONNECTION_AR.md)** |
+| **Backend API** | ✅ جاهز | Node.js + Express - [التوثيق](docs/CLOUD_DATABASE_GUIDE.md) |
 | **النشر** | ✅ جاهز | GitHub Pages + Render.com + Docker - [الدليل](docs/GITHUB_PAGES_SETUP.md) |
 | **Render.com** | ✅ مُصلح | تم إصلاح `render.yaml` - [دليل Render](docs/RENDER_DEPLOYMENT_AR.md) |
 | **CI/CD** | ✅ جاهز | GitHub Actions workflow - [deploy.yml](.github/workflows/deploy.yml) |
-| **الأمان** | ✅ آمن | bcrypt + Helmet + Rate Limiting - [SECURITY.md](SECURITY.md) |
-| **المراجعة الشاملة** | ✅ مكتملة | **[SYSTEM_REVIEW.md](SYSTEM_REVIEW.md)** - مراجعة تفصيلية كاملة |
-| **قائمة النشر** | ✅ محدّثة | [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) |
-| **دمج الفروع** | ✅ موثق | **[BRANCH_DEPLOYMENT_GUIDE.md](BRANCH_DEPLOYMENT_GUIDE.md)** - دليل الدمج والنشر |
+| **الأمان** | ✅ آمن | bcrypt + Helmet + Rate Limiting - [SECURITY.md](docs/SECURITY.md) |
+| **المراجعة الشاملة** | ✅ مكتملة | **[SYSTEM_REVIEW.md](docs/SYSTEM_REVIEW.md)** - مراجعة تفصيلية كاملة |
+| **قائمة النشر** | ✅ محدّثة | [DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md) |
+| **دمج الفروع** | ✅ موثق | **[BRANCH_DEPLOYMENT_GUIDE.md](docs/BRANCH_DEPLOYMENT_GUIDE.md)** - دليل الدمج والنشر |
 
 ### 🔍 التحقق من حالة قاعدة البيانات
 - **صفحة الحالة المباشرة:** [database_status.html](pages/database_status.html)
@@ -273,7 +283,7 @@ npm start
 - ✅ حماية متقدمة من الهجمات
 - ✅ نظام احتياطي تلقائي (localStorage)
 
-📖 **[دليل كامل لربط قاعدة البيانات](DATABASE_CONNECTION_AR.md)** | **[Cloud Database Guide](CLOUD_DATABASE_GUIDE.md)**
+📖 **[دليل كامل لربط قاعدة البيانات](docs/DATABASE_CONNECTION_AR.md)** | **[Cloud Database Guide](docs/CLOUD_DATABASE_GUIDE.md)**
 
 ---
 
@@ -392,7 +402,7 @@ npm start
 - تصدير المستخدمين إلى Excel
 - فلاتر متقدمة لجميع التصديرات
 - واجهة برمجة تطبيقات REST كاملة
-- **[توثيق API](EXPORT_API_DOCUMENTATION.md)**
+- **[توثيق API](docs/EXPORT_API_DOCUMENTATION.md)**
 
 ## 🔮 التطوير المستقبلي
 
@@ -474,7 +484,7 @@ pip install requests pillow
 python plate_recognition.py --api-key MY_API_KEY /path/to/vehicle.jpg
 ```
 
-**للمزيد من التفاصيل:** راجع [deep-license-plate-recognition/README.md](deep-license-plate-recognition/README.md) و [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)
+**للمزيد من التفاصيل:** راجع [deep-license-plate-recognition/README.md](deep-license-plate-recognition/README.md) و [INTEGRATION_GUIDE.md](docs/INTEGRATION_GUIDE.md)
 
 ## 📧 نظام الإشعارات عبر البريد الإلكتروني
 
@@ -550,34 +560,34 @@ N-M/
 - 📝 **[COMPLETION_SUMMARY.md](COMPLETION_SUMMARY.md)** - ملخص إكمال المشروع (عربي/إنجليزي)
 - ✅ **[تقرير_إكمال_الالتزامات.md](تقرير_إكمال_الالتزامات.md)** - تقرير مفصل بالعربية
 - 📊 **[COMMITS_COMPLETION_REPORT.md](COMMITS_COMPLETION_REPORT.md)** - Complete report in English
-- 📋 **[CHANGELOG.md](CHANGELOG.md)** - سجل التغييرات الكامل / Complete version history
+- 📋 **[CHANGELOG.md](docs/CHANGELOG.md)** - سجل التغييرات الكامل / Complete version history
 
 ### وثائق قاعدة البيانات / Database Documentation
-- 🗄️ **[DATABASE_CONNECTION_AR.md](DATABASE_CONNECTION_AR.md)** - دليل الربط بالعربية
-- 🌐 **[CLOUD_DATABASE_GUIDE.md](CLOUD_DATABASE_GUIDE.md)** - Cloud database guide
+- 🗄️ **[DATABASE_CONNECTION_AR.md](docs/DATABASE_CONNECTION_AR.md)** - دليل الربط بالعربية
+- 🌐 **[CLOUD_DATABASE_GUIDE.md](docs/CLOUD_DATABASE_GUIDE.md)** - Cloud database guide
 - 📖 **[DATABASE_SETUP_EN.md](DATABASE_SETUP_EN.md)** - Setup guide in English
 - ⚡ **[QUICK_SETUP_CLOUD_DB.md](QUICK_SETUP_CLOUD_DB.md)** - Quick start guide
 
 ### وثائق النشر / Deployment Documentation
 - 🚀 **[DEPLOYMENT_CLOUD.md](DEPLOYMENT_CLOUD.md)** - Cloud deployment guide
 - 📦 **[RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md)** - Render-specific guide
-- ✓ **[DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md)** - Pre-deployment checklist
+- ✓ **[DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md)** - Pre-deployment checklist
 
 ### وثائق النظام / System Documentation
-- 🗺️ **[SYSTEM_MAP.md](SYSTEM_MAP.md)** - خريطة النظام الكاملة
-- 🔗 **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)** - دليل التكامل الشامل (Plate Recognizer + ParkPow) 🆕
+- 🗺️ **[SYSTEM_MAP.md](docs/SYSTEM_MAP.md)** - خريطة النظام الكاملة
+- 🔗 **[INTEGRATION_GUIDE.md](docs/INTEGRATION_GUIDE.md)** - دليل التكامل الشامل (Plate Recognizer + ParkPow) 🆕
 - 🔍 **[PAGES_VERIFICATION.md](PAGES_VERIFICATION.md)** - تقرير التحقق من الصفحات
 - 📊 **[SYSTEM_REVIEW_REPORT.md](SYSTEM_REVIEW_REPORT.md)** - تقرير المراجعة الشاملة
 - 📋 **[FINAL_SUMMARY.md](FINAL_SUMMARY.md)** - الملخص النهائي
 - 🌿 **[BRANCH_STATUS_REPORT.md](BRANCH_STATUS_REPORT.md)** - تقرير حالة الفروع والربط مع الفرع الرئيسي
 
 ### أدلة الأمان والجودة / Security & Quality Guides
-- 🔒 **[SECURITY.md](SECURITY.md)** - دليل الأمان والحماية
+- 🔒 **[SECURITY.md](docs/SECURITY.md)** - دليل الأمان والحماية
 - 🧪 **[VALIDATION_SUMMARY.txt](VALIDATION_SUMMARY.txt)** - ملخص التحقق
 
 ### أدلة سريعة / Quick Start Guides
-- ⚡ **[QUICK_START_GUIDE.md](QUICK_START_GUIDE.md)** - دليل البدء السريع
-- 📝 **[API_SETUP.md](API_SETUP.md)** - إعداد API
+- ⚡ **[QUICK_START_GUIDE.md](docs/QUICK_START_GUIDE.md)** - دليل البدء السريع
+- 📝 **[API_SETUP.md](docs/API_SETUP.md)** - إعداد API
 
 ---
 
