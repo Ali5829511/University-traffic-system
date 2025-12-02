@@ -6,6 +6,10 @@
 [![Database](https://img.shields.io/badge/database-cloud_ready-brightgreen.svg)](docs/CLOUD_DATABASE_GUIDE.md)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
+> **🎉 النظام الآن مُعاد هيكلته! / System Now Restructured!**  
+> تم تنظيم المشروع بهيكل احترافي وعصري. راجع [دليل الهيكل](docs/STRUCTURE.md) و [دليل الانتقال](docs/MIGRATION_GUIDE.md)  
+> The project is now organized with a professional, modern structure. See [Structure Guide](docs/STRUCTURE.md) and [Migration Guide](docs/MIGRATION_GUIDE.md)
+
 نظام شامل لإدارة المخالفات المرورية بنظام أدوار وصلاحيات متقدم للتحكم في الوصول.
 
 **الإصدار الحالي / Current Version:** 5.0 | [سجل التحديثات / Updates Log](UPDATES_LOG.md)
