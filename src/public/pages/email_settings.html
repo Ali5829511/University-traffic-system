@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إعدادات البريد الإلكتروني - نظام إدارة المرور</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&family=Tajawal:wght@400;500;700&display=swap">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            direction: rtl;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: #667eea;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .settings-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .settings-card h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Tajawal', Arial, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-switch label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(81, 207, 102, 0.4);
+        }
+
+        .btn-test {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-test:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="fas fa-envelope-open-text"></i>
+                إعدادات البريد الإلكتروني
+            </h1>
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-right"></i>
+                العودة للصفحة الرئيسية
+            </a>
+        </div>
+
+        <div id="alertMessage" class="alert"></div>
+
+        <div class="settings-card">
+            <h2>
+                <i class="fas fa-cog"></i>
+                إعدادات خادم البريد
+            </h2>
+            <form id="emailSettingsForm">
+                <div class="form-group">
+                    <label>خادم SMTP</label>
+                    <input type="text" id="smtpServer" placeholder="smtp.example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>المنفذ</label>
+                    <input type="number" id="smtpPort" placeholder="587" required>
+                </div>
+
+                <div class="form-group">
+                    <label>البريد الإلكتروني</label>
+                    <input type="email" id="emailAddress" placeholder="your-email@example.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" id="emailPassword" placeholder="••••••••" required>
+                </div>
+
+                <div class="toggle-switch">
+                    <label>استخدام SSL/TLS</label>
+                    <label class="switch">
+                        <input type="checkbox" id="useSSL" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </form>
+        </div>
+
+        <div class="settings-card">
+            <h2>
+                <i class="fas fa-bell"></i>
+                إعدادات الإشعارات
+            </h2>
+
+            <div class="toggle-switch">
+                <label>إشعار عند تسجيل مخالفة جديدة</label>
+                <label class="switch">
+                    <input type="checkbox" id="notifyViolation" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-switch">
+                <label>إشعار عند إضافة مستخدم جديد</label>
+                <label class="switch">
+                    <input type="checkbox" id="notifyNewUser" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-switch">
+                <label>إشعار عند تسجيل ملصق جديد</label>
+                <label class="switch">
+                    <input type="checkbox" id="notifySticker">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="toggle-switch">
+                <label>تقرير يومي بالإحصائيات</label>
+                <label class="switch">
+                    <input type="checkbox" id="dailyReport">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label>قائمة البريد الإلكتروني للإشعارات</label>
+                <textarea id="notificationEmails" placeholder="admin@example.com, manager@example.com"></textarea>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <h2>
+                <i class="fas fa-envelope"></i>
+                قوالب البريد الإلكتروني
+            </h2>
+
+            <div class="form-group">
+                <label>موضوع البريد - مخالفة جديدة</label>
+                <input type="text" id="violationSubject" value="تنبيه: مخالفة مرورية جديدة">
+            </div>
+
+            <div class="form-group">
+                <label>نص البريد - مخالفة جديدة</label>
+                <textarea id="violationTemplate">تم تسجيل مخالفة مرورية جديدة في النظام.
+الرجاء مراجعة النظام لمزيد من التفاصيل.</textarea>
+            </div>
+        </div>
+
+        <div class="settings-card" style="text-align: center;">
+            <button class="btn-test" onclick="testEmail()">
+                <i class="fas fa-paper-plane"></i>
+                إرسال بريد تجريبي
+            </button>
+        </div>
+
+        <div class="settings-card">
+            <button class="btn-save" onclick="saveSettings()">
+                <i class="fas fa-save"></i>
+                حفظ الإعدادات
+            </button>
+        </div>
+    </div>
+
+    <script src="/js/database.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        // التحقق من المصادقة
+        if (!window.authManager.isAuthenticated()) {
+            window.location.href = 'index.html';
+        }
+
+        // تحميل الإعدادات المحفوظة
+        function loadSettings() {
+            const settings = JSON.parse(localStorage.getItem('emailSettings') || '{}');
+            
+            if (settings.smtpServer) document.getElementById('smtpServer').value = settings.smtpServer;
+            if (settings.smtpPort) document.getElementById('smtpPort').value = settings.smtpPort;
+            if (settings.emailAddress) document.getElementById('emailAddress').value = settings.emailAddress;
+            if (settings.useSSL !== undefined) document.getElementById('useSSL').checked = settings.useSSL;
+            if (settings.notifyViolation !== undefined) document.getElementById('notifyViolation').checked = settings.notifyViolation;
+            if (settings.notifyNewUser !== undefined) document.getElementById('notifyNewUser').checked = settings.notifyNewUser;
+            if (settings.notifySticker !== undefined) document.getElementById('notifySticker').checked = settings.notifySticker;
+            if (settings.dailyReport !== undefined) document.getElementById('dailyReport').checked = settings.dailyReport;
+            if (settings.notificationEmails) document.getElementById('notificationEmails').value = settings.notificationEmails;
+            if (settings.violationSubject) document.getElementById('violationSubject').value = settings.violationSubject;
+            if (settings.violationTemplate) document.getElementById('violationTemplate').value = settings.violationTemplate;
+        }
+
+        function saveSettings() {
+            const settings = {
+                smtpServer: document.getElementById('smtpServer').value,
+                smtpPort: document.getElementById('smtpPort').value,
+                emailAddress: document.getElementById('emailAddress').value,
+                emailPassword: document.getElementById('emailPassword').value,
+                useSSL: document.getElementById('useSSL').checked,
+                notifyViolation: document.getElementById('notifyViolation').checked,
+                notifyNewUser: document.getElementById('notifyNewUser').checked,
+                notifySticker: document.getElementById('notifySticker').checked,
+                dailyReport: document.getElementById('dailyReport').checked,
+                notificationEmails: document.getElementById('notificationEmails').value,
+                violationSubject: document.getElementById('violationSubject').value,
+                violationTemplate: document.getElementById('violationTemplate').value
+            };
+
+            localStorage.setItem('emailSettings', JSON.stringify(settings));
+            
+            showAlert('تم حفظ الإعدادات بنجاح!', 'success');
+        }
+
+        function testEmail() {
+            const emailAddress = document.getElementById('emailAddress').value;
+            
+            if (!emailAddress) {
+                showAlert('الرجاء إدخال عنوان البريد الإلكتروني أولاً', 'error');
+                return;
+            }
+
+            showAlert('تم إرسال بريد تجريبي إلى: ' + emailAddress, 'success');
+        }
+
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertMessage');
+            alert.textContent = message;
+            alert.className = 'alert ' + type;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // تحميل الإعدادات عند فتح الصفحة
+        loadSettings();
+    </script>
+</body>
+</html>

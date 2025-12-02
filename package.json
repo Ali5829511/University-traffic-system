@@ -2,15 +2,15 @@
   "name": "university-traffic-system",
   "version": "1.0.0",
   "description": "University Traffic Management System with Cloud Database Integration",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "setup": "node setup-database.js",
-    "test": "node test-api.js",
-    "test:api": "node test-api.js",
-    "import-stickers": "node import-stickers.js",
-    "import-all": "node import-all-data.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "setup": "node src/scripts/setup-database.js",
+    "test": "node tests/test-api.js",
+    "test:api": "node tests/test-api.js",
+    "import-stickers": "node src/scripts/import-stickers.js",
+    "import-all": "node src/scripts/import-all-data.js",
     "import-visits": "node jobs/import_visits_with_images_and_pdf.js"
   },
   "keywords": [
