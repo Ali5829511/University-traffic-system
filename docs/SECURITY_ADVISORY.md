@@ -98,13 +98,18 @@ checkUserRole(['admin', 'violations']); // التحقق من الصلاحيات
 ### 2. التحقق من الملفات / File Validation
 ```javascript
 // في server.js
+const multer = require('multer');
+const storage = multer.diskStorage({ /* تكوين التخزين */ });
+
 const upload = multer({
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
     fileFilter: function (req, file, cb) {
         const imageTypes = /jpeg|jpg|png|gif/;
+        const ext = path.extname(file.originalname).toLowerCase();
+        
         // فقط الصور مسموح بها حالياً
-        if (imageTypes.test(ext)) {
+        if (imageTypes.test(ext) && imageTypes.test(file.mimetype)) {
             return cb(null, true);
         }
         cb(new Error('نوع الملف غير مسموح به'));

@@ -83,11 +83,18 @@
 3. الموقع سيكون متاحاً على: `https://ali5829511.github.io/N-M/`
 
 ### 📚 أدلة مفيدة:
+
+#### النشر والجاهزية / Deployment & Readiness:
+- 🎯 [REVIEW_AND_PUBLISH_SUMMARY.md](docs/REVIEW_AND_PUBLISH_SUMMARY.md) - ملخص المراجعة والنشر النهائي 🆕
 - 🚀 [DEPLOYMENT_READINESS.md](docs/DEPLOYMENT_READINESS.md) - تقرير جاهزية النشر الشامل 🆕
-- 📖 [DEPLOYMENT.md](docs/DEPLOYMENT.md) - دليل النشر الكامل
-- 📖 [DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md) - قائمة التحقق
-- 🔒 [SECURITY.md](docs/SECURITY.md) - إرشادات الأمان (مهم!)
+- ⚡ [QUICK_DEPLOYMENT.md](docs/QUICK_DEPLOYMENT.md) - دليل النشر السريع (5-10 دقائق) 🆕
+- 📖 [DEPLOYMENT_CHECKLIST.md](docs/DEPLOYMENT_CHECKLIST.md) - قائمة التحقق التفصيلية
+
+#### الأمان / Security:
+- 🔒 [SECURITY.md](docs/SECURITY.md) - إرشادات الأمان الشاملة (مهم!)
 - ⚠️ [SECURITY_ADVISORY.md](docs/SECURITY_ADVISORY.md) - تنبيه أمني xlsx 🆕
+
+#### التطوير والتكامل / Development & Integration:
 - 🔑 [API_SETUP.md](docs/API_SETUP.md) - إعداد Plate Recognizer API
 - 🔗 [INTEGRATION_GUIDE.md](docs/INTEGRATION_GUIDE.md) - دليل التكامل الشامل
 - 📖 [QUICKSTART.md](docs/QUICKSTART.md) - البدء السريع
