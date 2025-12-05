@@ -349,6 +349,118 @@ http://localhost:3000/index.html         ❌
 
 ---
 
+## 🔄 Phase 2 Migration - Data Files Organization (Dec 2025)
+
+### What Changed in Phase 2?
+
+Phase 2 moved data files and database schemas from root to organized directories.
+
+### Data Files Location Changes
+
+| Old Location | New Location | Size |
+|--------------|--------------|------|
+| `schema.postgres.sql` | `database/schemas/schema.postgres.sql` | 12 KB |
+| `schema.sql` | `database/schemas/schema.sql` | 28 KB |
+| `sample_data.sql` | `database/seeds/sample_data.sql` | 29 KB |
+| `update_residential_units.sql` | `database/schemas/migrations/update_residential_units.sql` | 3 KB |
+| `stickers_data.json` | `data/json/stickers_data.json` | 1.2 MB |
+| `parking_data.json` | `data/json/parking_data.json` | 562 KB |
+| `residents_data.json` | `data/json/residents_data.json` | 405 KB |
+| `residential_units_data.json` | `data/json/residential_units_data.json` | 353 KB |
+| `buildings_data.json` | `data/json/buildings_data.json` | 59 KB |
+| `plate_recognizer_config.json` | `data/config/plate_recognizer_config.json` | 575 B |
+| `real_data.json` | `data/config/real_data.json` | 91 B |
+
+### Code Changes Required
+
+The following files were automatically updated with new paths:
+
+1. **src/server/config/db-config.js**
+   ```javascript
+   // Before
+   const schemaPath = path.join(__dirname, 'schema.postgres.sql');
+   
+   // After
+   const schemaPath = path.join(__dirname, '../../../database/schemas/schema.postgres.sql');
+   ```
+
+2. **src/scripts/import-stickers.js**
+   ```javascript
+   // Before
+   const outputFilePath = path.join(__dirname, '../../stickers_data.json');
+   
+   // After
+   const outputFilePath = path.join(__dirname, '../../data/json/stickers_data.json');
+   ```
+
+3. **src/scripts/import-all-data.js**
+   - Updated paths for all 5 data JSON files (stickers, parking, residential_units, residents, buildings)
+
+4. **src/scripts/real_data_loader.js**
+   ```javascript
+   // Before
+   this.dataFile = '../data/real_data.json';
+   
+   // After
+   this.dataFile = '../data/config/real_data.json';
+   ```
+
+### New Directory Structure (Phase 2)
+
+```
+database/
+├── schemas/
+│   ├── schema.postgres.sql      # PostgreSQL schema
+│   ├── schema.sql               # Generic SQL schema
+│   └── migrations/              # Migration scripts
+│       └── update_residential_units.sql
+└── seeds/
+    └── sample_data.sql          # Sample data
+
+data/
+├── json/                        # Data files
+│   ├── buildings_data.json
+│   ├── parking_data.json
+│   ├── residential_units_data.json
+│   ├── residents_data.json
+│   └── stickers_data.json
+└── config/                      # Configuration
+    ├── plate_recognizer_config.json
+    └── real_data.json
+```
+
+### If You're Working on an Older Branch
+
+If you have changes in an old branch before Phase 2:
+
+```bash
+# 1. Commit your current work
+git add .
+git commit -m "WIP: my changes"
+
+# 2. Fetch latest changes
+git fetch origin
+
+# 3. Rebase onto new structure (or merge)
+git rebase origin/main  # or git merge origin/main
+
+# 4. If there are conflicts with moved files:
+# - Update your file paths to use new locations
+# - Reference database/schemas/ instead of root
+# - Reference data/json/ instead of root
+```
+
+### Phase 2 Benefits
+
+- ✅ Clean root directory (only package.json and config files)
+- ✅ Organized database files in database/ directory
+- ✅ Clear separation of data files in data/json/
+- ✅ Configuration files grouped in data/config/
+- ✅ Easier to maintain and scale
+- ✅ Git history preserved for all moved files
+
+---
+
 ## 💡 Benefits of New Structure
 
 1. **Better Organization**: Clear separation between frontend, backend, tests, docs

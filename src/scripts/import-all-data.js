@@ -80,7 +80,7 @@ function importStickers() {
         };
         
         fs.writeFileSync(
-            path.join(__dirname, '../../stickers_data.json'),
+            path.join(__dirname, '../../data/json/stickers_data.json'),
             JSON.stringify(outputData, null, 2),
             'utf8'
         );
@@ -136,7 +136,7 @@ function importParkingSpaces() {
         };
         
         fs.writeFileSync(
-            path.join(__dirname, '../../parking_data.json'),
+            path.join(__dirname, '../../data/json/parking_data.json'),
             JSON.stringify(outputData, null, 2),
             'utf8'
         );
@@ -194,7 +194,7 @@ function importResidentialUnits() {
         };
         
         fs.writeFileSync(
-            path.join(__dirname, '../../residential_units_data.json'),
+            path.join(__dirname, '../../data/json/residential_units_data.json'),
             JSON.stringify(outputData, null, 2),
             'utf8'
         );
@@ -254,7 +254,7 @@ function importResidents() {
         };
         
         fs.writeFileSync(
-            path.join(__dirname, '../../residents_data.json'),
+            path.join(__dirname, '../../data/json/residents_data.json'),
             JSON.stringify(outputData, null, 2),
             'utf8'
         );
@@ -304,7 +304,7 @@ function importBuildings() {
         };
         
         fs.writeFileSync(
-            path.join(__dirname, '../../buildings_data.json'),
+            path.join(__dirname, '../../data/json/buildings_data.json'),
             JSON.stringify(outputData, null, 2),
             'utf8'
         );

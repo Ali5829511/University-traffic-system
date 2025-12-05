@@ -6,7 +6,7 @@
 
 class RealDataLoader {
     constructor() {
-        this.dataFile = '../data/real_data.json';
+        this.dataFile = '../data/config/real_data.json';
         this.data = null;
         this.loaded = false;
     }
