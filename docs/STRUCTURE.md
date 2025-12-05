@@ -59,7 +59,25 @@ This document explains the new organized structure of the project.
 │   ├── SYSTEM_MAP.md
 │   └── ... (14 more docs)
 │
+├── database/                   # Database files (Phase 2)
+│   ├── schemas/               # SQL schema definitions
+│   │   ├── schema.postgres.sql    # PostgreSQL schema
+│   │   ├── schema.sql             # Generic SQL schema
+│   │   └── migrations/            # Schema migration scripts
+│   │       └── update_residential_units.sql
+│   └── seeds/                 # Sample/seed data
+│       └── sample_data.sql
+│
 ├── data/                       # Data directory
+│   ├── json/                  # JSON data files (Phase 2)
+│   │   ├── buildings_data.json        # Building information (59 KB)
+│   │   ├── parking_data.json          # Parking records (562 KB)
+│   │   ├── residential_units_data.json # Housing units (353 KB)
+│   │   ├── residents_data.json        # Resident information (405 KB)
+│   │   └── stickers_data.json         # Parking stickers (1.2 MB)
+│   ├── config/                # Configuration files (Phase 2)
+│   │   ├── plate_recognizer_config.json
+│   │   └── real_data.json
 │   ├── images/                # Uploaded images
 │   └── results/               # Generated results
 │
@@ -82,27 +100,21 @@ This document explains the new organized structure of the project.
 ├── docker-compose.yml        # Docker Compose configuration
 ├── render.yaml               # Render.com deployment config
 ├── README.md                 # Project documentation
-│
-└── [Data files]              # JSON data files
-    ├── buildings_data.json
-    ├── parking_data.json
-    ├── residential_units_data.json
-    ├── residents_data.json
-    └── stickers_data.json
 ```
 
 ---
 
 ## 📋 Key Changes
 
-### Before Restructure:
+### Phase 1 - Source Code Organization (Completed):
+**Before:**
 - ❌ All HTML files in root (31 files)
 - ❌ JavaScript files scattered (11 in root, 2 in /js)
 - ❌ Backend and frontend mixed together
 - ❌ Documentation files in root
 - ❌ Hard to navigate and maintain
 
-### After Restructure:
+**After:**
 - ✅ Organized src/ directory
 - ✅ Clear separation: server/ and public/
 - ✅ All HTML pages in src/public/pages/
@@ -111,6 +123,21 @@ This document explains the new organized structure of the project.
 - ✅ Scripts in src/scripts/
 - ✅ Documentation in docs/
 - ✅ Tests in tests/
+
+### Phase 2 - Data Files Organization (Completed):
+**Before:**
+- ❌ SQL schemas in root (4 files)
+- ❌ JSON data files in root (5 files, 2.6 MB)
+- ❌ Config files in root (2 files)
+- ❌ No clear data file organization
+
+**After:**
+- ✅ SQL schemas in database/schemas/
+- ✅ Migration scripts in database/schemas/migrations/
+- ✅ Seed data in database/seeds/
+- ✅ JSON data files in data/json/
+- ✅ Config files in data/config/
+- ✅ Clean root directory structure
 - ✅ Easy to navigate and maintain
 
 ---

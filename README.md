@@ -50,9 +50,14 @@
 │   │   ├── css/                  # ملفات الأنماط
 │   │   └── assets/               # الأصول (صور، أيقونات)
 │   └── scripts/                   # سكريبتات المساعدة
+├── database/                      # قاعدة البيانات / Database
+│   ├── schemas/                  # SQL schemas
+│   └── seeds/                    # بيانات تجريبية / Sample data
+├── data/                          # ملفات البيانات / Data files
+│   ├── json/                     # ملفات JSON
+│   └── config/                   # إعدادات / Configuration
 ├── tests/                         # الاختبارات / Tests
 ├── docs/                          # التوثيق / Documentation
-├── data/                          # ملفات البيانات / Data files
 ├── reports/                       # التقارير المُنشأة / Generated reports
 ├── jobs/                          # المهام الخلفية / Background jobs
 ├── index.js                       # نقطة الدخول الرئيسية / Main entry point
