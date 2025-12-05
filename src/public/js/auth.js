@@ -153,18 +153,27 @@ class AuthManager {
 
     /**
      * تسجيل الدخول
+     * Login using secure backend API
      */
     async login(username, password) {
         try {
-            // الحصول على المستخدمين من قاعدة البيانات
-            const users = window.db ? await window.db.getUsers() : JSON.parse(localStorage.getItem('users') || '[]');
+            // استخدام API الخلفي للمصادقة الآمنة
+            // Use backend API for secure authentication
+            if (!window.db) {
+                return {
+                    success: false,
+                    error: 'Database connection not available',
+                    error_ar: 'الاتصال بقاعدة البيانات غير متاح'
+                };
+            }
+
+            // استدعاء API تسجيل الدخول من الخادم
+            // Call login API from server
+            const result = await window.db.login(username, password);
             
-            // البحث عن المستخدم
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
+            if (result.success && result.user) {
                 // التحقق من حالة المستخدم
-                if (user.status === 'inactive') {
+                if (result.user.is_active === false) {
                     return {
                         success: false,
                         error: 'User account is inactive',
@@ -172,14 +181,15 @@ class AuthManager {
                     };
                 }
                 
-                // تسجيل دخول ناجح
+                // تسجيل دخول ناجح - حفظ معلومات المستخدم
+                // Successful login - save user information
                 this.currentUser = {
-                    id: user.id,
-                    username: user.username,
-                    name: user.name,
-                    email: user.email,
-                    role: user.role,
-                    status: user.status || 'active'
+                    id: result.user.id,
+                    username: result.user.username,
+                    name: result.user.full_name || result.user.name || result.user.username,
+                    email: result.user.email,
+                    role: result.user.role,
+                    status: result.user.is_active ? 'active' : 'inactive'
                 };
                 
                 this.lastActivity = Date.now();
@@ -194,8 +204,8 @@ class AuthManager {
             } else {
                 return {
                     success: false,
-                    error: 'Invalid credentials',
-                    error_ar: 'اسم المستخدم أو كلمة المرور غير صحيحة'
+                    error: result.message || 'Invalid credentials',
+                    error_ar: result.message || 'اسم المستخدم أو كلمة المرور غير صحيحة'
                 };
             }
         } catch (error) {
