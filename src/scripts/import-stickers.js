@@ -14,7 +14,7 @@ const path = require('path');
 
 // قراءة ملف Excel
 const excelFilePath = path.join(__dirname, '../../ملصقاتالسيارات.xlsx');
-const outputFilePath = path.join(__dirname, '../../stickers_data.json');
+const outputFilePath = path.join(__dirname, '../../data/json/stickers_data.json');
 
 console.log('╔════════════════════════════════════════════════════════════╗');
 console.log('║  📋 Stickers Import Script                                ║');

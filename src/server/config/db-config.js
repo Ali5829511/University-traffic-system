@@ -135,7 +135,7 @@ class DatabaseConnection {
         const path = require('path');
         
         try {
-            const schemaPath = path.join(__dirname, 'schema.postgres.sql');
+            const schemaPath = path.join(__dirname, '../../../database/schemas/schema.postgres.sql');
             const schema = fs.readFileSync(schemaPath, 'utf8');
             
             await this.query(schema);
