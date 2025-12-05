@@ -74,8 +74,7 @@ try {
         failed++;
     }
     
-    if (!loginHtmlContent.includes('src="/js/database.js"') || 
-        loginHtmlContent.includes('database-api.js')) {
+    if (!loginHtmlContent.includes('src="/js/database.js"')) {
         log('   ✅ login.html does not load legacy database.js', 'green');
         passed++;
     } else {
