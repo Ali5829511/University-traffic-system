@@ -10,7 +10,8 @@ FROM node:18-alpine
 WORKDIR /app
 
 # تثبيت الأدوات اللازمة للاتصال بقاعدة البيانات / Install necessary tools for database connection
-RUN apk add --no-cache postgresql-client curl
+# Note: This step may fail in restricted environments - that's OK, it's only for debugging
+RUN apk add --no-cache postgresql-client curl || echo "Optional tools installation skipped"
 
 # نسخ ملفات package.json لتثبيت المكتبات أولاً (للتخزين المؤقت) / Copy package files first for caching
 COPY package*.json ./

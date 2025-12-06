@@ -1,6 +1,7 @@
 # نظام إدارة المرور - Traffic Management System
 
 [![Deploy to GitHub Pages](https://github.com/Ali5829511/N-M/actions/workflows/deploy.yml/badge.svg)](https://github.com/Ali5829511/N-M/actions/workflows/deploy.yml)
+[![Deploy to Netlify](https://img.shields.io/badge/deploy-netlify-00C7B7.svg?logo=netlify)](docs/NETLIFY_DEPLOYMENT.md)
 [![Version](https://img.shields.io/badge/version-5.0-blue.svg)](UPDATES_LOG.md)
 [![Security](https://img.shields.io/badge/security-protected-green.svg)](docs/SECURITY.md)
 [![Database](https://img.shields.io/badge/database-cloud_ready-brightgreen.svg)](docs/CLOUD_DATABASE_GUIDE.md)
@@ -11,8 +12,8 @@
 > The project is now organized with a professional, modern structure. See [Structure Guide](docs/STRUCTURE.md) and [Migration Guide](docs/MIGRATION_GUIDE.md)
 
 > **✅ النظام جاهز للنشر! / System Ready for Deployment!**  
-> تمت المراجعة الشاملة وتوثيق جميع الجوانب. راجع [تقرير جاهزية النشر](docs/DEPLOYMENT_READINESS.md) 🆕  
-> Comprehensive review completed and all aspects documented. See [Deployment Readiness Report](docs/DEPLOYMENT_READINESS.md) 🆕
+> 🚀 **انشر الآن في 5 دقائق فقط!** راجع [النشر السريع](docs/DEPLOY_IN_5_MINUTES.md) 🆕  
+> 🚀 **Deploy now in just 5 minutes!** See [Quick Deploy Guide](docs/DEPLOY_IN_5_MINUTES.md) 🆕
 
 نظام شامل لإدارة المخالفات المرورية بنظام أدوار وصلاحيات متقدم للتحكم في الوصول.
 
@@ -82,14 +83,37 @@
 
 **النظام جاهز للنشر!** لتفعيل الموقع وإتاحته على الإنترنت:
 
-### ⚡ خطوات النشر:
-1. راجع [دليل النشر الكامل](docs/DEPLOYMENT.md)
-2. اتبع الخطوات المعروضة في الدليل
-3. الموقع سيكون متاحاً على: `https://ali5829511.github.io/N-M/`
+### ⚡ النشر السريع (5 دقائق!) / Quick Deploy (5 Minutes!)
+
+🎯 **[انشر الآن في 5 دقائق! / Deploy Now in 5 Minutes!](docs/DEPLOY_IN_5_MINUTES.md)** 🆕⭐
+
+دليل مختصر خطوة بخطوة لنشر النظام على Netlify مجاناً!  
+Concise step-by-step guide to deploy the system on Netlify for free!
+
+### 🚀 خيارات النشر / Deployment Options:
+
+#### 1. **Netlify** (الموصى به - 5 دقائق ⭐ NEW!)
+```
+✅ نشر مجاني / Free deployment
+✅ SSL تلقائي / Automatic SSL
+✅ CDN عالمي / Global CDN
+✅ نشر تلقائي من GitHub / Auto-deploy from GitHub
+```
+**📖 اتبع:** [دليل نشر Netlify الشامل](docs/NETLIFY_DEPLOYMENT.md) 🆕
+
+#### 2. **Render** (سريع - 5 دقائق)
+**📖 اتبع:** [دليل النشر السريع](docs/QUICK_DEPLOYMENT.md)
+
+#### 3. **Docker** (للخوادم الخاصة - 10 دقائق)
+```bash
+docker compose up -d
+```
 
 ### 📚 أدلة مفيدة:
 
 #### النشر والجاهزية / Deployment & Readiness:
+- ⚡ [DEPLOY_IN_5_MINUTES.md](docs/DEPLOY_IN_5_MINUTES.md) - النشر الفوري! 🆕🔥
+- 🌐 [NETLIFY_DEPLOYMENT.md](docs/NETLIFY_DEPLOYMENT.md) - دليل نشر Netlify الشامل 🆕
 - 🎯 [REVIEW_AND_PUBLISH_SUMMARY.md](docs/REVIEW_AND_PUBLISH_SUMMARY.md) - ملخص المراجعة والنشر النهائي 🆕
 - 🚀 [DEPLOYMENT_READINESS.md](docs/DEPLOYMENT_READINESS.md) - تقرير جاهزية النشر الشامل 🆕
 - ⚡ [QUICK_DEPLOYMENT.md](docs/QUICK_DEPLOYMENT.md) - دليل النشر السريع (5-10 دقائق) 🆕
