@@ -1,0 +1,27 @@
+# ============================================
+# Netlify Redirects - نظام إدارة المرور الجامعي
+# University Traffic Management System
+# ============================================
+
+# Root redirect to login page / إعادة توجيه الجذر إلى صفحة تسجيل الدخول
+/                           /pages/index.html           200
+
+# Login page aliases / أسماء مستعارة لصفحة تسجيل الدخول
+/login                      /pages/login.html           200
+/index.html                 /pages/index.html           200
+
+# API routes to Netlify Functions / مسارات API إلى وظائف Netlify
+/api/*                      /.netlify/functions/:splat  200
+
+# Static file serving / تقديم الملفات الثابتة
+/uploads/*                  /uploads/:splat             200
+/assets/*                   /assets/:splat              200
+/js/*                       /js/:splat                  200
+/css/*                      /css/:splat                 200
+
+# Page routes / مسارات الصفحات
+/pages/*                    /pages/:splat               200
+
+# Fallback for SPA (if page not found, serve index)
+# احتياطي لـ SPA (إذا لم يتم العثور على الصفحة، قدم index)
+/*                          /pages/index.html           404

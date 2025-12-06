@@ -1,0 +1,161 @@
+# ============================================
+# Netlify Configuration - نظام إدارة المرور الجامعي
+# University Traffic Management System
+# ============================================
+# This configuration deploys the frontend as static files
+# and provides serverless function support for backend APIs
+# ============================================
+
+[build]
+  # Publish directory / مجلد النشر
+  publish = "src/public"
+  
+  # Build command / أمر البناء
+  command = "npm install && echo 'Build completed'"
+  
+  # Functions directory for serverless backend / مجلد الوظائف للواجهة الخلفية
+  functions = "netlify/functions"
+
+[build.environment]
+  # Node.js version / إصدار Node.js
+  NODE_VERSION = "18.17.0"
+
+# ============================================
+# Redirect Rules / قواعد إعادة التوجيه
+# ============================================
+
+# Redirect root to login page / إعادة توجيه الجذر إلى صفحة تسجيل الدخول
+[[redirects]]
+  from = "/"
+  to = "/pages/index.html"
+  status = 200
+
+# API requests to Netlify Functions / طلبات API إلى وظائف Netlify
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# SPA fallback for client-side routing / احتياطي لـ SPA للتوجيه من جانب العميل
+[[redirects]]
+  from = "/pages/*"
+  to = "/pages/:splat"
+  status = 200
+
+# Serve static assets / تقديم الأصول الثابتة
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/js/*"
+  to = "/js/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/css/*"
+  to = "/css/:splat"
+  status = 200
+
+# ============================================
+# Headers Configuration / إعدادات الترويسات
+# ============================================
+
+# Security headers / ترويسات الأمان
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+
+# Cache static assets / تخزين مؤقت للأصول الثابتة
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/js/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/css/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Don't cache HTML pages / عدم تخزين صفحات HTML مؤقتاً
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# ============================================
+# Environment Variables (Set in Netlify Dashboard)
+# متغيرات البيئة (يتم تعيينها في لوحة تحكم Netlify)
+# ============================================
+# Required environment variables to set in Netlify Dashboard:
+# المتغيرات المطلوبة التي يجب تعيينها في لوحة تحكم Netlify:
+#
+# DATABASE_URL=postgresql://user:password@host:port/database
+# NODE_ENV=production
+# DB_SSL=true
+# PORT=3000 (optional for functions)
+#
+# Note: Set these in: Site settings > Environment variables
+# ملاحظة: قم بتعيين هذه في: إعدادات الموقع > متغيرات البيئة
+# ============================================
+
+# ============================================
+# Functions Configuration / إعدادات الوظائف
+# ============================================
+[functions]
+  # Directory for serverless functions / مجلد للوظائف بدون خادم
+  directory = "netlify/functions"
+  
+  # Node bundler / مجمع Node
+  node_bundler = "esbuild"
+  
+  # External node modules to include / وحدات Node الخارجية للتضمين
+  included_files = ["src/server/**", "node_modules/**"]
+
+# ============================================
+# Dev Settings (for local development)
+# إعدادات التطوير (للتطوير المحلي)
+# ============================================
+[dev]
+  command = "npm run dev"
+  port = 3000
+  targetPort = 3000
+  publish = "src/public"
+  autoLaunch = true
+
+# ============================================
+# Context-specific settings / إعدادات خاصة بالسياق
+# ============================================
+
+# Production context / سياق الإنتاج
+[context.production]
+  publish = "src/public"
+  command = "npm install"
+  
+[context.production.environment]
+  NODE_ENV = "production"
+
+# Deploy Preview context / سياق معاينة النشر
+[context.deploy-preview]
+  publish = "src/public"
+  
+[context.deploy-preview.environment]
+  NODE_ENV = "development"
+
+# Branch Deploy context / سياق نشر الفرع
+[context.branch-deploy]
+  publish = "src/public"
+  
+[context.branch-deploy.environment]
+  NODE_ENV = "development"
