@@ -11,7 +11,9 @@
   publish = "src/public"
   
   # Build command / أمر البناء
-  command = "npm install && echo 'Build completed'"
+  # Note: This is a static site deployment - frontend files are served as-is
+  # The backend API runs as Netlify Functions (serverless)
+  command = "npm install && echo 'Static site ready - backend runs as serverless functions'"
   
   # Functions directory for serverless backend / مجلد الوظائف للواجهة الخلفية
   functions = "netlify/functions"
@@ -121,7 +123,9 @@
   node_bundler = "esbuild"
   
   # External node modules to include / وحدات Node الخارجية للتضمين
-  included_files = ["src/server/**", "node_modules/**"]
+  # Note: Netlify's esbuild bundler will automatically include required dependencies
+  # Only specify if you need to explicitly include certain modules
+  # included_files = ["src/server/config/**"]
 
 # ============================================
 # Dev Settings (for local development)

@@ -173,11 +173,16 @@ process.env.DATABASE_URL
 
 4. **أضف CORS Headers:**
 ```javascript
+// ⚠️ للإنتاج: استخدم النطاق المحدد بدلاً من '*'
+// ⚠️ Production: Use specific domain instead of '*'
 const headers = {
-    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN || '*',
     'Access-Control-Allow-Headers': 'Content-Type',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE'
 };
+
+// في Netlify Environment Variables أضف:
+// ALLOWED_ORIGIN=https://your-domain.netlify.app
 ```
 
 ## التطوير المحلي / Local Development

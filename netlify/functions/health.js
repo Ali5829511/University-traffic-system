@@ -8,8 +8,10 @@
 
 exports.handler = async (event, context) => {
     // Set CORS headers / تعيين ترويسات CORS
+    // TODO: In production, replace '*' with your specific domain for better security
+    // مثال / Example: 'https://your-domain.netlify.app'
     const headers = {
-        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Origin': process.env.ALLOWED_ORIGIN || '*',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Content-Type': 'application/json'

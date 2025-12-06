@@ -22,6 +22,6 @@
 # Page routes / مسارات الصفحات
 /pages/*                    /pages/:splat               200
 
-# Fallback for SPA (if page not found, serve index)
-# احتياطي لـ SPA (إذا لم يتم العثور على الصفحة، قدم index)
-/*                          /pages/index.html           404
+# SPA fallback for client-side routing / احتياطي لـ SPA للتوجيه من جانب العميل
+# Using 200 status for proper SPA behavior (not a real 404)
+/*                          /pages/index.html           200
