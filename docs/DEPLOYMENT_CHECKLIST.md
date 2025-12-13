@@ -125,52 +125,52 @@
 ### 3️⃣ التوثيق - Documentation
 
 #### توثيق النشر (Deployment Documentation)
-- [x] DEPLOYMENT_CHECKLIST.md - قائمة التحقق من النشر (هذا الملف)
-- [x] DEPLOYMENT_SYSTEM_REVIEW.md - مراجعة نظام النشر الشاملة
-- [x] DEPLOYMENT_MASTER_GUIDE.md - الدليل الرئيسي للنشر
-- [x] DEPLOYMENT_QUICK_REFERENCE.md - مرجع النشر السريع
-- [x] DEPLOYMENT_READINESS.md - جاهزية النشر
-- [x] DEPLOYMENT_TROUBLESHOOTING.md - حل مشاكل النشر
-- [x] DEPLOYMENT_FLOWCHART.md - مخطط انسيابي للنشر
-- [x] DEPLOY_IN_5_MINUTES.md - النشر في 5 دقائق
-- [x] DEPLOYMENT_REVIEW_EXECUTIVE_SUMMARY.md - ملخص تنفيذي للمراجعة
-- [x] TASK_COMPLETED_DEPLOYMENT_REVIEW.md - مراجعة المهمة المكتملة
-- [x] NETLIFY_DEPLOYMENT.md - النشر على Netlify
-- [x] BRANCH_DEPLOYMENT_GUIDE.md - دليل نشر الفروع
-- [x] QUICK_DEPLOYMENT.md - النشر السريع
-- [x] POST_DEPLOYMENT_SECURITY_CHECKLIST.md - قائمة الأمان بعد النشر
+- [x] docs/DEPLOYMENT_CHECKLIST.md - قائمة التحقق من النشر (هذا الملف)
+- [x] docs/DEPLOYMENT_SYSTEM_REVIEW.md - مراجعة نظام النشر الشاملة
+- [x] docs/DEPLOYMENT_MASTER_GUIDE.md - الدليل الرئيسي للنشر
+- [x] docs/DEPLOYMENT_QUICK_REFERENCE.md - مرجع النشر السريع
+- [x] docs/DEPLOYMENT_READINESS.md - جاهزية النشر
+- [x] docs/DEPLOYMENT_TROUBLESHOOTING.md - حل مشاكل النشر
+- [x] docs/DEPLOYMENT_FLOWCHART.md - مخطط انسيابي للنشر
+- [x] docs/DEPLOY_IN_5_MINUTES.md - النشر في 5 دقائق
+- [x] docs/DEPLOYMENT_REVIEW_EXECUTIVE_SUMMARY.md - ملخص تنفيذي للمراجعة
+- [x] docs/TASK_COMPLETED_DEPLOYMENT_REVIEW.md - مراجعة المهمة المكتملة
+- [x] docs/NETLIFY_DEPLOYMENT.md - النشر على Netlify
+- [x] docs/BRANCH_DEPLOYMENT_GUIDE.md - دليل نشر الفروع
+- [x] docs/QUICK_DEPLOYMENT.md - النشر السريع
+- [x] docs/POST_DEPLOYMENT_SECURITY_CHECKLIST.md - قائمة الأمان بعد النشر
 
 #### توثيق النظام (System Documentation)
-- [x] README.md - دليل المشروع الرئيسي
-- [x] SYSTEM_MAP.md - خريطة النظام
-- [x] SYSTEM_REVIEW.md - المراجعة الشاملة للنظام
-- [x] STRUCTURE.md - هيكل المشروع
-- [x] VISUAL_STRUCTURE.md - الهيكل المرئي
-- [x] MIGRATION_GUIDE.md - دليل الانتقال
+- [x] README.md - دليل المشروع الرئيسي (في الجذر / in root)
+- [x] docs/SYSTEM_MAP.md - خريطة النظام
+- [x] docs/SYSTEM_REVIEW.md - المراجعة الشاملة للنظام
+- [x] docs/STRUCTURE.md - هيكل المشروع
+- [x] docs/VISUAL_STRUCTURE.md - الهيكل المرئي
+- [x] docs/MIGRATION_GUIDE.md - دليل الانتقال
 
 #### توثيق الأمان والتكامل (Security & Integration Documentation)
-- [x] SECURITY.md - إرشادات الأمان
-- [x] SECURITY_ADVISORY.md - تحذيرات الأمان
-- [x] API_SETUP.md - إعداد API
-- [x] INTEGRATION_GUIDE.md - دليل التكامل
-- [x] WEBHOOK_ARCHITECTURE.md - معمارية Webhook
-- [x] EXPORT_API_DOCUMENTATION.md - توثيق API التصدير
+- [x] docs/SECURITY.md - إرشادات الأمان
+- [x] docs/SECURITY_ADVISORY.md - تحذيرات الأمان
+- [x] docs/API_SETUP.md - إعداد API
+- [x] docs/INTEGRATION_GUIDE.md - دليل التكامل
+- [x] docs/WEBHOOK_ARCHITECTURE.md - معمارية Webhook
+- [x] docs/EXPORT_API_DOCUMENTATION.md - توثيق API التصدير
 
 #### توثيق قاعدة البيانات (Database Documentation)
-- [x] CLOUD_DATABASE_GUIDE.md - دليل قاعدة البيانات السحابية
-- [x] DATABASE_CONNECTION_AR.md - الاتصال بقاعدة البيانات (عربي)
-- [x] database_documentation.md - توثيق قاعدة البيانات
-- [x] 🚀 دليل التثبيت والإعداد - قاعدة بيانات نظام إدارة المرور.md
+- [x] docs/CLOUD_DATABASE_GUIDE.md - دليل قاعدة البيانات السحابية
+- [x] docs/DATABASE_CONNECTION_AR.md - الاتصال بقاعدة البيانات (عربي)
+- [x] docs/database_documentation.md - توثيق قاعدة البيانات
+- [x] docs/🚀 دليل التثبيت والإعداد - قاعدة بيانات نظام إدارة المرور.md
 
 #### توثيق آخر (Other Documentation)
-- [x] QUICK_START_GUIDE.md - دليل البدء السريع
-- [x] CHANGELOG.md - سجل التغييرات
-- [x] RESTRUCTURE_SUMMARY.md - ملخص إعادة الهيكلة
-- [x] REVIEW_AND_PUBLISH_SUMMARY.md - ملخص المراجعة والنشر
-- [x] AUTHENTICATION_FIX_SUMMARY.md - ملخص إصلاح المصادقة
-- [x] دليل البدء السريع - نظام إدارة المرور.md
-- [x] دليل التصدير المتقدم - نظام إدارة المرور.md
-- [x] توثيق تصميم نظام إدارة المرور - وحدة إسكان هيئة التدريس.md
+- [x] docs/QUICK_START_GUIDE.md - دليل البدء السريع
+- [x] docs/CHANGELOG.md - سجل التغييرات
+- [x] docs/RESTRUCTURE_SUMMARY.md - ملخص إعادة الهيكلة
+- [x] docs/REVIEW_AND_PUBLISH_SUMMARY.md - ملخص المراجعة والنشر
+- [x] docs/AUTHENTICATION_FIX_SUMMARY.md - ملخص إصلاح المصادقة
+- [x] docs/دليل البدء السريع - نظام إدارة المرور.md
+- [x] docs/دليل التصدير المتقدم - نظام إدارة المرور.md
+- [x] docs/توثيق تصميم نظام إدارة المرور - وحدة إسكان هيئة التدريس.md
 
 **الإجمالي:** 37/37 ملف توثيق ✅
 
@@ -372,8 +372,10 @@ git push origin main
 # الهيكل الجديد يتطلب رفع محتويات src/public/ للواجهة الأمامية
 - src/public/pages/*.html (31 صفحة)
 - src/public/js/*.js (4 ملفات JS للعميل)
-- src/public/css/* (ملفات الأنماط)
-- src/public/assets/* (الصور والأصول)
+- src/public/assets/* (الصور والأصول والأيقونات)
+- src/public/_redirects (إعادة توجيه Netlify)
+
+# ملاحظة: CSS مضمّن في الصفحات، لا توجد ملفات css خارجية
 
 # للخادم الخلفي (Backend - اختياري)
 - src/server/server.js
@@ -413,11 +415,11 @@ npm start      # تشغيل الخادم
 ### الملفات الأساسية:
 - [x] ✅ src/public/pages/index.html موجود
 - [x] ✅ src/public/pages/home.html موجود
-- [x] ✅ جميع ملفات HTML موجودة (31 صفحة)
+- [x] ✅ جميع ملفات HTML موجودة (31 صفحة في src/public/pages/)
 - [x] ✅ جميع ملفات JS موجودة (13 ملف)
-- [x] ✅ README.md محدّث
+- [x] ✅ README.md محدّث (في الجذر / in root)
 - [x] ✅ src/server/server.js - الخادم الرئيسي
-- [x] ✅ index.js - نقطة الدخول
+- [x] ✅ index.js - نقطة الدخول (في الجذر / in root)
 
 ### الوظائف:
 - [x] ✅ تسجيل الدخول يعمل
@@ -426,17 +428,17 @@ npm start      # تشغيل الخادم
 - [x] ✅ التصميم متجاوب
 
 ### التوثيق:
-- [x] ✅ README.md شامل
+- [x] ✅ README.md شامل (في الجذر / in root)
 - [x] ✅ 37 ملف توثيق موجود في docs/
-- [x] ✅ خريطة النظام موجودة (SYSTEM_MAP.md)
-- [x] ✅ قائمة النشر موجودة (هذا الملف)
-- [x] ✅ دليل الهيكل (STRUCTURE.md)
-- [x] ✅ دليل الانتقال (MIGRATION_GUIDE.md)
+- [x] ✅ خريطة النظام موجودة (docs/SYSTEM_MAP.md)
+- [x] ✅ قائمة النشر موجودة (docs/DEPLOYMENT_CHECKLIST.md - هذا الملف)
+- [x] ✅ دليل الهيكل (docs/STRUCTURE.md)
+- [x] ✅ دليل الانتقال (docs/MIGRATION_GUIDE.md)
 
 ### الأمان:
-- [x] ✅ راجع SECURITY.md
-- [x] ⚠️ تذكّر: النظام الحالي للتطوير فقط
-- [x] ⚠️ للإنتاج: استخدم قاعدة بيانات حقيقية وشفّر كلمات المرور
+- [x] ✅ راجع docs/SECURITY.md
+- [x] ⚠️ تذكّر: النظام جاهز للإنتاج مع قاعدة بيانات PostgreSQL
+- [x] ⚠️ للإنتاج: تأكد من ضبط متغيرات البيئة في .env
 
 ---
 
